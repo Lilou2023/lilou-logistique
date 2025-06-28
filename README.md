@@ -1,1 +1,1 @@
-# lilou-logistique
+# Placeholder for README.md

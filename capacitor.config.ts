@@ -1,0 +1,1 @@
+// Placeholder for capacitor.config.ts
