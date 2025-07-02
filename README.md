@@ -1,79 +1,93 @@
-# lilou-logistique
-name: 🔍 Validation Environnement LILOU LOGISTIQUE
+# 🚚 Lilou Logistique
 
-on:
-  push:
-    branches: [main, develop]
-  pull_request:
-    branches: [main, develop]
+Plateforme Next.js dédiée à la gestion logistique intelligente et connectée avec Supabase et OpenAI.
 
-env:
-  NODE_VERSION: '20'
-  FORCE_COLOR: 1
+## 🚀 Fonctionnalités principales
 
-jobs:
-  valider:
-    name: 🛡️ CI - Validation et construction
-    runs-on: ubuntu-latest
-    steps:
-      - name: 📥 Checkout du code
-        uses: actions/checkout@v3
+- Authentification sécurisée via NextAuth.js
+- Base de données temps réel avec Supabase
+- Intégration OpenAI (analyse, génération, automatisation)
+- CI/CD complet via GitHub Actions
+- Tests unitaires et audit de sécurité automatisés
 
-      - name: 🔧 Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+---
 
-      - name: 📦 Install dependencies
-        run: npm ci
+## 📦 Installation locale
 
-      - name: 🔍 TypeScript Check
-        run: npm run type-check
+```bash
+git clone https://github.com/Lilou2023/lilou-logistique.git
+cd lilou-logistique
+npm install
+```
 
-      - name: ✅ Validate Env Vars
-        env:
-          NODE_ENV: development
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
-          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
-        run: npm run validate-env
+---
 
-      - name: 🧪 Unit tests
-        run: npm run test
+## ⚙️ Configuration de l'environnement
 
-      - name: 🏗️ Production Build
-        env:
-          NODE_ENV: production
-        run: npm run build
+1. **Crée un fichier `.env.local`** à la racine du projet :
 
-  audit:
-    name: 🔒 Audit Sécurité
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
+```bash
+cp .env.example .env.local
+```
 
-      - name: 🔧 Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+2. **Renseigne les variables d'environnement** dans `.env.local` :
 
-      - name: 📦 Install dependencies
-        run: npm ci
+| Variable                        | Description                                 |
+| ------------------------------- | ------------------------------------------- |
+| `NEXT_PUBLIC_SUPABASE_URL`      | URL de ton projet Supabase                  |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Clé publique Supabase                       |
+| `SUPABASE_SERVICE_ROLE_KEY`     | Clé de rôle de service (serveur uniquement) |
+| `OPENAI_API_KEY`                | Clé API OpenAI                              |
+| `JWT_SECRET`                    | Clé de signature JWT                        |
+| `NEXTAUTH_SECRET`               | Clé de chiffrement NextAuth                 |
 
-      - name: 🔐 Exécution de l'audit NPM
-        run: npm audit --audit-level=high || echo "⚠️ Vulnérabilités détectées"
+---
 
-      - name: 🧪 Vérifier les secrets codés en dur
-        run: |
-          echo "🔍 Vérification des secrets en dur..."
-          if grep -r "your-super-secret" . --exclude-dir=node_modules --exclude-dir=.git; then
-            echo "❌ Secrets par défaut trouvés !"
-            exit 1
-          fi
-          echo "✅ Aucun secret par défaut trouvé"
+## 🧪 Lancer les tests
+
+```bash
+npm run test
+```
+
+---
+
+## ✅ Vérification d'environnement
+
+```bash
+npm run validate-env
+```
+
+Ce script vérifie :
+
+* La présence d'un `.env.local`
+* L'absence de `.env` (sécurité)
+* Le format et la validité des variables
+
+---
+
+## 🛠️ Build de production
+
+```bash
+npm run build
+```
+
+---
+
+## 🔐 CI/CD avec GitHub Actions
+
+Un pipeline automatique est déclenché sur chaque `push` ou `pull request` :
+
+* Validation environnement (développement + production)
+* Lint / Type check TypeScript
+* Tests unitaires
+* Build
+* Audit de sécurité NPM
+
+Fichier de workflow : `.github/workflows/validate-env.yml`
+
+---
+
+## 🧾 Licence
+
+Ce projet est sous licence MIT. Voir [LICENSE](LICENSE).
 
