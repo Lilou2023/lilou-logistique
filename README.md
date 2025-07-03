@@ -34,12 +34,12 @@ cp .env.example .env.local
 
 | Variable                        | Description                                 |
 | ------------------------------- | ------------------------------------------- |
-| `NEXT_PUBLIC_SUPABASE_URL`      | URL de ton projet Supabase                  |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Clé publique Supabase                       |
-| `SUPABASE_SERVICE_ROLE_KEY`     | Clé de rôle de service (serveur uniquement) |
-| `OPENAI_API_KEY`                | Clé API OpenAI                              |
-| `JWT_SECRET`                    | Clé de signature JWT                        |
-| `NEXTAUTH_SECRET`               | Clé de chiffrement NextAuth                 |
+| `NEXT_PUBLIC_SUPABASE_URL`      | |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` |              |
+| `SUPABASE_SERVICE_ROLE_KEY`     | |
+| `OPENAI_API_KEY`                ||
+| `JWT_SECRET`                    |                      |
+| `NEXTAUTH_SECRET`               |                |
 
 ---
 
