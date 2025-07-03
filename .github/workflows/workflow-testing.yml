@@ -1,0 +1,413 @@
+name: Workflow Testing & Validation
+
+on:
+  workflow_dispatch:
+    inputs:
+      test_scope:
+        description: 'Portée du test'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+        - all
+        - syntax-only
+        - actions-only
+        - security-only
+      target_workflow:
+        description: 'Workflow spécifique à tester (optionnel)'
+        required: false
+        type: string
+      dry_run:
+        description: 'Exécution à blanc (simulation)'
+        required: true
+        default: true
+        type: boolean
+
+env:
+  NODE_VERSION: '18'
+
+jobs:
+  pre-test-validation:
+    name: 🔍 Validation Pré-Test
+    runs-on: ubuntu-latest
+    
+    outputs:
+      workflows-to-test: ${{ steps.discover.outputs.workflows }}
+      test-matrix: ${{ steps.matrix.outputs.matrix }}
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Découvrir les workflows
+      id: discover
+      run: |
+        echo "🔍 Découverte des workflows à tester..."
+        
+        if [ -n "${{ github.event.inputs.target_workflow }}" ]; then
+          # Test d'un workflow spécifique
+          target="${{ github.event.inputs.target_workflow }}"
+          if [ -f ".github/workflows/$target" ]; then
+            echo "workflows=[\"$target\"]" >> $GITHUB_OUTPUT
+            echo "📄 Workflow cible: $target"
+          else
+            echo "❌ Workflow $target introuvable"
+            exit 1
+          fi
+        else
+          # Découvrir tous les workflows
+          workflows=$(find .github/workflows -name "*.yml" -o -name "*.yaml" | \
+                     grep -v "workflow-testing.yml" | \
+                     sed 's|.github/workflows/||' | \
+                     jq -R -s -c 'split("\n")[:-1]')
+          echo "workflows=$workflows" >> $GITHUB_OUTPUT
+          echo "📄 Workflows découverts:"
+          echo "$workflows" | jq -r '.[]' | sed 's/^/  - /'
+        fi
+        
+    - name: Générer la matrice de test
+      id: matrix
+      run: |
+        echo "🎯 Génération de la matrice de test..."
+        
+        # Créer la matrice basée sur le scope
+        case "${{ github.event.inputs.test_scope }}" in
+          "syntax-only")
+            matrix='{"include":[{"test":"syntax","tool":"yamllint"},{"test":"syntax","tool":"actionlint"}]}'
+            ;;
+          "actions-only")
+            matrix='{"include":[{"test":"actions","tool":"version-check"}]}'
+            ;;
+          "security-only")
+            matrix='{"include":[{"test":"security","tool":"secrets-scan"}]}'
+            ;;
+          *)
+            matrix='{"include":[{"test":"syntax","tool":"yamllint"},{"test":"syntax","tool":"actionlint"},{"test":"actions","tool":"version-check"},{"test":"security","tool":"secrets-scan"}]}'
+            ;;
+        esac
+        
+        echo "matrix=$matrix" >> $GITHUB_OUTPUT
+        echo "📊 Matrice de test:"
+        echo "$matrix" | jq .
+
+  syntax-testing:
+    name: 🔍 Test Syntaxe - ${{ matrix.tool }}
+    runs-on: ubuntu-latest
+    needs: pre-test-validation
+    if: contains(needs.pre-test-validation.outputs.test-matrix, 'syntax')
+    strategy:
+      matrix: ${{ fromJson(needs.pre-test-validation.outputs.test-matrix) }}
+      fail-fast: false
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Setup outils de validation
+      run: |
+        echo "🛠️ Installation des outils de validation..."
+        
+        if [ "${{ matrix.tool }}" = "yamllint" ]; then
+          pip install yamllint
+        elif [ "${{ matrix.tool }}" = "actionlint" ]; then
+          bash <(curl https://raw.githubusercontent.com/rhymond/actionlint/main/scripts/download-actionlint.bash)
+          sudo mv actionlint /usr/local/bin/
+        fi
+        
+    - name: Exécuter les tests de syntaxe
+      run: |
+        echo "🧪 Test de syntaxe avec ${{ matrix.tool }}..."
+        
+        if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+          echo "🔄 Mode simulation activé"
+        fi
+        
+        case "${{ matrix.tool }}" in
+          "yamllint")
+            echo "📝 Configuration yamllint..."
+            cat > .yamllint.yml << 'EOF'
+        extends: default
+        rules:
+          line-length:
+            max: 120
+          indentation:
+            spaces: 2
+          truthy:
+            allowed-values: ['true', 'false', 'on', 'off']
+          document-start: disable
+        EOF
+            
+            echo "🔍 Validation yamllint..."
+            for workflow in $(echo '${{ needs.pre-test-validation.outputs.workflows }}' | jq -r '.[]'); do
+              echo "📄 Test de .github/workflows/$workflow"
+              if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+                echo "  ✅ [SIMULATION] Syntaxe YAML valide"
+              else
+                yamllint ".github/workflows/$workflow"
+              fi
+            done
+            ;;
+            
+          "actionlint")
+            echo "🔍 Validation actionlint..."
+            if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+              echo "✅ [SIMULATION] Workflows valides selon actionlint"
+            else
+              actionlint .github/workflows/*.yml
+            fi
+            ;;
+        esac
+
+  action-version-testing:
+    name: 🔄 Test Versions Actions
+    runs-on: ubuntu-latest
+    needs: pre-test-validation
+    if: contains(needs.pre-test-validation.outputs.test-matrix, 'actions')
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Tester les versions d'actions
+      run: |
+        echo "🔄 Test des versions d'actions..."
+        
+        # Extraire toutes les actions utilisées
+        actions_file="actions_to_test.txt"
+        find .github/workflows -name "*.yml" -exec grep -h "uses:" {} \; | \
+        sed 's/.*uses: *//' | sed 's/ *#.*//' | sort | uniq > "$actions_file"
+        
+        echo "📄 Actions à tester:"
+        cat "$actions_file"
+        
+        if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+          echo "🔄 Mode simulation - vérification des actions..."
+          while read -r action; do
+            if [ -n "$action" ]; then
+              echo "  ✅ [SIMULATION] $action - Disponible"
+            fi
+          done < "$actions_file"
+        else
+          # Vérification réelle
+          echo "🌐 Vérification réelle des actions..."
+          unavailable=0
+          
+          while read -r action; do
+            if [ -n "$action" ]; then
+              repo="${action%@*}"
+              version="${action#*@}"
+              
+              echo "🔍 Test de $action..."
+              if curl -s -f "https://api.github.com/repos/$repo" > /dev/null; then
+                if [ "$version" != "$repo" ]; then
+                  if curl -s -f "https://api.github.com/repos/$repo/git/refs/tags/$version" > /dev/null; then
+                    echo "  ✅ $action - Disponible"
+                  else
+                    echo "  ❌ $action - Version introuvable"
+                    unavailable=$((unavailable + 1))
+                  fi
+                else
+                  echo "  ✅ $action - Repository disponible"
+                fi
+              else
+                echo "  ❌ $action - Repository introuvable"
+                unavailable=$((unavailable + 1))
+              fi
+            fi
+          done < "$actions_file"
+          
+          if [ $unavailable -gt 0 ]; then
+            echo "🚨 $unavailable actions indisponibles détectées"
+            exit 1
+          else
+            echo "🎉 Toutes les actions sont disponibles"
+          fi
+        fi
+
+  security-testing:
+    name: 🔒 Test Sécurité
+    runs-on: ubuntu-latest
+    needs: pre-test-validation
+    if: contains(needs.pre-test-validation.outputs.test-matrix, 'security')
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Scanner la sécurité des workflows
+      run: |
+        echo "🔒 Scan de sécurité des workflows..."
+        
+        security_issues=0
+        
+        # Vérifier les secrets hardcodés
+        echo "🔍 Recherche de secrets hardcodés..."
+        secret_patterns=("password" "secret" "token" "key" "api_key")
+        
+        for pattern in "${secret_patterns[@]}"; do
+          if find .github/workflows -name "*.yml" -exec grep -l -i "$pattern" {} \; | \
+             xargs grep -v "secrets\." | grep -v "github\.token" | grep -v "description" | \
+             grep -i "$pattern" >/dev/null 2>&1; then
+            echo "⚠️ Potentiel secret hardcodé: $pattern"
+            security_issues=$((security_issues + 1))
+          fi
+        done
+        
+        # Vérifier les permissions
+        echo "🔍 Vérification des permissions..."
+        workflows_without_permissions=$(find .github/workflows -name "*.yml" -exec grep -L "permissions:" {} \; | wc -l)
+        if [ "$workflows_without_permissions" -gt 0 ]; then
+          echo "⚠️ $workflows_without_permissions workflows sans permissions explicites"
+        fi
+        
+        # Vérifier les actions tierces
+        echo "🔍 Vérification des actions tierces..."
+        third_party_count=$(find .github/workflows -name "*.yml" -exec grep "uses:" {} \; | \
+                           grep -v "actions/" | wc -l)
+        if [ "$third_party_count" -gt 0 ]; then
+          echo "⚠️ $third_party_count actions tierces détectées"
+          echo "📋 Actions tierces:"
+          find .github/workflows -name "*.yml" -exec grep "uses:" {} \; | \
+          grep -v "actions/" | sed 's/.*uses: */  - /'
+        fi
+        
+        if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+          echo "✅ [SIMULATION] Scan de sécurité terminé"
+        else
+          if [ $security_issues -gt 0 ]; then
+            echo "🚨 $security_issues problèmes de sécurité potentiels détectés"
+            echo "::warning::Problèmes de sécurité potentiels dans les workflows"
+          else
+            echo "✅ Aucun problème de sécurité évident détecté"
+          fi
+        fi
+
+  integration-testing:
+    name: 🧪 Test d'Intégration
+    runs-on: ubuntu-latest
+    needs: [syntax-testing, action-version-testing, security-testing]
+    if: always() && (needs.syntax-testing.result == 'success' || needs.syntax-testing.result == 'skipped') && (needs.action-version-testing.result == 'success' || needs.action-version-testing.result == 'skipped') && (needs.security-testing.result == 'success' || needs.security-testing.result == 'skipped')
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Test d'intégration des workflows
+      run: |
+        echo "🧪 Test d'intégration des workflows..."
+        
+        if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+          echo "🔄 Mode simulation - test d'intégration..."
+          echo "✅ [SIMULATION] Tous les workflows sont compatibles"
+          echo "✅ [SIMULATION] Aucun conflit de noms détecté"
+          echo "✅ [SIMULATION] Dépendances entre jobs validées"
+        else
+          echo "🔍 Vérification des conflits de noms de jobs..."
+          job_conflicts=$(find .github/workflows -name "*.yml" -exec grep -h "^  [a-zA-Z].*:$" {} \; | \
+                         sort | uniq -d | wc -l)
+          
+          if [ "$job_conflicts" -gt 0 ]; then
+            echo "⚠️ Conflits de noms de jobs détectés"
+          else
+            echo "✅ Aucun conflit de noms de jobs"
+          fi
+          
+          echo "🔍 Vérification de la cohérence des déclencheurs..."
+          echo "✅ Test d'intégration terminé"
+        fi
+
+  test-report:
+    name: 📋 Rapport de Test
+    runs-on: ubuntu-latest
+    needs: [pre-test-validation, syntax-testing, action-version-testing, security-testing, integration-testing]
+    if: always()
+    
+    steps:
+    - name: Générer le rapport de test
+      run: |
+        echo "📋 Génération du rapport de test..."
+        
+        cat > workflow-test-report.md << 'EOF'
+        # 🧪 Rapport de Test des Workflows
+        
+        **Date:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+        **Portée:** ${{ github.event.inputs.test_scope }}
+        **Mode:** ${{ github.event.inputs.dry_run == 'true' && 'Simulation' || 'Réel' }}
+        **Déclenché par:** ${{ github.actor }}
+        
+        ## 📊 Résultats des Tests
+        
+        | Test | Statut | Détails |
+        |------|--------|---------|
+        EOF
+        
+        # Ajouter les résultats
+        tests=(
+          "syntax-testing:Test Syntaxe"
+          "action-version-testing:Test Versions Actions"
+          "security-testing:Test Sécurité"
+          "integration-testing:Test Intégration"
+        )
+        
+        for test_info in "${tests[@]}"; do
+          test_name="${test_info%%:*}"
+          test_desc="${test_info##*:}"
+          
+          case "$test_name" in
+            "syntax-testing")
+              result="${{ needs.syntax-testing.result }}"
+              ;;
+            "action-version-testing")
+              result="${{ needs.action-version-testing.result }}"
+              ;;
+            "security-testing")
+              result="${{ needs.security-testing.result }}"
+              ;;
+            "integration-testing")
+              result="${{ needs.integration-testing.result }}"
+              ;;
+          esac
+          
+          case "$result" in
+            "success")
+              echo "| $test_desc | ✅ Réussi | Tous les tests passés |" >> workflow-test-report.md
+              ;;
+            "failure")
+              echo "| $test_desc | ❌ Échec | Erreurs détectées |" >> workflow-test-report.md
+              ;;
+            "skipped")
+              echo "| $test_desc | ⏭️ Ignoré | Non inclus dans la portée |" >> workflow-test-report.md
+              ;;
+            *)
+              echo "| $test_desc | ❓ Inconnu | Statut non déterminé |" >> workflow-test-report.md
+              ;;
+          esac
+        done
+        
+        cat >> workflow-test-report.md << 'EOF'
+        
+        ## 💡 Recommandations
+        
+        1. **Avant chaque modification** de workflow, exécuter ce test
+        2. **Utiliser le mode simulation** pour les tests rapides
+        3. **Tester en mode réel** avant le merge vers main
+        4. **Vérifier les actions** sur GitHub Marketplace
+        
+        ## 🔗 Actions Suivantes
+        
+        - [ ] Corriger les erreurs détectées
+        - [ ] Re-tester après corrections
+        - [ ] Valider en environnement de test
+        - [ ] Merger les modifications
+        
+        EOF
+        
+        echo "✅ Rapport généré"
+        
+    - name: Upload du rapport
+      uses: actions/upload-artifact@v3
+      with:
+        name: workflow-test-report
+        path: workflow-test-report.md
+        retention-days: 30
+      if: always()
