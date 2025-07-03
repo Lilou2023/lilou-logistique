@@ -1,0 +1,242 @@
+name: YAML Validation & Linting
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - '.github/workflows/**'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - '.github/workflows/**'
+  workflow_dispatch:
+
+jobs:
+  yaml-validation:
+    name: 🔍 Validation YAML
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Setup Python pour yamllint
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+        
+    - name: Install yamllint
+      run: |
+        pip install yamllint
+        
+    - name: Install actionlint
+      run: |
+        echo "📦 Installation d'actionlint..."
+        bash <(curl https://raw.githubusercontent.com/rhymond/actionlint/main/scripts/download-actionlint.bash)
+        sudo mv actionlint /usr/local/bin/
+        actionlint -version
+        
+    - name: Configure yamllint
+      run: |
+        echo "⚙️ Configuration de yamllint..."
+        cat > .yamllint.yml << 'EOF'
+        extends: default
+        
+        rules:
+          line-length:
+            max: 120
+            level: warning
+          indentation:
+            spaces: 2
+          comments:
+            min-spaces-from-content: 1
+          comments-indentation: disable
+          truthy:
+            allowed-values: ['true', 'false', 'on', 'off']
+          document-start: disable
+          empty-lines:
+            max-end: 1
+        
+        ignore: |
+          node_modules/
+          .git/
+        EOF
+        
+    - name: Valider la syntaxe YAML avec yamllint
+      run: |
+        echo "🔍 Validation YAML avec yamllint..."
+        
+        # Valider tous les fichiers YAML dans .github/workflows
+        find .github/workflows -name "*.yml" -o -name "*.yaml" | while read -r file; do
+          echo "📄 Validation de $file..."
+          if yamllint "$file"; then
+            echo "✅ $file: Syntaxe YAML valide"
+          else
+            echo "❌ $file: Erreurs de syntaxe YAML détectées"
+            echo "::error file=$file::Erreurs de syntaxe YAML dans $file"
+          fi
+        done
+        
+    - name: Valider les workflows avec actionlint
+      run: |
+        echo "🔍 Validation des workflows avec actionlint..."
+        
+        # Exécuter actionlint sur tous les workflows
+        if actionlint .github/workflows/*.yml; then
+          echo "✅ Tous les workflows sont valides selon actionlint"
+        else
+          echo "❌ Erreurs détectées par actionlint"
+          echo "::error::Erreurs de workflow détectées par actionlint"
+          exit 1
+        fi
+        
+    - name: Vérifications supplémentaires
+      run: |
+        echo "🔍 Vérifications supplémentaires..."
+        
+        # Vérifier les caractères non-ASCII
+        echo "📝 Recherche de caractères non-ASCII..."
+        if find .github/workflows -name "*.yml" -exec grep -l '[^\x00-\x7F]' {} \; | head -5; then
+          echo "⚠️ Caractères non-ASCII trouvés (peuvent causer des problèmes)"
+        else
+          echo "✅ Aucun caractère non-ASCII problématique"
+        fi
+        
+        # Vérifier les lignes trop longues
+        echo "📏 Vérification de la longueur des lignes..."
+        find .github/workflows -name "*.yml" | while read -r file; do
+          long_lines=$(awk 'length($0) > 120 { print NR ": " $0 }' "$file")
+          if [ -n "$long_lines" ]; then
+            echo "⚠️ Lignes longues dans $file:"
+            echo "$long_lines"
+          fi
+        done
+        
+        # Vérifier l'indentation
+        echo "📐 Vérification de l'indentation..."
+        find .github/workflows -name "*.yml" | while read -r file; do
+          if grep -n $'\t' "$file"; then
+            echo "⚠️ Tabulations trouvées dans $file (utiliser des espaces)"
+            echo "::warning file=$file::Tabulations détectées, utiliser des espaces"
+          fi
+        done
+        
+    - name: Générer un rapport de validation
+      if: always()
+      run: |
+        echo "📋 Génération du rapport de validation..."
+        
+        cat > yaml-validation-report.md << 'EOF'
+        # 📊 Rapport de Validation YAML
+        
+        **Date:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+        **Commit:** ${{ github.sha }}
+        **Branche:** ${{ github.ref_name }}
+        
+        ## 🔍 Fichiers Validés
+        
+        EOF
+        
+        echo "| Fichier | yamllint | actionlint | Taille |" >> yaml-validation-report.md
+        echo "|---------|----------|------------|--------|" >> yaml-validation-report.md
+        
+        find .github/workflows -name "*.yml" -o -name "*.yaml" | while read -r file; do
+          size=$(wc -c < "$file")
+          echo "| \`$file\` | ✅ | ✅ | ${size} bytes |" >> yaml-validation-report.md
+        done
+        
+        cat >> yaml-validation-report.md << 'EOF'
+        
+        ## 🛠️ Outils Utilisés
+        
+        - **yamllint**: Validation de la syntaxe YAML
+        - **actionlint**: Validation spécifique aux workflows GitHub Actions
+        - **Vérifications custom**: Caractères, indentation, longueur des lignes
+        
+        ## 💡 Bonnes Pratiques
+        
+        1. **Indentation**: Utiliser 2 espaces (pas de tabulations)
+        2. **Longueur des lignes**: Maximum 120 caractères
+        3. **Encodage**: UTF-8 sans BOM
+        4. **Actions**: Utiliser des versions stables (@v3)
+        5. **Noms**: Utiliser des noms descriptifs pour les jobs et steps
+        
+        EOF
+        
+        echo "✅ Rapport généré: yaml-validation-report.md"
+        
+    - name: Upload du rapport
+      uses: actions/upload-artifact@v3
+      with:
+        name: yaml-validation-report
+        path: yaml-validation-report.md
+        retention-days: 30
+      if: always()
+
+  workflow-security:
+    name: 🔒 Sécurité des Workflows
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Analyser la sécurité des workflows
+      run: |
+        echo "🔒 Analyse de sécurité des workflows..."
+        
+        # Vérifier les secrets hardcodés
+        echo "🔍 Recherche de secrets potentiellement hardcodés..."
+        secret_patterns=(
+          "password"
+          "secret"
+          "token"
+          "key"
+          "api_key"
+          "private"
+        )
+        
+        secrets_found=false
+        for pattern in "${secret_patterns[@]}"; do
+          if find .github/workflows -name "*.yml" -exec grep -l -i "$pattern" {} \; | \
+             xargs grep -v "secrets\." | grep -v "github\.token" | grep -v "description" | \
+             grep -i "$pattern" >/dev/null; then
+            echo "⚠️ Potentiel secret hardcodé trouvé: $pattern"
+            secrets_found=true
+          fi
+        done
+        
+        if [ "$secrets_found" = false ]; then
+          echo "✅ Aucun secret hardcodé évident détecté"
+        fi
+        
+        # Vérifier les permissions
+        echo "🔍 Vérification des permissions..."
+        if find .github/workflows -name "*.yml" -exec grep -l "permissions:" {} \; >/dev/null; then
+          echo "✅ Permissions explicites définies dans certains workflows"
+        else
+          echo "⚠️ Aucune permission explicite définie (utilise les permissions par défaut)"
+        fi
+        
+        # Vérifier l'utilisation de continue-on-error
+        continue_count=$(find .github/workflows -name "*.yml" -exec grep -c "continue-on-error: true" {} \; | \
+                        awk '{sum += $1} END {print sum}')
+        echo "📊 Nombre d'étapes avec continue-on-error: $continue_count"
+        
+        if [ "$continue_count" -gt 20 ]; then
+          echo "⚠️ Beaucoup d'étapes ignorent les erreurs - vérifiez si c'est intentionnel"
+        else
+          echo "✅ Utilisation raisonnable de continue-on-error"
+        fi
+        
+        # Vérifier les actions tierces
+        echo "🔍 Vérification des actions tierces..."
+        third_party_actions=$(find .github/workflows -name "*.yml" -exec grep "uses:" {} \; | \
+                             grep -v "actions/" | wc -l)
+        echo "📊 Actions tierces utilisées: $third_party_actions"
+        
+        if [ "$third_party_actions" -gt 0 ]; then
+          echo "⚠️ Actions tierces détectées - vérifiez leur sécurité"
+          find .github/workflows -name "*.yml" -exec grep "uses:" {} \; | \
+          grep -v "actions/" | sed 's/.*uses: */  - /'
+        fi

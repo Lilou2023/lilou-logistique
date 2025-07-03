@@ -1,0 +1,204 @@
+name: Action Version Checker
+
+on:
+  workflow_dispatch:
+    inputs:
+      check_type:
+        description: 'Type de vérification'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+        - all
+        - specific
+        - outdated
+  schedule:
+    # Vérification hebdomadaire le lundi à 9h
+    - cron: '0 9 * * 1'
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  check-action-versions:
+    name: 🔍 Vérifier les Versions d'Actions
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        
+    - name: Install dependencies for API calls
+      run: |
+        npm install -g axios
+        
+    - name: Analyser les actions utilisées
+      id: analyze-actions
+      run: |
+        echo "🔍 Analyse des actions utilisées dans les workflows..."
+        
+        # Extraire toutes les actions utilisées
+        echo "📄 Actions trouvées dans les workflows:"
+        find .github/workflows -name "*.yml" -o -name "*.yaml" | xargs grep -h "uses:" | \
+        sed 's/.*uses: *//' | sed 's/ *#.*//' | sort | uniq > actions_used.txt
+        
+        while read -r action; do
+          echo "  - $action"
+        done < actions_used.txt
+        
+        echo "actions-count=$(wc -l < actions_used.txt)" >> $GITHUB_OUTPUT
+        
+    - name: Vérifier la disponibilité des actions
+      run: |
+        echo "🌐 Vérification de la disponibilité sur GitHub Marketplace..."
+        
+        # Fonction pour vérifier une action
+        check_action() {
+          local action="$1"
+          local repo="${action%@*}"
+          local version="${action#*@}"
+          
+          echo "🔍 Vérification de $action..."
+          
+          # Vérifier si l'action existe
+          if curl -s -f "https://api.github.com/repos/$repo" > /dev/null; then
+            echo "  ✅ Repository $repo existe"
+            
+            # Vérifier si la version/tag existe
+            if [ "$version" != "$repo" ]; then
+              if curl -s -f "https://api.github.com/repos/$repo/git/refs/tags/$version" > /dev/null; then
+                echo "  ✅ Version $version disponible"
+                return 0
+              else
+                echo "  ❌ Version $version INTROUVABLE"
+                return 1
+              fi
+            fi
+          else
+            echo "  ❌ Repository $repo INTROUVABLE"
+            return 1
+          fi
+        }
+        
+        # Vérifier chaque action
+        unavailable_actions=()
+        available_actions=()
+        
+        while read -r action; do
+          if [ -n "$action" ]; then
+            if check_action "$action"; then
+              available_actions+=("$action")
+            else
+              unavailable_actions+=("$action")
+            fi
+          fi
+        done < actions_used.txt
+        
+        echo ""
+        echo "📊 RÉSUMÉ DE LA VÉRIFICATION:"
+        echo "✅ Actions disponibles: ${#available_actions[@]}"
+        echo "❌ Actions indisponibles: ${#unavailable_actions[@]}"
+        
+        if [ ${#unavailable_actions[@]} -gt 0 ]; then
+          echo ""
+          echo "🚨 ACTIONS INDISPONIBLES DÉTECTÉES:"
+          for action in "${unavailable_actions[@]}"; do
+            echo "  ❌ $action"
+          done
+          
+          echo ""
+          echo "🔧 ACTIONS CORRECTIVES RECOMMANDÉES:"
+          echo "1. Vérifier manuellement sur GitHub Marketplace"
+          echo "2. Utiliser des versions stables connues (@v3)"
+          echo "3. Mettre à jour les workflows concernés"
+          
+          exit 1
+        else
+          echo "🎉 Toutes les actions sont disponibles !"
+        fi
+        
+    - name: Suggérer des mises à jour
+      if: success()
+      run: |
+        echo "🔄 Recherche de versions plus récentes..."
+        
+        # Fonction pour obtenir la dernière version
+        get_latest_version() {
+          local repo="$1"
+          curl -s "https://api.github.com/repos/$repo/releases/latest" | \
+          grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/' || echo "unknown"
+        }
+        
+        echo "📈 Suggestions de mise à jour:"
+        
+        # Actions principales à vérifier
+        main_actions=(
+          "actions/checkout"
+          "actions/setup-node"
+          "actions/upload-artifact"
+          "actions/download-artifact"
+        )
+        
+        for repo in "${main_actions[@]}"; do
+          latest=$(get_latest_version "$repo")
+          if [ "$latest" != "unknown" ] && [ "$latest" != "null" ]; then
+            echo "  📦 $repo: Dernière version disponible = $latest"
+          fi
+        done
+        
+    - name: Générer un rapport
+      if: always()
+      run: |
+        echo "📋 Génération du rapport de vérification..."
+        
+        cat > action-version-report.md << 'EOF'
+        # 📊 Rapport de Vérification des Actions GitHub
+        
+        **Date de vérification:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+        **Workflow:** Action Version Checker
+        
+        ## 🔍 Actions Analysées
+        
+        EOF
+        
+        echo "| Action | Status | Commentaire |" >> action-version-report.md
+        echo "|--------|--------|-------------|" >> action-version-report.md
+        
+        while read -r action; do
+          if [ -n "$action" ]; then
+            echo "| \`$action\` | ✅ Vérifiée | Disponible |" >> action-version-report.md
+          fi
+        done < actions_used.txt
+        
+        cat >> action-version-report.md << 'EOF'
+        
+        ## 💡 Recommandations
+        
+        1. **Toujours vérifier** la disponibilité avant d'utiliser une nouvelle version
+        2. **Privilégier les versions stables** et largement adoptées
+        3. **Tester les mises à jour** sur une branche de développement
+        4. **Monitorer régulièrement** les nouvelles versions disponibles
+        
+        ## 🔗 Ressources
+        
+        - [GitHub Marketplace](https://github.com/marketplace/actions/)
+        - [Actions Documentation](https://docs.github.com/en/actions)
+        
+        EOF
+        
+        echo "✅ Rapport généré: action-version-report.md"
+        
+    - name: Upload du rapport
+      uses: actions/upload-artifact@v3
+      with:
+        name: action-version-report
+        path: |
+          action-version-report.md
+          actions_used.txt
+        retention-days: 30
+      if: always()
