@@ -21,7 +21,7 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v3
       
     - name: Validate project structure
       id: check-project
@@ -99,7 +99,7 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v3
       
     - name: Simulate build process
       id: build-sim
@@ -311,7 +311,7 @@ jobs:
         echo "  🔍 SEO: 94/100"
         
     - name: Upload build artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v3
       with:
         name: build-files-simple-${{ github.run_number }}
         path: dist/
@@ -326,7 +326,7 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v3
       
     - name: Simulate mobile build
       run: |
@@ -384,7 +384,7 @@ jobs:
         echo "  🍎 iOS: $(find ios -type f | wc -l) files"
         
     - name: Upload mobile artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v3
       with:
         name: mobile-build-simple-${{ github.run_number }}
         path: |
@@ -402,10 +402,10 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v3
       
     - name: Download build artifacts
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v3
       with:
         name: build-files-simple-${{ github.run_number }}
         path: dist/
@@ -449,10 +449,10 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v3
       
     - name: Download build artifacts
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v3
       with:
         name: build-files-simple-${{ github.run_number }}
         path: dist/
