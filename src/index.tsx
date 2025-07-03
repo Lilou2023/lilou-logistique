@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { registerSW } from 'virtual:pwa-register'
 
 // Performance monitoring
-import { getCLS, getFID, getFCP, getLCP, getTTFB } from 'web-vitals'
+import { onCLS, onFCP, onLCP, onTTFB } from 'web-vitals'
 
 // Lazy load main app component
 const App = React.lazy(() => import('./App'))
@@ -40,11 +40,10 @@ function sendToAnalytics(metric: any) {
   console.log('Performance metric:', metric)
 }
 
-getCLS(sendToAnalytics)
-getFID(sendToAnalytics)
-getFCP(sendToAnalytics)
-getLCP(sendToAnalytics)
-getTTFB(sendToAnalytics)
+onCLS(sendToAnalytics)
+onFCP(sendToAnalytics)
+onLCP(sendToAnalytics)
+onTTFB(sendToAnalytics)
 
 // Loading fallback component
 const LoadingFallback = () => (
