@@ -1,4 +1,4 @@
-name: Validation
+name: Validation & Quality Checks
 
 on:
   push:
@@ -6,9 +6,18 @@ on:
   pull_request:
     branches: [ main, develop ]
 
+env:
+  NODE_VERSION: '18'
+
 jobs:
   validate:
+    name: 🔍 Validate Project Structure
     runs-on: ubuntu-latest
+    
+    outputs:
+      has-package-json: ${{ steps.check-files.outputs.has-package-json }}
+      has-tsconfig: ${{ steps.check-files.outputs.has-tsconfig }}
+      project-name: ${{ steps.check-package.outputs.project-name }}
     
     steps:
     - name: Checkout code
@@ -17,25 +26,21 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '18'
+        node-version: ${{ env.NODE_VERSION }}
         
-    - name: Validate package.json
+    - name: Check essential files
+      id: check-files
       run: |
-        if [ -f "package.json" ]; then
-          echo "✅ package.json found"
-          node -p "JSON.parse(require('fs').readFileSync('package.json', 'utf8')).name"
-        else
-          echo "❌ package.json not found"
-          exit 1
-        fi
+        echo "🔍 Checking essential project files..."
         
-    - name: Validate project structure
-      run: |
-        echo "🔍 Validating project structure..."
-        
-        # Check for essential files
-        files_to_check=(
+        # Essential files check
+        essential_files=(
           "package.json"
+          "README.md"
+          ".gitignore"
+        )
+        
+        optional_files=(
           "tsconfig.json"
           "vite.config.ts"
           "index.html"
@@ -43,15 +48,90 @@ jobs:
           "src/App.tsx"
         )
         
-        for file in "${files_to_check[@]}"; do
+        missing_essential=()
+        missing_optional=()
+        
+        for file in "${essential_files[@]}"; do
           if [ -f "$file" ]; then
-            echo "✅ $file exists"
+            echo "✅ $file exists (essential)"
           else
-            echo "⚠️ $file missing (optional for this validation)"
+            echo "❌ $file missing (essential)"
+            missing_essential+=("$file")
           fi
         done
         
-    - name: Validate performance files
+        for file in "${optional_files[@]}"; do
+          if [ -f "$file" ]; then
+            echo "✅ $file exists (optional)"
+          else
+            echo "⚠️ $file missing (optional)"
+            missing_optional+=("$file")
+          fi
+        done
+        
+        # Set outputs
+        if [ -f "package.json" ]; then
+          echo "has-package-json=true" >> $GITHUB_OUTPUT
+        else
+          echo "has-package-json=false" >> $GITHUB_OUTPUT
+        fi
+        
+        if [ -f "tsconfig.json" ]; then
+          echo "has-tsconfig=true" >> $GITHUB_OUTPUT
+        else
+          echo "has-tsconfig=false" >> $GITHUB_OUTPUT
+        fi
+        
+        # Report results
+        if [ ${#missing_essential[@]} -gt 0 ]; then
+          echo "� Missing essential files: ${missing_essential[*]}"
+          exit 1
+        else
+          echo "✅ All essential files present"
+        fi
+        
+        if [ ${#missing_optional[@]} -gt 0 ]; then
+          echo "📝 Missing optional files: ${missing_optional[*]}"
+        fi
+        
+    - name: Validate package.json
+      id: check-package
+      if: steps.check-files.outputs.has-package-json == 'true'
+      run: |
+        echo "📦 Validating package.json..."
+        
+        if ! node -e "JSON.parse(require('fs').readFileSync('package.json', 'utf8'))"; then
+          echo "❌ package.json is not valid JSON"
+          exit 1
+        fi
+        
+        PROJECT_NAME=$(node -p "JSON.parse(require('fs').readFileSync('package.json', 'utf8')).name || 'unknown'")
+        echo "project-name=$PROJECT_NAME" >> $GITHUB_OUTPUT
+        echo "📦 Project name: $PROJECT_NAME"
+        
+        # Check for required fields
+        REQUIRED_FIELDS=("name" "version")
+        for field in "${REQUIRED_FIELDS[@]}"; do
+          if node -e "const pkg = JSON.parse(require('fs').readFileSync('package.json', 'utf8')); if (!pkg.$field) process.exit(1)"; then
+            echo "✅ $field field present"
+          else
+            echo "❌ $field field missing"
+            exit 1
+          fi
+        done
+        
+        echo "✅ package.json validation completed"
+
+  validate-performance-files:
+    name: 📊 Validate Performance Files
+    runs-on: ubuntu-latest
+    needs: validate
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Check performance optimization files
       run: |
         echo "📊 Checking performance optimization files..."
         
@@ -62,29 +142,264 @@ jobs:
           "schema.sql"
         )
         
+        workflow_files=(
+          ".github/workflows/main.yml"
+          ".github/workflows/validate.yml"
+          ".github/workflows/simple.yml"
+        )
+        
+        missing_performance=()
+        missing_workflows=()
+        
         for file in "${performance_files[@]}"; do
           if [ -f "$file" ]; then
             echo "✅ $file exists"
+            # Check if file is not empty
+            if [ -s "$file" ]; then
+              echo "  📄 File has content"
+            else
+              echo "  ⚠️ File is empty"
+            fi
           else
             echo "⚠️ $file missing"
+            missing_performance+=("$file")
           fi
         done
         
-    - name: Validate deployment script
-      run: |
-        if [ -f "deploy.sh" ]; then
-          echo "✅ deploy.sh found"
-          if [ -x "deploy.sh" ]; then
-            echo "✅ deploy.sh is executable"
+        for file in "${workflow_files[@]}"; do
+          if [ -f "$file" ]; then
+            echo "✅ $file exists"
           else
-            echo "⚠️ deploy.sh is not executable"
+            echo "❌ $file missing (critical)"
+            missing_workflows+=("$file")
           fi
-        else
-          echo "❌ deploy.sh not found"
+        done
+        
+        # Report results
+        if [ ${#missing_workflows[@]} -gt 0 ]; then
+          echo "🚨 Missing critical workflow files: ${missing_workflows[*]}"
+          exit 1
         fi
         
-    - name: Summary
+        if [ ${#missing_performance[@]} -gt 0 ]; then
+          echo "📝 Missing performance files: ${missing_performance[*]}"
+        fi
+        
+        echo "✅ Performance files validation completed"
+
+  validate-scripts:
+    name: 🔧 Validate Scripts & Dependencies
+    runs-on: ubuntu-latest
+    needs: validate
+    if: needs.validate.outputs.has-package-json == 'true'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        
+    - name: Validate npm scripts
       run: |
-        echo "🎉 Validation completed!"
-        echo "📊 Performance optimization files are in place"
-        echo "🚀 Ready for deployment"
+        echo "🔧 Validating npm scripts..."
+        
+        # Check if scripts exist in package.json
+        EXPECTED_SCRIPTS=(
+          "build"
+          "dev"
+          "test"
+          "lint"
+        )
+        
+        missing_scripts=()
+        
+        for script in "${EXPECTED_SCRIPTS[@]}"; do
+          if node -e "const pkg = JSON.parse(require('fs').readFileSync('package.json', 'utf8')); if (!pkg.scripts || !pkg.scripts.$script) process.exit(1)" 2>/dev/null; then
+            echo "✅ Script '$script' exists"
+          else
+            echo "⚠️ Script '$script' missing"
+            missing_scripts+=("$script")
+          fi
+        done
+        
+        if [ ${#missing_scripts[@]} -gt 0 ]; then
+          echo "📝 Missing scripts: ${missing_scripts[*]}"
+        fi
+        
+        echo "✅ Scripts validation completed"
+        
+    - name: Check dependencies
+      run: |
+        echo "📦 Checking dependencies..."
+        
+        # Install dependencies to check for issues
+        if [ -f "package-lock.json" ]; then
+          echo "📋 Using package-lock.json"
+          if npm ci --dry-run; then
+            echo "✅ Dependencies can be installed"
+          else
+            echo "⚠️ Dependency installation issues detected"
+          fi
+        else
+          echo "⚠️ No package-lock.json found"
+          if npm install --dry-run; then
+            echo "✅ Dependencies can be installed"
+          else
+            echo "⚠️ Dependency installation issues detected"
+          fi
+        fi
+
+  validate-deployment:
+    name: 🚀 Validate Deployment Configuration
+    runs-on: ubuntu-latest
+    needs: validate
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Check deployment scripts
+      run: |
+        echo "🚀 Checking deployment configuration..."
+        
+        deployment_files=(
+          "deploy.sh"
+          "Dockerfile"
+          ".dockerignore"
+        )
+        
+        optional_deployment=()
+        
+        for file in "${deployment_files[@]}"; do
+          if [ -f "$file" ]; then
+            echo "✅ $file exists"
+            if [ "$file" == "deploy.sh" ] && [ -x "$file" ]; then
+              echo "  🔧 deploy.sh is executable"
+            elif [ "$file" == "deploy.sh" ]; then
+              echo "  ⚠️ deploy.sh is not executable"
+            fi
+          else
+            echo "📝 $file missing (optional)"
+            optional_deployment+=("$file")
+          fi
+        done
+        
+        if [ ${#optional_deployment[@]} -gt 0 ]; then
+          echo "📝 Optional deployment files missing: ${optional_deployment[*]}"
+        fi
+        
+        echo "✅ Deployment validation completed"
+
+  security-check:
+    name: 🔒 Security Validation
+    runs-on: ubuntu-latest
+    needs: validate
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Check for sensitive files
+      run: |
+        echo "🔒 Checking for sensitive files..."
+        
+        # Files that should not be committed
+        sensitive_patterns=(
+          "*.env"
+          "*.key"
+          "*.pem"
+          "*.p12"
+          ".env.local"
+          ".env.production"
+          "config/secrets.json"
+        )
+        
+        found_sensitive=()
+        
+        for pattern in "${sensitive_patterns[@]}"; do
+          if find . -name "$pattern" -type f | grep -q .; then
+            echo "⚠️ Found potentially sensitive files: $pattern"
+            found_sensitive+=("$pattern")
+          fi
+        done
+        
+        if [ ${#found_sensitive[@]} -gt 0 ]; then
+          echo "🚨 Sensitive files detected: ${found_sensitive[*]}"
+          echo "🔧 Consider adding these to .gitignore"
+        else
+          echo "✅ No sensitive files detected"
+        fi
+        
+        # Check .gitignore exists and has common patterns
+        if [ -f ".gitignore" ]; then
+          echo "✅ .gitignore exists"
+          
+          important_patterns=("node_modules/" "*.log" ".env")
+          missing_patterns=()
+          
+          for pattern in "${important_patterns[@]}"; do
+            if grep -q "$pattern" .gitignore; then
+              echo "✅ .gitignore includes $pattern"
+            else
+              echo "⚠️ .gitignore missing $pattern"
+              missing_patterns+=("$pattern")
+            fi
+          done
+          
+          if [ ${#missing_patterns[@]} -gt 0 ]; then
+            echo "� Consider adding to .gitignore: ${missing_patterns[*]}"
+          fi
+        else
+          echo "❌ .gitignore missing"
+        fi
+
+  summary:
+    name: 📋 Validation Summary
+    runs-on: ubuntu-latest
+    needs: [validate, validate-performance-files, validate-scripts, validate-deployment, security-check]
+    if: always()
+    
+    steps:
+    - name: Generate validation summary
+      run: |
+        echo "📋 Validation Summary for ${{ needs.validate.outputs.project-name || 'Unknown Project' }}"
+        echo "================================================"
+        
+        # Check results of all validation jobs
+        if [ "${{ needs.validate.result }}" == "success" ]; then
+          echo "✅ Project Structure: PASSED"
+        else
+          echo "❌ Project Structure: FAILED"
+        fi
+        
+        if [ "${{ needs.validate-performance-files.result }}" == "success" ]; then
+          echo "✅ Performance Files: PASSED"
+        else
+          echo "❌ Performance Files: FAILED"
+        fi
+        
+        if [ "${{ needs.validate-scripts.result }}" == "success" ]; then
+          echo "✅ Scripts & Dependencies: PASSED"
+        elif [ "${{ needs.validate-scripts.result }}" == "skipped" ]; then
+          echo "⏭️ Scripts & Dependencies: SKIPPED"
+        else
+          echo "❌ Scripts & Dependencies: FAILED"
+        fi
+        
+        if [ "${{ needs.validate-deployment.result }}" == "success" ]; then
+          echo "✅ Deployment Config: PASSED"
+        else
+          echo "❌ Deployment Config: FAILED"
+        fi
+        
+        if [ "${{ needs.security-check.result }}" == "success" ]; then
+          echo "✅ Security Check: PASSED"
+        else
+          echo "❌ Security Check: FAILED"
+        fi
+        
+        echo "================================================"
+        echo "🎉 Validation completed at $(date)"
