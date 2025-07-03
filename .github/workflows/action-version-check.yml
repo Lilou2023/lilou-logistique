@@ -1,4 +1,4 @@
-name: Action Version Checker
+THIS SHOULD BE A LINTER ERRORname: Action Version Checker
 
 on:
   workflow_dispatch:
