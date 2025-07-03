@@ -1,4 +1,4 @@
-THIS SHOULD BE A LINTER ERRORname: Action Version Checker
+name: Action Version Checker
 
 on:
   workflow_dispatch:
@@ -194,7 +194,7 @@ jobs:
         echo "✅ Rapport généré: action-version-report.md"
         
     - name: Upload du rapport
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: action-version-report
         path: |
