@@ -1,4 +1,4 @@
-import React, { memo, useState, useMemo } from 'react'
+import { memo, useState, useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 
 interface Vehicle {

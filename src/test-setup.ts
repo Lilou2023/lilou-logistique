@@ -14,8 +14,15 @@ Object.defineProperty(window, 'performance', {
 
 // Mock IntersectionObserver
 global.IntersectionObserver = class IntersectionObserver {
+  root = null
+  rootMargin = ''
+  thresholds = []
+  
   constructor() {}
   observe() {}
   unobserve() {}
   disconnect() {}
-}
+  takeRecords() {
+    return []
+  }
+} as any
