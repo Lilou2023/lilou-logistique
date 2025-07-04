@@ -4,9 +4,7 @@ const nextConfig = {
   output: 'export',
   
   // Disable image optimization for static export
-  images: {
-    unoptimized: true,
-  },
+  images: { unoptimized: true },
   
   // Set base path if needed
   basePath: '',
