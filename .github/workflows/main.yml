@@ -125,7 +125,7 @@ jobs:
       continue-on-error: true
       
     - name: Upload performance reports
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: performance-reports-${{ github.run_number }}
         path: |
@@ -199,7 +199,7 @@ jobs:
       continue-on-error: true
       
     - name: Upload build artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: build-files-${{ github.run_number }}
         path: dist/
@@ -243,7 +243,7 @@ jobs:
       continue-on-error: true
       
     - name: Upload mobile build
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: mobile-build-${{ github.run_number }}
         path: |
@@ -264,7 +264,7 @@ jobs:
       uses: actions/checkout@v3
       
     - name: Download build artifacts
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: build-files-${{ github.run_number }}
         path: dist/
@@ -296,7 +296,7 @@ jobs:
       uses: actions/checkout@v3
       
     - name: Download build artifacts
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: build-files-${{ github.run_number }}
         path: dist/
