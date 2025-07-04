@@ -2,6 +2,16 @@
 
 Plateforme Next.js dédiée à la gestion logistique intelligente et connectée avec Supabase et OpenAI.
 
+## 🆘 Premier déploiement sur Hostinger ?
+
+Si vous avez l'erreur **"branche hostinger-deploy introuvable"**, c'est normal ! 
+
+**Solution rapide** :
+```bash
+bash scripts/create-deploy-branch.sh
+```
+Puis relancez le déploiement sur Hostinger. [Plus d'infos](FIX_FIRST_DEPLOYMENT.md)
+
 ## 🚀 Fonctionnalités principales
 
 - Authentification sécurisée via NextAuth.js
