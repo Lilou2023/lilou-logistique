@@ -96,3 +96,7 @@ ios/
 
 # Lighthouse CI
 .lighthouseci/
+
+# Hostinger deployment artifacts
+deploy/
+backup-*/
