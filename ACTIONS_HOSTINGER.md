@@ -39,6 +39,18 @@ Puis cliquez sur **"Créer"**.
 
 ## 3. Attendez la magie ✨
 
+### ⚠️ Erreur possible au premier déploiement
+
+Si vous voyez : **"branche hostinger-deploy introuvable"**, c'est normal !
+
+**Solution rapide** :
+```bash
+bash scripts/create-deploy-branch.sh
+```
+Puis cliquez sur "Pull" dans Hostinger.
+
+### Déploiement normal
+
 1. GitHub Actions va automatiquement :
    - Détecter votre push
    - Construire une version statique
