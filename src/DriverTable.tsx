@@ -2,24 +2,8 @@ import React, { memo, useState, useMemo, useCallback } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { FixedSizeList as List } from 'react-window'
 import AutoSizer from 'react-virtualized-auto-sizer'
-
-// Types
-interface Driver {
-  id: string
-  name: string
-  status: 'active' | 'inactive' | 'on-break'
-  vehicle: string
-  currentLocation: string
-  deliveries: number
-  rating: number
-}
-
-// API function
-const fetchDrivers = async (): Promise<Driver[]> => {
-  const response = await fetch('/api/drivers')
-  if (!response.ok) throw new Error('Failed to fetch drivers')
-  return response.json()
-}
+import { fetchDrivers } from './api/mockApi'
+import { Driver } from './types'
 
 // Memoized filter component
 const FilterControls = memo(({ 

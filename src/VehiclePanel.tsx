@@ -1,23 +1,7 @@
 import React, { memo, useState, useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
-
-interface Vehicle {
-  id: string
-  licensePlate: string
-  model: string
-  status: 'available' | 'in-use' | 'maintenance' | 'out-of-service'
-  currentLocation: string
-  fuelLevel: number
-  lastMaintenance: string
-  driverId?: string
-  driverName?: string
-}
-
-const fetchVehicles = async (): Promise<Vehicle[]> => {
-  const response = await fetch('/api/vehicles')
-  if (!response.ok) throw new Error('Failed to fetch vehicles')
-  return response.json()
-}
+import { fetchVehicles } from './api/mockApi'
+import { Vehicle } from './types'
 
 const VehiclePanel = memo(() => {
   const [statusFilter, setStatusFilter] = useState('')
@@ -110,8 +94,8 @@ const VehiclePanel = memo(() => {
               </div>
               
               <div className="detail-item">
-                <span className="label">Position:</span>
-                <span className="value">{vehicle.currentLocation}</span>
+                <span className="label">Capacité:</span>
+                <span className="value">{vehicle.capacity} kg</span>
               </div>
               
               <div className="detail-item">
@@ -127,14 +111,14 @@ const VehiclePanel = memo(() => {
               <div className="detail-item">
                 <span className="label">Dernière maintenance:</span>
                 <span className="value">
-                  {new Date(vehicle.lastMaintenance).toLocaleDateString('fr-FR')}
+                  {new Date(vehicle.lastMaintenance).toLocaleDateString()}
                 </span>
               </div>
               
-              {vehicle.driverName && (
+              {vehicle.driver && (
                 <div className="detail-item">
                   <span className="label">Conducteur:</span>
-                  <span className="value">{vehicle.driverName}</span>
+                  <span className="value">{vehicle.driver}</span>
                 </div>
               )}
             </div>

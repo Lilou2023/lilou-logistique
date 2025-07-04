@@ -2,28 +2,8 @@ import React, { memo, useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { FixedSizeList as List } from 'react-window'
 import AutoSizer from 'react-virtualized-auto-sizer'
-
-// Types
-interface DashboardData {
-  totalDrivers: number
-  activeVehicles: number
-  todayDeliveries: number
-  recentActivities: Activity[]
-}
-
-interface Activity {
-  id: string
-  type: string
-  description: string
-  timestamp: string
-}
-
-// API functions
-const fetchDashboardData = async (): Promise<DashboardData> => {
-  const response = await fetch('/api/dashboard')
-  if (!response.ok) throw new Error('Failed to fetch dashboard data')
-  return response.json()
-}
+import { fetchDashboardData } from './api/mockApi'
+import { DashboardData, Activity } from './types'
 
 // Memoized components for better performance
 const StatCard = memo(({ title, value, icon }: {

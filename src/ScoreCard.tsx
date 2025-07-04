@@ -1,22 +1,7 @@
 import React, { memo } from 'react'
 import { useQuery } from '@tanstack/react-query'
-
-interface ScoreData {
-  driverId: string
-  driverName: string
-  efficiency: number
-  punctuality: number
-  customerRating: number
-  totalScore: number
-  deliveriesCompleted: number
-  fuelEfficiency: number
-}
-
-const fetchScoreData = async (): Promise<ScoreData[]> => {
-  const response = await fetch('/api/scores')
-  if (!response.ok) throw new Error('Failed to fetch score data')
-  return response.json()
-}
+import { fetchScoreData } from './api/mockApi'
+import { Score } from './types'
 
 const ScoreCard = memo(() => {
   const { data: scores = [], isLoading, error } = useQuery({
@@ -29,6 +14,14 @@ const ScoreCard = memo(() => {
     if (score >= 90) return '#4CAF50' // Green
     if (score >= 75) return '#FF9800' // Orange
     return '#F44336' // Red
+  }
+
+  const getTrendIcon = (trend: string) => {
+    switch (trend) {
+      case 'up': return '📈'
+      case 'down': return '📉'
+      default: return '➡️'
+    }
   }
 
   if (isLoading) {
@@ -54,35 +47,18 @@ const ScoreCard = memo(() => {
       
       <div className="scores-grid">
         {scores.map((score) => (
-          <div key={score.driverId} className="score-item">
-            <div className="driver-info">
-              <h3>{score.driverName}</h3>
-              <div className="total-score" style={{ color: getScoreColor(score.totalScore) }}>
-                {score.totalScore}/100
-              </div>
+          <div key={score.id} className="score-item card">
+            <div className="score-header">
+              <h3>{score.metric}</h3>
+              <span className="trend-icon">{getTrendIcon(score.trend)}</span>
             </div>
             
-            <div className="score-details">
-              <div className="metric">
-                <span className="label">Efficacité:</span>
-                <span className="value">{score.efficiency}%</span>
-              </div>
-              <div className="metric">
-                <span className="label">Ponctualité:</span>
-                <span className="value">{score.punctuality}%</span>
-              </div>
-              <div className="metric">
-                <span className="label">Note Client:</span>
-                <span className="value">⭐ {score.customerRating.toFixed(1)}</span>
-              </div>
-              <div className="metric">
-                <span className="label">Livraisons:</span>
-                <span className="value">{score.deliveriesCompleted}</span>
-              </div>
-              <div className="metric">
-                <span className="label">Consommation:</span>
-                <span className="value">{score.fuelEfficiency.toFixed(1)} L/100km</span>
-              </div>
+            <div className="score-value" style={{ color: getScoreColor(score.score) }}>
+              {score.score}%
+            </div>
+            
+            <div className="score-trend">
+              Tendance: <span className={`trend-${score.trend}`}>{score.trend}</span>
             </div>
           </div>
         ))}
