@@ -92,12 +92,21 @@ push_to_branch "main"
 # Retourner à la branche originale
 git checkout $CURRENT_BRANCH
 
+# Proposer le déploiement Hostinger
+echo ""
+echo "🌐 Déploiement Hostinger disponible!"
+echo "Pour déployer vers Hostinger, utilisez:"
+echo "  ./setup-hostinger.sh"
+echo "  ou"
+echo "  git push origin hostinger-deploy"
+
 echo ""
 echo "🎉 Déploiement terminé!"
 echo ""
 echo "📊 Résumé:"
 echo "✅ Staging (develop): Déployé"
 echo "✅ Production (main): Déployé"
+echo "🌐 Hostinger: Prêt pour déploiement"
 echo ""
 echo "🔗 Actions suivantes:"
 echo "1. Vérifier les pipelines CI/CD sur GitHub"

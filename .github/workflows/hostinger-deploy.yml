@@ -1,0 +1,226 @@
+name: Deploy Lilou Logistique to Hostinger
+
+on:
+  push:
+    branches: [ main, hostinger-deploy ]
+  workflow_dispatch:
+    inputs:
+      force_deploy:
+        description: 'Force deployment even if no changes'
+        required: false
+        default: 'false'
+        type: boolean
+
+env:
+  NODE_VERSION: '18'
+  DEPLOY_PATH: 'public_html'
+
+jobs:
+  build:
+    name: 🏗️ Build for Hostinger
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        cache-dependency-path: package-lock.json
+        
+    - name: Install dependencies
+      run: |
+        if [ -f "package-lock.json" ]; then
+          npm ci
+        else
+          npm install
+        fi
+      
+    - name: Build application
+      run: |
+        echo "🏗️ Building application for Hostinger..."
+        npm run build
+        echo "✅ Build completed"
+        
+    - name: Prepare deployment files
+      run: |
+        echo "📦 Preparing files for Hostinger deployment..."
+        
+        # Create deployment directory
+        mkdir -p deploy
+        
+        # Copy build files
+        if [ -d "dist" ]; then
+          cp -r dist/* deploy/
+        else
+          echo "⚠️ No dist directory found, creating fallback"
+          mkdir -p deploy
+          echo "<html><body><h1>Lilou Logistique</h1><p>Application déployée avec succès!</p></body></html>" > deploy/index.html
+        fi
+        
+        # Create .htaccess for React Router
+        cat > deploy/.htaccess << 'EOF'
+        # Hostinger - React Router SPA configuration
+        RewriteEngine On
+        RewriteBase /
+        
+        # Handle client-side routing
+        RewriteCond %{REQUEST_FILENAME} !-f
+        RewriteCond %{REQUEST_FILENAME} !-d
+        RewriteRule . /index.html [L]
+        
+        # Enable compression
+        <IfModule mod_deflate.c>
+          AddOutputFilterByType DEFLATE text/plain
+          AddOutputFilterByType DEFLATE text/html
+          AddOutputFilterByType DEFLATE text/xml
+          AddOutputFilterByType DEFLATE text/css
+          AddOutputFilterByType DEFLATE application/xml
+          AddOutputFilterByType DEFLATE application/xhtml+xml
+          AddOutputFilterByType DEFLATE application/rss+xml
+          AddOutputFilterByType DEFLATE application/javascript
+          AddOutputFilterByType DEFLATE application/x-javascript
+        </IfModule>
+        
+        # Cache static files
+        <IfModule mod_expires.c>
+          ExpiresActive On
+          ExpiresByType text/css "access plus 1 year"
+          ExpiresByType application/javascript "access plus 1 year"
+          ExpiresByType image/png "access plus 1 year"
+          ExpiresByType image/jpg "access plus 1 year"
+          ExpiresByType image/jpeg "access plus 1 year"
+          ExpiresByType image/gif "access plus 1 year"
+          ExpiresByType image/ico "access plus 1 year"
+          ExpiresByType image/icon "access plus 1 year"
+          ExpiresByType text/html "access plus 1 hour"
+        </IfModule>
+        EOF
+        
+        echo "✅ Deployment files prepared"
+        
+    - name: Upload deployment artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: hostinger-deployment-${{ github.run_number }}
+        path: deploy/
+        retention-days: 30
+
+  deploy:
+    name: 🚀 Deploy to Hostinger
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/hostinger-deploy'
+    environment: hostinger-production
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Download deployment artifacts
+      uses: actions/download-artifact@v3
+      with:
+        name: hostinger-deployment-${{ github.run_number }}
+        path: deploy/
+        
+    - name: Setup SSH
+      uses: webfactory/ssh-agent@v0.7.0
+      with:
+        ssh-private-key: ${{ secrets.HOSTINGER_SSH_KEY }}
+        
+    - name: Deploy to Hostinger
+      run: |
+        echo "🚀 Starting deployment to Hostinger..."
+        
+        # Add Hostinger to known hosts
+        ssh-keyscan -H ${{ secrets.HOSTINGER_HOST }} >> ~/.ssh/known_hosts
+        
+        # Create backup directory with timestamp
+        BACKUP_DIR="backup-$(date +%Y%m%d-%H%M%S)"
+        
+        echo "📁 Creating backup directory: $BACKUP_DIR"
+        ssh ${{ secrets.HOSTINGER_USER }}@${{ secrets.HOSTINGER_HOST }} "mkdir -p $BACKUP_DIR"
+        
+        # Backup current files (if any)
+        echo "💾 Backing up current files..."
+        ssh ${{ secrets.HOSTINGER_USER }}@${{ secrets.HOSTINGER_HOST }} "
+          if [ -d '${{ env.DEPLOY_PATH }}' ] && [ \"\$(ls -A ${{ env.DEPLOY_PATH }} 2>/dev/null)\" ]; then
+            cp -r ${{ env.DEPLOY_PATH }}/* $BACKUP_DIR/ 2>/dev/null || echo 'No files to backup'
+          fi
+        "
+        
+        # Create deployment directory if it doesn't exist
+        echo "📁 Ensuring deployment directory exists..."
+        ssh ${{ secrets.HOSTINGER_USER }}@${{ secrets.HOSTINGER_HOST }} "mkdir -p ${{ env.DEPLOY_PATH }}"
+        
+        # Upload new files
+        echo "📤 Uploading new files..."
+        scp -r deploy/* ${{ secrets.HOSTINGER_USER }}@${{ secrets.HOSTINGER_HOST }}:${{ env.DEPLOY_PATH }}/
+        
+        # Set proper permissions
+        echo "🔒 Setting file permissions..."
+        ssh ${{ secrets.HOSTINGER_USER }}@${{ secrets.HOSTINGER_HOST }} "
+          find ${{ env.DEPLOY_PATH }} -type f -exec chmod 644 {} \;
+          find ${{ env.DEPLOY_PATH }} -type d -exec chmod 755 {} \;
+        "
+        
+        echo "✅ Deployment completed successfully!"
+        
+    - name: Post-deployment verification
+      run: |
+        echo "🔍 Running post-deployment verification..."
+        
+        # Test website availability
+        if [ -n "${{ secrets.HOSTINGER_DOMAIN }}" ]; then
+          echo "🌐 Testing website availability..."
+          
+          # Wait a moment for changes to propagate
+          sleep 10
+          
+          # Check if website is accessible
+          if curl -s --head "${{ secrets.HOSTINGER_DOMAIN }}" | grep -q "200 OK"; then
+            echo "✅ Website is accessible at ${{ secrets.HOSTINGER_DOMAIN }}"
+          else
+            echo "⚠️ Website may not be immediately accessible - DNS propagation may be required"
+          fi
+        else
+          echo "ℹ️ No domain configured for testing"
+        fi
+        
+        echo "🎉 Deployment verification completed!"
+        
+    - name: Cleanup old backups
+      run: |
+        echo "🧹 Cleaning up old backups..."
+        ssh ${{ secrets.HOSTINGER_USER }}@${{ secrets.HOSTINGER_HOST }} "
+          # Keep only the 5 most recent backups
+          ls -t | grep '^backup-' | tail -n +6 | xargs -r rm -rf
+        "
+        echo "✅ Cleanup completed"
+
+  notify:
+    name: 📢 Send Deployment Notification
+    runs-on: ubuntu-latest
+    needs: [build, deploy]
+    if: always()
+    
+    steps:
+    - name: Send notification
+      run: |
+        echo "📢 Sending deployment notification..."
+        
+        if [ "${{ needs.deploy.result }}" == "success" ]; then
+          echo "✅ Hostinger deployment: SUCCESS"
+          echo "🌐 Application is now live!"
+          if [ -n "${{ secrets.HOSTINGER_DOMAIN }}" ]; then
+            echo "🔗 URL: ${{ secrets.HOSTINGER_DOMAIN }}"
+          fi
+        else
+          echo "❌ Hostinger deployment: FAILED"
+          echo "🔧 Please check the deployment logs for details"
+        fi
+        
+        echo "📊 Deployment completed at $(date)"

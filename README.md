@@ -54,6 +54,10 @@ npm run bundle-analyzer
 # Ou manuellement:
 git push origin main     # ⬆️ production
 git push origin develop  # ⬆️ staging
+
+# Déploiement Hostinger
+./setup-hostinger.sh     # Configuration rapide
+git push origin hostinger-deploy  # ⬆️ Hostinger
 ```
 
 ## 🏗️ Architecture
@@ -129,6 +133,7 @@ lilou-logistique/
 - ✅ Analyse de la taille du bundle
 - ✅ Vérification des métriques Core Web Vitals
 - ✅ Déploiement automatique staging/production
+- ✅ Déploiement Hostinger avec configuration automatique
 
 ### Métriques Surveillées
 - **Core Web Vitals**: FCP, LCP, CLS, FID
@@ -148,6 +153,7 @@ lilou-logistique/
 | `npm run capacitor:build` | Build mobile |
 | `npm run type-check` | Vérification TypeScript |
 | `./deploy.sh` | Déploiement automatique |
+| `./setup-hostinger.sh` | Configuration Hostinger |
 
 ## 📈 Résultats de Performance
 
