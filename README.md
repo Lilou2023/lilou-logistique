@@ -64,6 +64,7 @@ Le projet est configuré pour déclencher automatiquement le déploiement sur Ho
 - 🔗 **Webhook URL** : `https://webhooks.hostinger.com/deploy/9d76a543372e447af66b2fcc79675936`
 - 📡 **Déclenchement** : Automatique sur push vers `main`
 - 📚 **Documentation** : [WEBHOOK_DEPLOYMENT_CONFIG.md](./WEBHOOK_DEPLOYMENT_CONFIG.md)
+- 🎯 **Résumé complet** : [WEBHOOK_CONFIGURATION_SUMMARY.md](./WEBHOOK_CONFIGURATION_SUMMARY.md)
 
 ## 🏗️ Architecture
 
