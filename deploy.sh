@@ -18,11 +18,12 @@ if git diff --cached --quiet; then
     echo "✅ Aucun changement à commiter"
 else
     echo "💾 Commit des optimisations de performance..."
-    git commit -m "feat: implement comprehensive performance optimizations
+    git commit -F - <<'EOF'
+feat: implement comprehensive performance optimizations
 
 🎯 Performance Improvements:
 - Bundle size optimization with code splitting and lazy loading
-- PWA implementation with service worker caching strategies  
+- PWA implementation with service worker caching strategies
 - Optimized database schema with strategic indexing
 - Mobile performance optimizations for Capacitor
 - Performance monitoring with Lighthouse CI
@@ -33,7 +34,7 @@ else
 
 📊 Expected Results:
 - Load time: 40-60% improvement
-- Bundle size: 50-70% reduction  
+- Bundle size: 50-70% reduction
 - Database queries: 50-80% faster
 - Mobile performance: 30-50% improvement
 
@@ -47,7 +48,8 @@ else
 📚 Documentation:
 - PERFORMANCE_ANALYSIS.md: Detailed analysis
 - IMPLEMENTATION_GUIDE.md: Step-by-step guide
-- Updated README with performance metrics"
+- Updated README with performance metrics
+EOF
 fi
 
 # Fonction pour pousser vers une branche
