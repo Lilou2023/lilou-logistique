@@ -1,6 +1,7 @@
 # Statut des Workflows GitHub Actions
 
 ## 📊 Vérification des Workflows - $(date)
+GitHub impose maintenant les actions @v4 pour tous les workflows.
 
 ### ✅ Workflows Configurés
 

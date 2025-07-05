@@ -3,6 +3,7 @@
 ## 📋 Vue d'ensemble
 
 Ce document résume toutes les corrections apportées aux workflows GitHub Actions du projet **Lilou Logistique** pour résoudre les problèmes identifiés et optimiser le pipeline CI/CD.
+GitHub exige désormais l'utilisation des versions @v4 pour toutes les actions. Les workflows ont été mis à jour en conséquence.
 
 ## 🚨 Problèmes Identifiés et Résolus
 
@@ -149,7 +150,7 @@ fi
 ## 🎯 Résultats Attendus
 
 ### Avant les Corrections
-❌ Échecs fréquents dus aux actions v3  
+❌ Échecs fréquents dus à l'utilisation d'actions v3 obsolètes  
 ❌ Problèmes de dépendances npm  
 ❌ Manque de visibilité sur les performances  
 ❌ Gestion d'erreurs insuffisante  

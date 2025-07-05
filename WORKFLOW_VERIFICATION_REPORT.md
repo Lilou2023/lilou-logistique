@@ -4,6 +4,7 @@
 *Généré le: $(date)*
 
 ---
+GitHub impose d'utiliser les versions @v4 de toutes les actions officielles.
 
 ## ✅ Résumé Exécutif
 
