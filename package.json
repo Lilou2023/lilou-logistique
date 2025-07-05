@@ -15,7 +15,11 @@
     "capacitor:build": "npm run build && echo 'Capacitor build completed'",
     "capacitor:serve": "echo 'Capacitor serve would start here'",
     "lighthouse": "echo 'Lighthouse audit would run here' && echo 'Performance score: 95/100 ✅'",
-    "bundle-analyzer": "echo 'Bundle analysis: Total size 240KB ✅'"
+    "bundle-analyzer": "echo 'Bundle analysis: Total size 240KB ✅'",
+    "deploy": "./deploy.sh",
+    "deploy:hostinger": "./deploy-hostinger.sh",
+    "deploy:vercel": "vercel --prod",
+    "deploy:staging": "git push origin develop"
   },
   "dependencies": {
     "react": "^18.2.0",

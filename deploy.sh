@@ -92,12 +92,21 @@ push_to_branch "main"
 # Retourner à la branche originale
 git checkout $CURRENT_BRANCH
 
+# Déploiement vers Hostinger (optionnel)
+echo ""
+echo "🌐 Déploiement vers HOSTINGER (hostinger-deploy)..."
+push_to_branch "hostinger-deploy"
+
+# Retourner à la branche originale
+git checkout $CURRENT_BRANCH
+
 echo ""
 echo "🎉 Déploiement terminé!"
 echo ""
 echo "📊 Résumé:"
 echo "✅ Staging (develop): Déployé"
 echo "✅ Production (main): Déployé"
+echo "✅ Hostinger (hostinger-deploy): Déployé"
 echo ""
 echo "🔗 Actions suivantes:"
 echo "1. Vérifier les pipelines CI/CD sur GitHub"
