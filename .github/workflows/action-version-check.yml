@@ -26,10 +26,10 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       
     - name: Setup Node.js
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: '18'
         
@@ -114,7 +114,7 @@ jobs:
           echo ""
           echo "🔧 ACTIONS CORRECTIVES RECOMMANDÉES:"
           echo "1. Vérifier manuellement sur GitHub Marketplace"
-          echo "2. Utiliser des versions stables connues (@v3)"
+          echo "2. Utiliser des versions stables connues (@v4)"
           echo "3. Mettre à jour les workflows concernés"
           
           exit 1
