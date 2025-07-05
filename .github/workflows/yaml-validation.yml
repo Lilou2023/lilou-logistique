@@ -18,7 +18,7 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       
     - name: Setup Python pour yamllint
       uses: actions/setup-python@v4
@@ -158,7 +158,7 @@ jobs:
         1. **Indentation**: Utiliser 2 espaces (pas de tabulations)
         2. **Longueur des lignes**: Maximum 120 caractères
         3. **Encodage**: UTF-8 sans BOM
-        4. **Actions**: Utiliser des versions stables (@v3)
+        4. **Actions**: Utiliser des versions stables (@v4)
         5. **Noms**: Utiliser des noms descriptifs pour les jobs et steps
         
         EOF
@@ -179,7 +179,7 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       
     - name: Analyser la sécurité des workflows
       run: |
