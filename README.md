@@ -56,6 +56,17 @@ git push origin main     # ⬆️ production
 git push origin develop  # ⬆️ staging
 ```
 
+#### Vercel
+
+Pour un déploiement avec Vercel :
+
+1. Installez le CLI Vercel :
+   ```bash
+   npm install -g vercel
+   ```
+2. Lancez `vercel` dans ce répertoire ou connectez le dépôt depuis le tableau de bord Vercel.
+3. Le fichier `vercel.json` fournit désormais la configuration du déploiement.
+
 ## 🏗️ Architecture
 
 ### Frontend
