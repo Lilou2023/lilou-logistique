@@ -51,10 +51,20 @@ npm run bundle-analyzer
 # Déploiement automatique vers staging et production
 ./deploy.sh
 
+# Test du webhook Hostinger
+./test-webhook.sh
+
 # Ou manuellement:
-git push origin main     # ⬆️ production
+git push origin main     # ⬆️ production + webhook Hostinger
 git push origin develop  # ⬆️ staging
 ```
+
+### Configuration du Webhook
+Le projet est configuré pour déclencher automatiquement le déploiement sur Hostinger :
+- 🔗 **Webhook URL** : `https://webhooks.hostinger.com/deploy/9d76a543372e447af66b2fcc79675936`
+- 📡 **Déclenchement** : Automatique sur push vers `main`
+- 📚 **Documentation** : [WEBHOOK_DEPLOYMENT_CONFIG.md](./WEBHOOK_DEPLOYMENT_CONFIG.md)
+- 🎯 **Résumé complet** : [WEBHOOK_CONFIGURATION_SUMMARY.md](./WEBHOOK_CONFIGURATION_SUMMARY.md)
 
 ## 🏗️ Architecture
 

@@ -92,17 +92,54 @@ push_to_branch "main"
 # Retourner à la branche originale
 git checkout $CURRENT_BRANCH
 
+# Déclencher le webhook Hostinger si le déploiement vers main a réussi
+if git branch --show-current | grep -q "main"; then
+    echo ""
+    echo "📡 Déclenchement du webhook Hostinger..."
+    
+    WEBHOOK_URL="https://webhooks.hostinger.com/deploy/9d76a543372e447af66b2fcc79675936"
+    COMMIT_HASH=$(git rev-parse HEAD)
+    TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+    
+    # Appel du webhook avec les informations de déploiement
+    response=$(curl -s -o /dev/null -w "%{http_code}" \
+      -X POST \
+      -H "Content-Type: application/json" \
+      -H "User-Agent: Deploy-Script-Lilou-Logistique" \
+      -d "{
+        \"repository\": \"Lilou2023/lilou-logistique\",
+        \"ref\": \"refs/heads/main\",
+        \"commit\": \"$COMMIT_HASH\",
+        \"branch\": \"main\",
+        \"source\": \"deploy-script\",
+        \"timestamp\": \"$TIMESTAMP\",
+        \"message\": \"Automatic deployment triggered from deploy.sh script\"
+      }" \
+      "$WEBHOOK_URL" 2>/dev/null)
+    
+    if [ "$response" -eq 200 ] || [ "$response" -eq 201 ] || [ "$response" -eq 204 ]; then
+        echo "✅ Webhook Hostinger déclenché avec succès (HTTP $response)"
+    else
+        echo "⚠️ Webhook Hostinger - Réponse HTTP $response"
+        echo "🔄 Le déploiement peut encore être en cours..."
+    fi
+fi
+
 echo ""
 echo "🎉 Déploiement terminé!"
 echo ""
 echo "📊 Résumé:"
 echo "✅ Staging (develop): Déployé"
 echo "✅ Production (main): Déployé"
+if git branch --show-current | grep -q "main"; then
+    echo "✅ Webhook Hostinger: Déclenché"
+fi
 echo ""
 echo "🔗 Actions suivantes:"
 echo "1. Vérifier les pipelines CI/CD sur GitHub"
 echo "2. Monitorer les métriques de performance"
 echo "3. Tester l'application sur les environnements"
+echo "4. Vérifier le déploiement sur Hostinger"
 echo ""
 echo "📈 Métriques de performance à surveiller:"
 echo "- First Contentful Paint (FCP): < 1.5s"
