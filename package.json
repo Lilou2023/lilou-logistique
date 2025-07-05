@@ -31,7 +31,9 @@
     "zustand": "^4.4.0",
     "react-window": "^1.8.8",
     "react-virtualized-auto-sizer": "^1.0.20",
-    "workbox-window": "^7.0.0"
+    "workbox-window": "^7.0.0",
+    "@supabase/supabase-js": "^2.50.3",
+    "@supabase/auth-helpers-react": "^0.3.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.15",
