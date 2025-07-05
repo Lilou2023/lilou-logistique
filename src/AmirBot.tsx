@@ -99,7 +99,7 @@ const AmirBot = memo(() => {
                 </span>
               </div>
             </div>
-          ))}
+          ))
           
           {isTyping && (
             <div className="message bot-message typing">
