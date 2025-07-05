@@ -18,36 +18,8 @@ if git diff --cached --quiet; then
     echo "✅ Aucun changement à commiter"
 else
     echo "💾 Commit des optimisations de performance..."
-    git commit -m "feat: implement comprehensive performance optimizations
-
-🎯 Performance Improvements:
-- Bundle size optimization with code splitting and lazy loading
-- PWA implementation with service worker caching strategies  
-- Optimized database schema with strategic indexing
-- Mobile performance optimizations for Capacitor
-- Performance monitoring with Lighthouse CI
-- Virtualized components for large datasets
-- React Query for efficient data fetching and caching
-- Web Vitals monitoring and analytics
-- Comprehensive performance analysis documentation
-
-📊 Expected Results:
-- Load time: 40-60% improvement
-- Bundle size: 50-70% reduction  
-- Database queries: 50-80% faster
-- Mobile performance: 30-50% improvement
-
-🔧 Technical Changes:
-- Updated CI/CD pipeline with performance testing
-- Added bundle size limits and monitoring
-- Implemented automated Lighthouse audits
-- Created performance regression detection
-- Added mobile build optimization
-
-📚 Documentation:
-- PERFORMANCE_ANALYSIS.md: Detailed analysis
-- IMPLEMENTATION_GUIDE.md: Step-by-step guide
-- Updated README with performance metrics"
+    commit_msg=$(printf 'feat: implement comprehensive performance optimizations\n\n🎯 Performance Improvements:\n- Bundle size optimization with code splitting and lazy loading\n- PWA implementation with service worker caching strategies\n- Optimized database schema with strategic indexing\n- Mobile performance optimizations for Capacitor\n- Performance monitoring with Lighthouse CI\n- Virtualized components for large datasets\n- React Query for efficient data fetching and caching\n- Web Vitals monitoring and analytics\n- Comprehensive performance analysis documentation\n\n📊 Expected Results:\n- Load time: 40-60% improvement\n- Bundle size: 50-70% reduction\n- Database queries: 50-80% faster\n- Mobile performance: 30-50% improvement\n\n🔧 Technical Changes:\n- Updated CI/CD pipeline with performance testing\n- Added bundle size limits and monitoring\n- Implemented automated Lighthouse audits\n- Created performance regression detection\n- Added mobile build optimization\n\n📚 Documentation:\n- PERFORMANCE_ANALYSIS.md: Detailed analysis\n- IMPLEMENTATION_GUIDE.md: Step-by-step guide\n- Updated README with performance metrics')
+    git commit -m "$commit_msg"
 fi
 
 # Fonction pour pousser vers une branche
