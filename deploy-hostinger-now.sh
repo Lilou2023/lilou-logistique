@@ -151,11 +151,14 @@ echo "Build: Production (Export statique)" >> deploy-info.txt
 # 12. Commit et push
 echo "📤 Push vers GitHub..."
 git add -A
-git commit -m "🚀 Deploy Lilou GO v4.2 - $(date +%Y-%m-%d_%H-%M-%S)
-
+commit_msg=$(cat <<EOF
+🚀 Deploy Lilou GO v4.2 - $(date +%Y-%m-%d_%H-%M-%S)
 - Version: 4.2
 - Type: Export statique pour Hostinger
-- Optimisations: Cache, compression, sécurité"
+- Optimisations: Cache, compression, sécurité
+EOF
+)
+git commit -m "$commit_msg"
 
 git push -f origin hostinger-deploy
 
