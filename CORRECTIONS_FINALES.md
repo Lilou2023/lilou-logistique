@@ -2,6 +2,7 @@
 
 ## 📋 Résumé Exécutif
 
+GitHub impose désormais la version @v4 pour toutes les actions officielles.
 **Toutes les corrections des workflows GitHub Actions pour le projet Lilou Logistique ont été appliquées avec succès !**
 
 ### 🎯 Objectif Atteint
