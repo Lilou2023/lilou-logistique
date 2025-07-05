@@ -85,7 +85,8 @@ const ScoreCard = memo(() => {
               </div>
             </div>
           </div>
-        ))}
+        ))
+        }
       </div>
     </div>
   )
