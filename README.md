@@ -51,9 +51,16 @@ npm run bundle-analyzer
 # Déploiement automatique vers staging et production
 ./deploy.sh
 
+# Déploiement vers Hostinger
+./deploy-hostinger.sh
+
 # Ou manuellement:
 git push origin main     # ⬆️ production
 git push origin develop  # ⬆️ staging
+git push origin hostinger-deploy  # ⬆️ hostinger
+
+# Déclencher le workflow Hostinger
+gh workflow run "Deploy Lilou Logistique to Hostinger"
 ```
 
 ## 🏗️ Architecture
@@ -93,7 +100,9 @@ lilou-logistique/
 ├── vite.config.ts            # Configuration build optimisée
 ├── capacitor.config.ts       # Configuration mobile
 ├── lighthouse.config.js      # Tests de performance
-└── deploy.sh                 # Script de déploiement
+├── deploy.sh                 # Script de déploiement
+├── deploy-hostinger.sh       # Script de déploiement Hostinger
+└── HOSTINGER_DEPLOYMENT.md   # Guide de déploiement Hostinger
 ```
 
 ## 🔧 Optimisations Implémentées
@@ -148,6 +157,7 @@ lilou-logistique/
 | `npm run capacitor:build` | Build mobile |
 | `npm run type-check` | Vérification TypeScript |
 | `./deploy.sh` | Déploiement automatique |
+| `./deploy-hostinger.sh` | Déploiement vers Hostinger |
 
 ## 📈 Résultats de Performance
 
