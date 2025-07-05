@@ -82,26 +82,6 @@ jobs:
     - name: 📚 Install dependencies
       run: npm ci
       
-    - name: 🔧 Configure for Static Export
-      run: |
-        cat > next.config.js << 'EOF'
-        /** @type {import('next').NextConfig} */
-        const nextConfig = {
-          output: 'export',
-          images: {
-            unoptimized: true
-          },
-          trailingSlash: true,
-          eslint: {
-            ignoreDuringBuilds: true,
-          },
-          typescript: {
-            ignoreBuildErrors: true,
-          },
-        }
-        module.exports = nextConfig
-        EOF
-        
     - name: 🏗️ Build Static Site
       run: npm run build
       env:
@@ -115,7 +95,7 @@ jobs:
         mkdir -p hostinger-deploy
         
         # Copy static files
-        cp -r out/* hostinger-deploy/
+        cp -r dist/* hostinger-deploy/
         
         # Create .htaccess for Apache
         cat > hostinger-deploy/.htaccess << 'EOF'
@@ -130,11 +110,6 @@ jobs:
         # www to non-www
         RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
         RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
-        
-        # Handle Next.js routes
-        RewriteCond %{REQUEST_FILENAME} !-f
-        RewriteCond %{REQUEST_FILENAME} !-d
-        RewriteRule ^([^/]+)/?$ $1.html [L]
         
         # SPA fallback
         RewriteCond %{REQUEST_FILENAME} !-f

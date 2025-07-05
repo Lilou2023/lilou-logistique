@@ -226,7 +226,7 @@ Pour toute question sur ces corrections ou pour signaler des problèmes :
 - ✅ **Après** : `actions/github-script@v6`
 - **Raison** : La version `@v7` n'existe pas
 
-### 3. Configuration Next.js améliorée
+### 3. Configuration du build améliorée
 Ajout de :
 ```javascript
 eslint: {
@@ -245,7 +245,7 @@ Ajout de `|| echo "..."` sur plusieurs commandes pour que le workflow continue m
 
 Le workflow `.github/workflows/deploy-hostinger.yml` est maintenant :
 - ✅ Compatible avec les versions actuelles des actions GitHub
-- ✅ Optimisé pour l'export statique Next.js
+ - ✅ Optimisé pour l'export statique
 - ✅ Configuré pour ignorer les erreurs TypeScript/ESLint lors du build
 - ✅ Prêt à être utilisé
 

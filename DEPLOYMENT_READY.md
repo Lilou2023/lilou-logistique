@@ -4,7 +4,7 @@
 
 J'ai corrigé toutes les erreurs du workflow GitHub Actions :
 - ✅ Versions des actions corrigées (`@v4` → `@v3`)
-- ✅ Configuration Next.js optimisée pour l'export statique
+- ✅ Configuration Vite optimisée pour l'export statique
 - ✅ Gestion des erreurs améliorée
 
 ## 🚀 Option 1 : Déploiement manuel immédiat
