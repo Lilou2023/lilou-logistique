@@ -311,7 +311,7 @@ jobs:
         echo "  🔍 SEO: 94/100"
         
     - name: Upload build artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: build-files-simple-${{ github.run_number }}
         path: dist/
@@ -384,7 +384,7 @@ jobs:
         echo "  🍎 iOS: $(find ios -type f | wc -l) files"
         
     - name: Upload mobile artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: mobile-build-simple-${{ github.run_number }}
         path: |

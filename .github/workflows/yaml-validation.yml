@@ -166,7 +166,7 @@ jobs:
         echo "✅ Rapport généré: yaml-validation-report.md"
         
     - name: Upload du rapport
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: yaml-validation-report
         path: yaml-validation-report.md
