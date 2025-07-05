@@ -22,7 +22,7 @@ Cette fonctionnalité implémente un système d'authentification complet basé s
 ## 📁 Structure des fichiers
 
 ```
-├── useAuth.tsx                 # Hook et provider d'authentification
+├── src/hooks/useAuth.tsx       # Hook et provider d'authentification
 ├── src/lib/supabase.ts        # Configuration Supabase et types
 ├── .env.example               # Template de configuration
 └── docs/AUTHENTIFICATION.md   # Cette documentation
@@ -101,7 +101,7 @@ CREATE TRIGGER on_auth_user_created
 ### Wrapping de l'application
 
 ```tsx
-import { AuthProvider } from './useAuth';
+import { AuthProvider } from './hooks/useAuth';
 
 function App() {
   return (
@@ -115,7 +115,7 @@ function App() {
 ### Hook d'authentification
 
 ```tsx
-import { useAuth } from './useAuth';
+import { useAuth } from './hooks/useAuth';
 
 function LoginComponent() {
   const { signIn, loading, user } = useAuth();
@@ -154,7 +154,7 @@ function LoginComponent() {
 ### Protection des routes
 
 ```tsx
-import { ProtectedRoute } from './useAuth';
+import { ProtectedRoute } from './hooks/useAuth';
 
 function Dashboard() {
   return (
