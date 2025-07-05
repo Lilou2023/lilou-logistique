@@ -2,6 +2,7 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 import { analyzer } from 'vite-bundle-analyzer'
+import manifest from './manifest.json' assert { type: 'json' }
 
 export default defineConfig(({ mode }) => ({
   plugins: [
@@ -23,19 +24,7 @@ export default defineConfig(({ mode }) => ({
           }
         ]
       },
-      manifest: {
-        name: 'Lilou Logistique',
-        short_name: 'Lilou',
-        description: 'Logistics Management System',
-        theme_color: '#ffffff',
-        icons: [
-          {
-            src: 'logo.png',
-            sizes: '192x192',
-            type: 'image/png'
-          }
-        ]
-      }
+      manifest
     }),
     mode === 'analyze' && analyzer()
   ].filter(Boolean),
