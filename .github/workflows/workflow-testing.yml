@@ -405,7 +405,7 @@ jobs:
         echo "✅ Rapport généré"
         
     - name: Upload du rapport
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: workflow-test-report
         path: workflow-test-report.md
