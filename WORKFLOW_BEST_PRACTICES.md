@@ -18,8 +18,8 @@ Ce guide compile les bonnes pratiques essentielles pour développer et maintenir
 ### ✅ Bonnes Pratiques
 ```yaml
 # BON: Vérifier la disponibilité avant utilisation
-- uses: actions/checkout@v3      # Version stable confirmée
-- uses: actions/setup-node@v3    # Version testée et disponible
+- uses: actions/checkout@v4      # Version stable confirmée
+- uses: actions/setup-node@v4    # Version testée et disponible
 ```
 
 ### 🛠️ Comment Vérifier
@@ -160,7 +160,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 ```
 
 ### 📝 Nommage
@@ -190,7 +190,7 @@ jobs:
 ### 🚀 Cache Intelligent
 ```yaml
 - name: Setup Node.js
-  uses: actions/setup-node@v3
+  uses: actions/setup-node@v4
   with:
     node-version: '18'
     cache: 'npm'                    # ✅ Cache automatique
@@ -215,7 +215,7 @@ jobs:
 ### 📦 Artefacts Optimisés
 ```yaml
 - name: Upload artifacts
-  uses: actions/upload-artifact@v3
+  uses: actions/upload-artifact@v4
   with:
     name: build-${{ github.run_number }}  # ✅ Nom unique
     path: dist/
