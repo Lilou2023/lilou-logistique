@@ -91,7 +91,8 @@ const VehiclePanel = memo(() => {
       </div>
 
       <div className="vehicles-grid">
-        {filteredVehicles.map((vehicle) => (
+        {filteredVehicles.map((vehicle) => {
+          return (
           <div key={vehicle.id} className="vehicle-card">
             <div className="vehicle-header">
               <h3>{vehicle.licensePlate}</h3>
@@ -149,7 +150,8 @@ const VehiclePanel = memo(() => {
               />
             </div>
           </div>
-        ))}
+          )
+        })}
       </div>
     </div>
   )
