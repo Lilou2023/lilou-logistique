@@ -1,1 +1,1 @@
-// Placeholder for ScoreCard.tsx
+export { default } from './src/ScoreCard'
