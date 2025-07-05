@@ -27,7 +27,7 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       
     - name: Valider les workflows YAML
       run: |
@@ -58,29 +58,22 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       
     - name: Vérifier les versions d'actions
       run: |
         echo "🔄 Vérification des versions d'actions GitHub..."
         
-        # Compter les actions v3 (obsolètes)
-        v3_count=$(grep -r "actions/.*@v3" .github/workflows/ | wc -l || echo "0")
-        echo "📊 Actions v3 trouvées: $v3_count"
-        
         # Compter les actions v4 (recommandées)
         v4_count=$(grep -r "actions/.*@v4" .github/workflows/ | wc -l || echo "0")
         echo "📊 Actions v4 trouvées: $v4_count"
-        
-        if [ "$v3_count" -gt 0 ]; then
-          echo "⚠️ $v3_count actions v3 détectées - considérez la mise à jour"
-          grep -r "actions/.*@v3" .github/workflows/ || true
-        else
-          echo "✅ Aucune action v3 obsolète détectée"
-        fi
-        
+
         if [ "$v4_count" -gt 0 ]; then
+          echo "✅ Actions v4 détectées"
+          grep -r "actions/.*@v4" .github/workflows/ || true
           echo "✅ $v4_count actions v4 modernes trouvées"
+        else
+          echo "⚠️ Aucune action v4 détectée - considérez la mise à jour"
         fi
 
   workflow-structure:
@@ -89,7 +82,7 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       
     - name: Analyser la structure des workflows
       run: |
@@ -150,10 +143,10 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       
     - name: Setup Node.js
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: ${{ env.NODE_VERSION }}
         
@@ -192,7 +185,7 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       
     - name: Vérifier les fichiers de performance
       run: |
@@ -244,10 +237,10 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       
     - name: Setup Node.js
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: ${{ env.NODE_VERSION }}
         
@@ -301,7 +294,7 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       
     - name: Scan de sécurité des workflows
       run: |
