@@ -15,12 +15,12 @@
 ## 🚨 Problèmes Résolus
 
 ### 1. **Actions GitHub Obsolètes** ❌➡️✅
-**AVANT** : Actions v3 obsolètes causant des échecs
+**AVANT** : Actions obsolètes causant des échecs
 ```yaml
 # Problématique
-- uses: actions/checkout@v3      # Obsolète
-- uses: actions/setup-node@v3    # Obsolète  
-- uses: actions/upload-artifact@v3  # Obsolète
+- uses: actions/checkout@v2      # Ancienne version
+- uses: actions/setup-node@v2    # Ancienne version
+- uses: actions/upload-artifact@v2  # Ancienne version
 ```
 
 **APRÈS** : Actions v4 modernes et stables
