@@ -114,7 +114,7 @@ jobs:
           echo ""
           echo "🔧 ACTIONS CORRECTIVES RECOMMANDÉES:"
           echo "1. Vérifier manuellement sur GitHub Marketplace"
-          echo "2. Utiliser des versions stables connues (@v3)"
+          echo "2. Utiliser des versions stables connues (@v4)"
           echo "3. Mettre à jour les workflows concernés"
           
           exit 1
@@ -130,8 +130,9 @@ jobs:
         # Fonction pour obtenir la dernière version
         get_latest_version() {
           local repo="$1"
-          curl -s "https://api.github.com/repos/$repo/releases/latest" | \
-          grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/' || echo "unknown"
+          curl -s "https://api.github.com/repos/$repo/tags?per_page=1" |
+            grep -o '"name": "[^"]*"' | head -n 1 |
+            sed -E 's/.*"([^"]+)".*/\1/' || echo "unknown"
         }
         
         echo "📈 Suggestions de mise à jour:"
@@ -148,6 +149,9 @@ jobs:
           latest=$(get_latest_version "$repo")
           if [ "$latest" != "unknown" ] && [ "$latest" != "null" ]; then
             echo "  📦 $repo: Dernière version disponible = $latest"
+            if echo "$latest" | grep -q '^v4'; then
+              echo "     👉 Suggestion: uses: $repo@v4"
+            fi
           fi
         done
         
