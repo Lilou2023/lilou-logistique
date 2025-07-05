@@ -1,5 +1,7 @@
 # 🚀 DÉPLOIEMENT IMMÉDIAT - 2 OPTIONS
 
+> **Note :** ce projet fonctionne avec **React** et **Vite**. Les étapes ci-dessous ne dépendent plus d'une configuration Next.js.
+
 ## Option A : Fusionner la Pull Request (Recommandé) ✅
 
 1. **Sur GitHub** (où tu es maintenant) :
