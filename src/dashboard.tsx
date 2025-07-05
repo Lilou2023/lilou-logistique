@@ -114,7 +114,7 @@ const Dashboard: React.FC = () => {
             value={stat.value}
             icon={stat.icon}
           />
-        ))}
+        ))
       </div>
 
       {/* Recent Activities with Virtualization */}

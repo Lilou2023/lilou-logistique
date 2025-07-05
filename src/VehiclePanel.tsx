@@ -149,7 +149,7 @@ const VehiclePanel = memo(() => {
               />
             </div>
           </div>
-        ))}
+        ))
       </div>
     </div>
   )
