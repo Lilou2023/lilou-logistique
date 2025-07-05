@@ -2,11 +2,11 @@
 
 ## 📊 Comparaison rapide
 
-### 🚀 Vercel (Recommandé pour Next.js)
+### 🚀 Vercel (Recommandé pour React/Vite)
 
 **Avantages :**
 - ✅ **Gratuit** pour les projets personnels
-- ✅ **Optimisé pour Next.js** (créé par la même équipe)
+- ✅ **Optimisé pour les apps React/Vite**
 - ✅ **Déploiement automatique** depuis GitHub
 - ✅ **Support complet** : SSR, API Routes, ISR
 - ✅ **CDN global** intégré
@@ -30,7 +30,7 @@
 - ❌ **Export statique uniquement** sur hébergement mutualisé
 - ❌ Pas d'API Routes ni SSR
 - ❌ Configuration manuelle requise
-- ❌ Pas optimisé pour Next.js
+- ❌ Pas optimisé pour les frameworks React modernes
 
 ## 🎯 Recommandation
 
@@ -38,7 +38,7 @@
 
 1. **C'est GRATUIT** pour commencer
 2. **Zero configuration** - ça marche directement
-3. **Performance optimale** pour Next.js
+3. **Performance optimale** pour React/Vite
 4. **Le workflow que tu as est parfait** pour Vercel
 
 ## 🚀 Comment déployer sur Vercel (5 minutes)
