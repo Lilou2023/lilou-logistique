@@ -103,10 +103,10 @@ inputs:
 **Exemples Pratiques :**
 ```yaml
 # ❌ MAUVAIS
-- uses: actions/checkout@v4      # Version non vérifiée
+- uses: actions/checkout@v5      # Version non verifiée
 
 # ✅ BON
-- uses: actions/checkout@v3      # Version stable confirmée
+- uses: actions/checkout@v4      # Version stable confirmée
 ```
 
 ---
