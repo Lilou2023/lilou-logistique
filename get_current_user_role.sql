@@ -1,1 +1,0 @@
-// Placeholder for get_current_user_role.sql
