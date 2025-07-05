@@ -179,7 +179,7 @@ lilou-logistique/
 
 ## 📄 Licence
 
-Ce projet est sous licence MIT - voir le fichier [LICENSE](LICENSE) pour plus de détails.
+Ce projet (*Lilou Logistique*) est sous licence MIT (© 2025). Voir le fichier [LICENSE](LICENSE) pour plus de détails.
 
 ---
 
