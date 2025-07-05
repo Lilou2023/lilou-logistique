@@ -23,8 +23,7 @@ const config: CapacitorConfig = {
     // Memory management
     limitsNavigationsToAppBoundDomains: true,
     // Disable unused features for better performance
-    scrollEnabled: true,
-    disallowOverscroll: true
+    scrollEnabled: true
   },
 
   // Android specific optimizations
