@@ -239,12 +239,9 @@ jobs:
         
         # Commit if there are changes
         if ! git diff --cached --quiet; then
-          git commit -m "🚀 Deploy Lilou GO v4.2 - ${{ github.sha }}
-          
-          Environment: ${{ github.ref == 'refs/heads/production' && 'Production' || 'Staging' }}
-          Build Date: $(date)
-          Triggered by: ${{ github.actor }}"
-          
+          commit_msg=$(printf '🚀 Deploy Lilou GO v4.2 - %s\n\nEnvironment: %s\nBuild Date: %s\nTriggered by: %s' "${{ github.sha }}" "${{ github.ref == 'refs/heads/production' && 'Production' || 'Staging' }}" "$(date)" "${{ github.actor }}")
+          git commit -m "$commit_msg"
+
           # Force push to deploy branch
           git push -f origin $DEPLOY_BRANCH
         else
