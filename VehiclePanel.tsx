@@ -1,1 +1,1 @@
-// Placeholder for VehiclePanel.tsx
+export { default } from './src/VehiclePanel'
