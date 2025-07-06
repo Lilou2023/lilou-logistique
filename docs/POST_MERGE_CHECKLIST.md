@@ -57,3 +57,15 @@ Ce document aide à ne rien oublier juste après la fusion d'une branche importa
 ---
 
 🟢 **Ton projet est maintenant correctement synchronisé, exporté et déployé.** 
+
+# Déploiement normal
+./tools/deploy.sh
+
+# Déploiement forcé (ignore les changements non commités)
+./tools/deploy.sh --force
+
+# Déploiement sans tests
+./tools/deploy.sh --skip-tests
+
+# Aide
+./tools/deploy.sh --help 
