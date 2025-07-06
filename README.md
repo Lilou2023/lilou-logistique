@@ -59,6 +59,12 @@ cp .env.example .env.local
 npm run test
 ```
 
+## 🧹 Lint du code
+
+```bash
+npm run lint
+```
+
 ---
 
 ## ✅ Vérification d'environnement
