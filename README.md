@@ -12,6 +12,14 @@ bash scripts/create-deploy-branch.sh
 ```
 Puis relancez le déploiement sur Hostinger. [Plus d'infos](FIX_FIRST_DEPLOYMENT.md)
 
+### Message "composer.json not found" ?
+
+Lors d'un déploiement via Git, Hostinger peut chercher un fichier `composer.json`
+et lancer automatiquement Composer. Ce projet est une application Next.js :
+utilisez simplement `npm install` pour installer les dépendances. Si vous voyez
+l'avertissement **"composer.json not found"**, ignorez-le ou désactivez la phase
+Composer dans les options de déploiement Hostinger.
+
 ## 🚀 Fonctionnalités principales
 
 - Authentification sécurisée via NextAuth.js
