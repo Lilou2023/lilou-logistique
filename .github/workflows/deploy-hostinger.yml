@@ -15,10 +15,10 @@ jobs:
     
     steps:
       - name: 📥 Checkout du code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: 📦 Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
@@ -50,9 +50,9 @@ jobs:
           NEXT_PUBLIC_APP_NAME: 'Lilou Logistique DSP'
           NEXT_PUBLIC_APP_VERSION: '1.0.0'
           NEXT_PUBLIC_APP_URL: 'https://lilou-logistique.com'
-          NEXT_PUBLIC_SUPABASE_URL: 'https://mvhogfelpbufnrklxpxq.supabase.co'
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im12aG9nZmVscGJ1Zm5ya2x4cHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg3MjQ0MDksImV4cCI6MjA2NDMwMDQwOX0.FrVdKelHzLgJFGFwnYfA23XsbzgrK6PCsSV01a1qM5I'
-          OPENAI_API_KEY: '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'
+          NEXT_PUBLIC_SUPABASE_URL: ${{ https://mvhogfelpbufnrklxpxq.supabase.co  }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im12aG9nZmVscGJ1Zm5ya2x4cHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg3MjQ0MDksImV4cCI6MjA2NDMwMDQwOX0.FrVdKelHzLgJFGFwnYfA23XsbzgrK6PCsSV01a1qM5I }}
+          OPENAI_API_KEY: ${{ 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  }}
         run: npm run build
 
       - name: 📁 Préparation des fichiers de déploiement
@@ -147,7 +147,7 @@ jobs:
           echo "Commit: ${{ github.sha }}" >> hostinger-deploy/deploy-info.txt
 
       - name: 📤 Upload des artefacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: hostinger-files
           path: hostinger-deploy/
@@ -177,12 +177,12 @@ jobs:
     
     steps:
       - name: 📥 Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: 📥 Download artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: hostinger-files
           path: hostinger-deploy

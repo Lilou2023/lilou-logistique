@@ -92,4 +92,4 @@ const inter = localFont({
 | **Actuelle** | 723KB | 100-900 | Normal + Italic | Aucune |
 | **Proposée** | ~50KB | 400 uniquement | Normal uniquement | @fontsource/inter |
 
-La configuration actuelle offre **14x plus de fonctionnalités** pour seulement **2x la taille**. 
+La configuration actuelle offre **14x plus de fonctionnalités** pour seulement **2x la taille**.
