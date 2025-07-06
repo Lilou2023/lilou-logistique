@@ -9,6 +9,7 @@ Plateforme Next.js dédiée à la gestion logistique intelligente et connectée 
 - Intégration OpenAI (analyse, génération, automatisation)
 - CI/CD complet via GitHub Actions
 - Tests unitaires et audit de sécurité automatisés
+- Chargement local de la police **Inter**
 
 ---
 
@@ -93,6 +94,12 @@ Un pipeline automatique est déclenché sur chaque `push` ou `pull request` :
 * Audit de sécurité NPM
 
 Fichier de workflow : `.github/workflows/validate-env.yml`
+
+---
+
+## ✍️ Police Inter locale
+
+Les fichiers de police Inter se trouvent dans `public/fonts` et sont chargés via `next/font/local` dans `app/layout.tsx`.
 
 ---
 

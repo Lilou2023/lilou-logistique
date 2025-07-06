@@ -1,22 +1,8 @@
 import type { Metadata } from 'next'
-import localFont from 'next/font/local'
+import { Inter } from 'next/font/google'
 import './globals.css'
 
-const inter = localFont({
-  src: [
-    {
-      path: '../public/fonts/InterVariable.woff2',
-      weight: '100 900',
-      style: 'normal',
-    },
-    {
-      path: '../public/fonts/InterVariable-Italic.woff2',
-      weight: '100 900',
-      style: 'italic',
-    },
-  ],
-  display: 'swap',
-})
+const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'Lilou Logistique - Gestion Logistique Intelligente',
