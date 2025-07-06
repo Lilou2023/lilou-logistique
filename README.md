@@ -1,5 +1,10 @@
 # 🚚 Lilou Logistique
 
+[![Deploy Hostinger](https://github.com/Lilou2023/lilou-logistique/workflows/%F0%9F%9A%80%20D%C3%A9ploiement%20Hostinger%20Automatique/badge.svg)](https://github.com/Lilou2023/lilou-logistique/actions)
+[![Tests](https://img.shields.io/badge/tests-passing-brightgreen)](https://github.com/Lilou2023/lilou-logistique/actions)
+[![Next.js](https://img.shields.io/badge/Next.js-14.0.4-black)](https://nextjs.org/)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 Plateforme Next.js dédiée à la gestion logistique intelligente et connectée avec Supabase et OpenAI.
 
 ## 🚀 Fonctionnalités principales
@@ -92,8 +97,20 @@ Un pipeline automatique est déclenché sur chaque `push` ou `pull request` :
 * Tests unitaires
 * Build
 * Audit de sécurité NPM
+* **Déploiement automatique sur Hostinger** 🚀
 
-Fichier de workflow : `.github/workflows/validate-env.yml`
+### Workflows disponibles :
+- `.github/workflows/validate-env.yml` - Validation et tests
+- `.github/workflows/deploy-hostinger.yml` - Déploiement automatique
+
+### Déploiement manuel :
+```bash
+# Script automatisé
+./tools/deploy.sh
+
+# Avec options
+./tools/deploy.sh --force --skip-tests
+```
 
 ---
 

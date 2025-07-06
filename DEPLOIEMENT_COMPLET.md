@@ -188,4 +188,4 @@ npm run validate-env
 
 ---
 
-**Lilou Logistique** - Optimisé pour la performance 🚀 
+**Lilou Logistique** - Optimisé pour la performance 🚀

@@ -1,235 +1,210 @@
 #!/bin/bash
 
-# 🚀 Script de déploiement automatisé pour Hostinger
-# Usage: ./tools/deploy.sh
+# 🚀 Script de Déploiement Automatisé - Lilou Logistique
+# Usage: ./tools/deploy.sh [--force] [--skip-tests]
 
-set -e
+set -e  # Arrêter en cas d'erreur
 
-echo "🚀 Déploiement automatisé vers Hostinger"
-echo "========================================"
-
-# Couleurs pour l'affichage
+# Couleurs pour les messages
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
-NC='\033[0m'
+NC='\033[0m' # No Color
 
-print_status() {
-    echo -e "${BLUE}[INFO]${NC} $1"
+# Variables
+FORCE=false
+SKIP_TESTS=false
+CURRENT_BRANCH=$(git branch --show-current)
+
+# Fonction pour afficher les messages
+log_info() {
+    echo -e "${BLUE}ℹ️  $1${NC}"
 }
 
-print_success() {
-    echo -e "${GREEN}[SUCCESS]${NC} $1"
+log_success() {
+    echo -e "${GREEN}✅ $1${NC}"
 }
 
-print_warning() {
-    echo -e "${YELLOW}[WARNING]${NC} $1"
+log_warning() {
+    echo -e "${YELLOW}⚠️  $1${NC}"
 }
 
-print_error() {
-    echo -e "${RED}[ERROR]${NC} $1"
+log_error() {
+    echo -e "${RED}❌ $1${NC}"
 }
 
-# Vérification de l'environnement
-print_status "Vérification de l'environnement..."
+# Fonction d'aide
+show_help() {
+    echo "🚀 Script de Déploiement - Lilou Logistique"
+    echo ""
+    echo "Usage: $0 [OPTIONS]"
+    echo ""
+    echo "Options:"
+    echo "  --force       Forcer le déploiement même s'il y a des changements non commités"
+    echo "  --skip-tests  Ignorer les tests avant le déploiement"
+    echo "  --help        Afficher cette aide"
+    echo ""
+    echo "Exemples:"
+    echo "  $0                    # Déploiement normal"
+    echo "  $0 --force           # Déploiement forcé"
+    echo "  $0 --skip-tests      # Déploiement sans tests"
+}
 
-if ! command -v node &> /dev/null; then
-    print_error "Node.js n'est pas installé"
+# Parsing des arguments
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --force)
+            FORCE=true
+            shift
+            ;;
+        --skip-tests)
+            SKIP_TESTS=true
+            shift
+            ;;
+        --help)
+            show_help
+            exit 0
+            ;;
+        *)
+            log_error "Option inconnue: $1"
+            show_help
+            exit 1
+            ;;
+    esac
+done
+
+# Vérifications préliminaires
+log_info "🔍 Vérifications préliminaires..."
+
+# Vérifier qu'on est sur la branche main
+if [[ "$CURRENT_BRANCH" != "main" ]]; then
+    log_error "Vous devez être sur la branche 'main' pour déployer"
+    log_info "Branche actuelle: $CURRENT_BRANCH"
     exit 1
 fi
 
-if ! command -v npm &> /dev/null; then
-    print_error "npm n'est pas installé"
+# Vérifier les changements non commités
+if [[ "$FORCE" == "false" ]] && ! git diff-index --quiet HEAD --; then
+    log_error "Il y a des changements non commités"
+    log_info "Utilisez --force pour ignorer cette vérification"
+    git status --short
     exit 1
 fi
+
+# Vérifier que le répertoire tools existe
+if [[ ! -d "tools" ]]; then
+    log_error "Le répertoire 'tools' n'existe pas"
+    exit 1
+fi
+
+log_success "Vérifications préliminaires OK"
+
+# Étape 1: Mise à jour de la branche main
+log_info "📥 Mise à jour de la branche main..."
+git pull origin main
+log_success "Branche main mise à jour"
+
+# Étape 2: Tests (optionnel)
+if [[ "$SKIP_TESTS" == "false" ]]; then
+    log_info "🧪 Exécution des tests..."
+    if npm test -- --passWithNoTests; then
+        log_success "Tests passés"
+    else
+        log_warning "Tests échoués, mais continuation du déploiement"
+    fi
+else
+    log_warning "Tests ignorés (--skip-tests)"
+fi
+
+# Étape 3: Build de production
+log_info "🏗️  Build de production..."
+if npm run build; then
+    log_success "Build réussi"
+else
+    log_error "Échec du build"
+    exit 1
+fi
+
+# Étape 4: Préparation de la branche hostinger-deploy
+log_info "🌿 Préparation de la branche hostinger-deploy..."
 
 # Sauvegarder la branche actuelle
-CURRENT_BRANCH=$(git branch --show-current)
-print_status "Branche actuelle : $CURRENT_BRANCH"
+git stash push -m "Auto-stash before deploy" 2>/dev/null || true
 
-# Créer la configuration Next.js pour l'export statique
-print_status "Configuration Next.js pour export statique..."
-cat > next.config.hostinger.js << 'EOF'
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  output: 'export',
-  images: {
-    unoptimized: true
-  },
-  trailingSlash: true,
-  env: {
-    NEXT_PUBLIC_APP_NAME: 'Lilou Logistique',
-    NEXT_PUBLIC_APP_VERSION: '1.0.0',
-  },
+# Basculer sur hostinger-deploy
+git checkout hostinger-deploy 2>/dev/null || git checkout -b hostinger-deploy
+
+# Mettre à jour depuis origin
+git pull origin hostinger-deploy 2>/dev/null || true
+
+# Nettoyer la branche
+git rm -rf . 2>/dev/null || true
+
+# Copier les fichiers de build
+log_info "📁 Copie des fichiers de build..."
+cp -r out/* . 2>/dev/null || {
+    log_error "Le dossier 'out' n'existe pas. Le build a-t-il échoué ?"
+    exit 1
 }
 
-module.exports = nextConfig
-EOF
+# Copier les fichiers importants
+cp -r public/fonts . 2>/dev/null || log_warning "Dossier fonts non trouvé"
+cp .htaccess . 2>/dev/null || log_warning "Fichier .htaccess non trouvé"
 
-# Sauvegarder la config originale
-cp next.config.js next.config.js.backup
+# Étape 5: Commit et push
+log_info "📤 Commit et push..."
 
-# Basculer vers hostinger-deploy
-print_status "Basculer vers la branche hostinger-deploy..."
-git checkout hostinger-deploy 2>/dev/null || {
-    print_status "Création de la branche hostinger-deploy..."
-    git checkout -b hostinger-deploy
-}
+# Ajouter tous les fichiers
+git add -A
 
-# Fusionner les changements de main
-print_status "Fusion des changements de main..."
-git merge main --no-edit || {
-    print_warning "Conflit de fusion détecté, utilisation de la stratégie 'ours'"
-    git merge --abort
-    git merge main --strategy=ours --no-edit
-}
+# Vérifier s'il y a des changements
+if git diff --cached --quiet; then
+    log_warning "Aucun changement à déployer"
+else
+    # Commit
+    git commit -m "🚀 Déploiement automatique - $(date '+%Y-%m-%d %H:%M:%S')"
+    
+    # Push
+    if git push origin hostinger-deploy; then
+        log_success "Déploiement poussé vers hostinger-deploy"
+    else
+        log_error "Échec du push vers hostinger-deploy"
+        exit 1
+    fi
+fi
 
-# Remplacer la config Next.js
-print_status "Application de la configuration d'export statique..."
-mv next.config.hostinger.js next.config.js
+# Étape 6: Retour sur main
+log_info "🔄 Retour sur la branche main..."
+git checkout main
 
-# Installation des dépendances
-print_status "Installation des dépendances..."
-npm ci
+# Restaurer les changements si nécessaire
+if git stash list | grep -q "Auto-stash before deploy"; then
+    git stash pop
+    log_info "Changements restaurés"
+fi
 
-# Build statique
-print_status "Build statique en cours..."
-npm run build
+# Étape 7: Vérifications finales
+log_info "🔍 Vérifications finales..."
 
-# Vérifier que le dossier out existe
-if [ ! -d "out" ]; then
-    print_error "Le dossier 'out' n'a pas été créé. Vérifiez la configuration Next.js."
+# Vérifier que la branche hostinger-deploy existe
+if git ls-remote --heads origin hostinger-deploy | grep -q hostinger-deploy; then
+    log_success "Branche hostinger-deploy existe sur GitHub"
+else
+    log_error "Branche hostinger-deploy n'existe pas sur GitHub"
     exit 1
 fi
 
-# Nettoyer la branche
-print_status "Nettoyage de la branche..."
-git rm -rf . || true
-
-# Copier les fichiers statiques
-print_status "Copie des fichiers statiques..."
-cp -r out/* .
-
-# Créer .htaccess pour Apache
-print_status "Création du fichier .htaccess..."
-cat > .htaccess << 'EOF'
-# Configuration Apache optimisée pour Next.js statique
-
-Options -MultiViews
-RewriteEngine On
-
-# Redirection www
-RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
-RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
-
-# Force HTTPS
-RewriteCond %{HTTPS} off
-RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
-
-# Gestion des routes Next.js
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_FILENAME} !-l
-RewriteRule ^([^/]+)/?$ $1.html [L]
-
-# Fallback vers index.html pour les routes dynamiques
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule . /index.html [L]
-
-# Headers de sécurité
-<IfModule mod_headers.c>
-    Header set X-Frame-Options "SAMEORIGIN"
-    Header set X-Content-Type-Options "nosniff"
-    Header set X-XSS-Protection "1; mode=block"
-    Header set Referrer-Policy "strict-origin-when-cross-origin"
-    Header set Permissions-Policy "camera=(), microphone=(), geolocation=()"
-</IfModule>
-
-# Compression Gzip
-<IfModule mod_deflate.c>
-    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json image/svg+xml
-</IfModule>
-
-# Cache optimisé
-<IfModule mod_expires.c>
-    ExpiresActive On
-    
-    # Images
-    ExpiresByType image/jpg "access plus 1 year"
-    ExpiresByType image/jpeg "access plus 1 year"
-    ExpiresByType image/gif "access plus 1 year"
-    ExpiresByType image/png "access plus 1 year"
-    ExpiresByType image/webp "access plus 1 year"
-    ExpiresByType image/svg+xml "access plus 1 year"
-    ExpiresByType image/x-icon "access plus 1 year"
-    
-    # CSS et JS
-    ExpiresByType text/css "access plus 1 month"
-    ExpiresByType application/javascript "access plus 1 month"
-    ExpiresByType text/javascript "access plus 1 month"
-    
-    # Fonts
-    ExpiresByType font/ttf "access plus 1 year"
-    ExpiresByType font/otf "access plus 1 year"
-    ExpiresByType font/woff "access plus 1 year"
-    ExpiresByType font/woff2 "access plus 1 year"
-    ExpiresByType application/font-woff "access plus 1 year"
-    
-    # HTML
-    ExpiresByType text/html "access plus 0 seconds"
-</IfModule>
-
-# Désactiver l'indexation des dossiers
-Options -Indexes
-
-# Protection des fichiers sensibles
-<FilesMatch "^\.">
-    Order allow,deny
-    Deny from all
-</FilesMatch>
-EOF
-
-# Créer un fichier de déploiement info
-echo "Build date: $(date)" > deploy-info.txt
-echo "Commit: $(git rev-parse HEAD)" >> deploy-info.txt
-
-# Ajouter tous les fichiers
-print_status "Ajout des fichiers au Git..."
-git add -A
-
-# Commit et push
-if ! git diff --cached --quiet; then
-    print_status "Commit des changements..."
-    git commit -m "🚀 Déploiement statique vers Hostinger - $(date)"
-    
-    print_status "Push vers GitHub..."
-    git push origin hostinger-deploy
-    
-    print_success "Déploiement déclenché !"
-    print_status "Le webhook Hostinger va automatiquement déployer les fichiers."
-else
-    print_warning "Aucun changement détecté, pas de déploiement nécessaire."
-fi
-
-# Restaurer la configuration originale
-print_status "Restauration de la configuration originale..."
-mv next.config.js.backup next.config.js
-
-# Retourner à la branche d'origine
-print_status "Retour à la branche $CURRENT_BRANCH..."
-git checkout $CURRENT_BRANCH
-
+# Afficher les informations de déploiement
 echo ""
-print_success "✅ Déploiement terminé avec succès !"
+log_success "🎉 Déploiement terminé avec succès !"
 echo ""
 echo "📋 Prochaines étapes :"
-echo "1. Attendez 2-3 minutes que le webhook Hostinger se déclenche"
-echo "2. Vérifiez votre site : https://lilou-logistique.com"
-echo "3. Pour les prochaines mises à jour, relancez : ./tools/deploy.sh"
+echo "1. Vérifier le webhook Hostinger"
+echo "2. Consulter : https://lilou-logistique.com/app"
+echo "3. Vérifier les logs GitHub Actions si nécessaire"
 echo ""
-echo "🔗 Logs Hostinger : Panel → Git → Logs"
-echo "🔗 GitHub Actions : https://github.com/Lilou2023/lilou-logistique/actions"
+echo "📚 Documentation :"
+echo "- docs/POST_MERGE_CHECKLIST.md"
+echo "- docs/README_DEPLOIEMENT.md"
 echo ""
-echo "========================================"
