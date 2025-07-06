@@ -15,10 +15,10 @@ jobs:
     
     steps:
       - name: 📥 Checkout du code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: 📦 Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
@@ -46,6 +46,10 @@ jobs:
           # Variables publiques uniquement (pas de secrets)
           NEXT_PUBLIC_APP_NAME: 'Lilou Logistique'
           NEXT_PUBLIC_APP_VERSION: '1.0.0'
+          NEXT_PUBLIC_SUPABASE_URL=https://mvhogfelpbufnrklxpxq.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY=votre-clé-anon-supabase
+          OPENAI_API_KEY=votre-clé-openai
+          NEXT_PUBLIC_APP_URL=https://lilou-logistique.com
         run: npm run build
 
       - name: 📁 Préparation des fichiers de déploiement
@@ -140,7 +144,7 @@ jobs:
           echo "Commit: ${{ github.sha }}" >> hostinger-deploy/deploy-info.txt
 
       - name: 📤 Upload des artefacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: hostinger-files
           path: hostinger-deploy/
@@ -156,7 +160,7 @@ jobs:
           echo ""
           echo "1. Téléchargez l'artefact 'hostinger-files' depuis cette action"
           echo "2. Ou utilisez Git dans Hostinger avec ces paramètres :"
-          echo "   - Dépôt : https://github.com/${{ github.repository }}.git"
+          echo "   - Dépôt : git@github.com:Lilou2023/lilou-logistique.git"
           echo "   - Branche : hostinger-deploy"
           echo "   - Répertoire : (laisser vide pour public_html)"
           echo ""
@@ -170,12 +174,12 @@ jobs:
     
     steps:
       - name: 📥 Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: 📥 Download artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: hostinger-files
           path: hostinger-deploy
@@ -206,3 +210,6 @@ jobs:
           else
             echo "Pas de changements à déployer"
           fi
+
+      - name: 📥 Checkout main
+        run: git checkout main
