@@ -7,6 +7,7 @@ set -euo pipefail
 echo "🚀 Création de la branche hostinger-deploy"
 echo "=========================================="
 
+
 # Vérifier qu'on est dans un repo git
 if [ ! -d ".git" ]; then
     echo "❌ Erreur : Ce n'est pas un repository Git"
