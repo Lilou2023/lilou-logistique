@@ -16,6 +16,7 @@ const inter = localFont({
     },
   ],
   display: 'swap',
+  variable: '--font-inter',
 })
 
 export const metadata: Metadata = {
@@ -29,7 +30,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="fr">
+    <html lang="fr" className={inter.variable}>
       <body className={inter.className}>{children}</body>
     </html>
   )
