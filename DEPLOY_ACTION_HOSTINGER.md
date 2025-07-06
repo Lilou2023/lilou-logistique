@@ -1,5 +1,8 @@
 # 🚀 DÉPLOIE LILOU GO v4.2 SUR HOSTINGER MAINTENANT !
 
+> **Note :** le projet utilise désormais **React** avec **Vite**. Ce guide ne
+fait plus référence à la configuration Next.js initiale.
+
 ## ✅ Une seule commande :
 
 ```bash
