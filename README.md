@@ -32,14 +32,14 @@ cp .env.example .env.local
 
 2. **Renseigne les variables d'environnement** dans `.env.local` :
 
-| Variable                        | Description                                 |
-| ------------------------------- | ------------------------------------------- |
-| `NEXT_PUBLIC_SUPABASE_URL`      | |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` |              |
-| `SUPABASE_SERVICE_ROLE_KEY`     | |
-| `OPENAI_API_KEY`                ||
-| `JWT_SECRET`                    |                      |
-| `NEXTAUTH_SECRET`               |                |
+| Variable | Description |
+| --- | --- |
+| `NEXT_PUBLIC_SUPABASE_URL` | URL de votre projet Supabase |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Clé anonyme Supabase |
+| `SUPABASE_SERVICE_ROLE_KEY` | Clé de service Supabase (optionnelle) |
+| `OPENAI_API_KEY` | Clé API OpenAI |
+| `JWT_SECRET` | Secret de signature JWT |
+| `NEXTAUTH_SECRET` | Secret pour NextAuth |
 ### Ajouter les secrets GitHub
 
 Pour permettre le déploiement automatique, ajoutez aussi ces variables dans
