@@ -6,6 +6,7 @@
 set -e
 
 echo "================================================"
+
 echo "🚀 Installation de Lilou Logistique sur Hostinger"
 echo "================================================"
 
