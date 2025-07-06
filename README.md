@@ -64,6 +64,16 @@ npm run test
 
 ---
 
+## 🧹 Lint du code
+
+```bash
+npm run lint
+```
+
+Ce projet utilise la configuration ESLint recommandée pour Next.js (voir `.eslintrc.json`).
+
+---
+
 ## ✅ Vérification d'environnement
 
 ```bash
