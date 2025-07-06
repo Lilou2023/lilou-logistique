@@ -2,7 +2,9 @@
 set -euo pipefail
 
 # Script d'initialisation GitHub pour Lilou Logistique
-# Usage: bash init-github.sh
+# Usage: bash init-github.sh [repo_url]
+
+REPO_URL=${1:-"https://github.com/Lilou2023/lilou-logistique.git"}
 
 echo "🚀 Initialisation du projet Lilou Logistique sur GitHub"
 echo "======================================================"
@@ -46,7 +48,7 @@ git commit -m "🎉 Initial commit - Lilou Logistique
 # Ajouter le remote
 echo "🔗 Configuration du repository distant..."
 git branch -M main
-git remote add origin https://github.com/Lilou2023/lilou-logistique.git 2>/dev/null || {
+git remote add origin "$REPO_URL" 2>/dev/null || {
     echo "✅ Remote 'origin' déjà configuré"
 }
 
@@ -64,10 +66,10 @@ git push -u origin main || {
     echo "❌ Erreur lors du push. Vérifiez que :"
     echo "1. Le repository existe sur GitHub"
     echo "2. Vous avez les droits d'accès"
-    echo "3. L'URL est correcte : https://github.com/Lilou2023/lilou-logistique.git"
+    echo "3. L'URL est correcte : $REPO_URL"
     echo ""
     echo "Pour corriger l'URL du remote :"
-    echo "git remote set-url origin https://github.com/VOTRE-USERNAME/lilou-logistique.git"
+    echo "git remote set-url origin YOUR_REPO_URL"
     exit 1
 }
 
