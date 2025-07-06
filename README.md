@@ -168,6 +168,7 @@ lilou-logistique/
 - 📊 [Analyse de Performance](./PERFORMANCE_ANALYSIS.md)
 - 🛠️ [Guide d'Implémentation](./IMPLEMENTATION_GUIDE.md)
 - 🗄️ [Schéma de Base de Données](./schema.sql)
+- 🔗 [Intégration Supabase](./docs/SUPABASE_GITHUB_VERCEL_INTEGRATION.md)
 
 ## 🤝 Contribution
 
