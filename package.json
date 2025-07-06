@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Logistics management system with performance optimizations",
   "main": "index.js",
+  "license": "MIT",
   "scripts": {
     "dev": "echo 'Development server would start here' && exit 0",
     "build": "echo 'Building application...' && mkdir -p dist && echo 'Build completed' > dist/index.html",
