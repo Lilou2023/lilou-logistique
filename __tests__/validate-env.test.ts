@@ -9,7 +9,6 @@ import os from 'os';
 const scriptPath = path.resolve(__dirname, '../scripts/validate-env.js');
 
 function runScript(dir: string) {
-return spawnSync('node', [scriptPath], {
     cwd: dir,
     encoding: 'utf-8',
     env: { PATH: process.env.PATH },
