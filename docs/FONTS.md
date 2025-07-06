@@ -83,4 +83,4 @@ Pour mettre à jour les fichiers de police :
 
 **Problème** : Build échoue
 - Vérifiez que les fichiers sont bien des fichiers WOFF2 valides
-- Vérifiez la syntaxe de configuration dans `layout.tsx` 
+- Vérifiez la syntaxe de configuration dans `layout.tsx`
