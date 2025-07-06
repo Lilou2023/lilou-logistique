@@ -30,6 +30,9 @@ cd lilou-logistique
 npm install
 ```
 
+> **Prérequis :** assurez-vous d'utiliser **Node.js 20 ou supérieur**. Le fichier
+> `.nvmrc` fourni peut vous aider si vous utilisez [nvm](https://github.com/nvm-sh/nvm).
+
 ---
 
 ## ⚙️ Configuration de l'environnement
