@@ -30,6 +30,9 @@ cd lilou-logistique
 npm install
 ```
 
+Cette application nécessite **Node.js 20 ou plus**. Un fichier `.nvmrc` indique
+la version recommandée pour ceux utilisant nvm.
+
 ---
 
 ## ⚙️ Configuration de l'environnement
