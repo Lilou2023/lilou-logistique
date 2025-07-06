@@ -26,6 +26,9 @@ jobs:
       - name: 📦 Installation des dépendances
         run: npm ci
 
+      - name: ✅ Validation des variables d'environnement
+        run: npm run validate-env
+
       - name: 🔧 Configuration Next.js pour export statique
         run: |
           cat > next.config.js << 'EOF'

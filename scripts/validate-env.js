@@ -118,6 +118,15 @@ function validateEnv() {
     log('✅ Validation réussie: Toutes les variables sont correctement configurées!', 'green');
   }
   console.log('='.repeat(50) + '\n');
+
+  // Affichage des valeurs pour debug
+  log('📊 Valeurs des variables d\'environnement:', 'blue');
+  console.log('App:', process.env.NEXT_PUBLIC_APP_NAME || 'Non définie');
+  console.log('Version:', process.env.NEXT_PUBLIC_APP_VERSION || 'Non définie');
+  console.log('URL:', process.env.NEXT_PUBLIC_APP_URL || 'Non définie');
+  console.log('Supabase URL:', process.env.NEXT_PUBLIC_SUPABASE_URL ? '✅ Configurée' : '❌ Manquante');
+  console.log('Supabase Anon Key:', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? '✅ Configurée' : '❌ Manquante');
+  console.log('OpenAI API Key:', process.env.OPENAI_API_KEY ? '✅ Configurée' : '❌ Manquante');
 }
 
 // Exécuter la validation
