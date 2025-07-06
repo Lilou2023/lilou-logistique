@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 # Script pour générer une version statique de l'application
 # Compatible avec l'hébergement mutualisé Hostinger
