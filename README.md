@@ -40,6 +40,15 @@ cp .env.example .env.local
 | `OPENAI_API_KEY`                ||
 | `JWT_SECRET`                    |                      |
 | `NEXTAUTH_SECRET`               |                |
+### Ajouter les secrets GitHub
+
+Pour permettre le déploiement automatique, ajoutez aussi ces variables dans
+**Settings → Secrets and variables → Actions** de votre dépôt GitHub :
+
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `OPENAI_API_KEY`
+
 
 ---
 
