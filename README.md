@@ -99,4 +99,3 @@ Fichier de workflow : `.github/workflows/validate-env.yml`
 ## 🧾 Licence
 
 Ce projet est sous licence MIT. Voir [LICENSE](LICENSE).
-
