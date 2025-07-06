@@ -30,6 +30,9 @@ cd lilou-logistique
 npm install
 ```
 
+Cette application nécessite **Node.js 20 ou plus**. Un fichier `.nvmrc` indique
+la version recommandée pour ceux utilisant nvm.
+
 ---
 
 ## ⚙️ Configuration de l'environnement
@@ -42,14 +45,14 @@ cp .env.example .env.local
 
 2. **Renseigne les variables d'environnement** dans `.env.local` :
 
-| Variable                        | Description                                 |
-| ------------------------------- | ------------------------------------------- |
-| `NEXT_PUBLIC_SUPABASE_URL`      | |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` |              |
-| `SUPABASE_SERVICE_ROLE_KEY`     | |
-| `OPENAI_API_KEY`                ||
-| `JWT_SECRET`                    |                      |
-| `NEXTAUTH_SECRET`               |                |
+| Variable | Description |
+| -------- | ----------- |
+| `NEXT_PUBLIC_SUPABASE_URL` | URL de votre projet Supabase |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Clé anonyme Supabase |
+| `SUPABASE_SERVICE_ROLE_KEY` | Clé de rôle service Supabase |
+| `OPENAI_API_KEY` | Clé API pour OpenAI |
+| `JWT_SECRET` | Secret pour signer les JWT |
+| `NEXTAUTH_SECRET` | Secret utilisé par NextAuth.js |
 
 ---
 
@@ -58,6 +61,16 @@ cp .env.example .env.local
 ```bash
 npm run test
 ```
+
+---
+
+## 🧹 Lint du code
+
+```bash
+npm run lint
+```
+
+Ce projet utilise la configuration ESLint recommandée pour Next.js (voir `.eslintrc.json`).
 
 ---
 
