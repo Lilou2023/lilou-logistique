@@ -45,14 +45,14 @@ cp .env.example .env.local
 
 2. **Renseigne les variables d'environnement** dans `.env.local` :
 
-| Variable                        | Description                                 |
-| ------------------------------- | ------------------------------------------- |
-| `NEXT_PUBLIC_SUPABASE_URL`      | |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` |              |
-| `SUPABASE_SERVICE_ROLE_KEY`     | |
-| `OPENAI_API_KEY`                ||
-| `JWT_SECRET`                    |                      |
-| `NEXTAUTH_SECRET`               |                |
+| Variable | Description |
+| --- | --- |
+| `NEXT_PUBLIC_SUPABASE_URL` | Base URL of your Supabase project |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Public Supabase anonymous key |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role key |
+| `OPENAI_API_KEY` | API key for OpenAI services |
+| `JWT_SECRET` | Secret used to sign JWT tokens |
+| `NEXTAUTH_SECRET` | Secret key for NextAuth sessions |
 
 ---
 
