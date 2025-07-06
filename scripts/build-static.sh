@@ -26,6 +26,9 @@ const nextConfig = {
 module.exports = nextConfig
 EOF
 
+# S'assurer que la configuration d'origine est restaurée en cas d'interruption
+trap 'if [[ -f next.config.js.bak ]]; then mv next.config.js.bak next.config.js; fi' EXIT
+
 # Remplacer temporairement la config
 mv next.config.js next.config.js.bak
 mv next.config.static.js next.config.js
