@@ -9,7 +9,11 @@ import os from 'os';
 const scriptPath = path.resolve(__dirname, '../scripts/validate-env.js');
 
 function runScript(dir: string) {
-  return spawnSync('node', [scriptPath], { cwd: dir, encoding: 'utf-8' });
+  return spawnSync('node', [scriptPath], {
+    cwd: dir,
+    encoding: 'utf-8',
+    env: { PATH: process.env.PATH },
+  });
 }
 
 function createEnvFile(dir: string, content: string) {
@@ -56,5 +60,23 @@ JWT_SECRET=abcdefghijklmnopqrstuvwxyz123456
     const result = runScript(dir);
     rmSync(dir, { recursive: true, force: true });
     expect(result.status).toBe(1);
+  });
+
+  test('succeeds with warnings on default values', () => {
+    const dir = mkdtempSync(path.join(os.tmpdir(), 'envtest-'));
+    createEnvFile(
+      dir,
+      `NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=anon
+SUPABASE_SERVICE_ROLE_KEY=service
+OPENAI_API_KEY=openai
+JWT_SECRET=abcdefghijklmnopqrstuvwxyz123456
+NEXTAUTH_SECRET=abcdefghijklmnopqrstuvwxyz654321
+`
+    );
+    const result = runScript(dir);
+    rmSync(dir, { recursive: true, force: true });
+    expect(result.status).toBe(0);
+    expect(result.stdout + result.stderr).toMatch(/avertissements/i);
   });
 });
