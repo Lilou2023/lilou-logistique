@@ -90,4 +90,4 @@ RewriteRule ^(.*)$ /index.html [L]
 EOF
 
 echo "✅ Build statique terminé ! Les fichiers sont dans le dossier 'deploy/'"
-echo "📁 Ces fichiers peuvent être déployés sur l'hébergement mutualisé Hostinger"
+echo "📁 Ces fichiers peuvent être déployés sur l'hébergement mutualisé Hostinger."
