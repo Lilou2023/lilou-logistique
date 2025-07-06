@@ -13,7 +13,10 @@
    ```bash
    wget https://raw.githubusercontent.com/Lilou2023/lilou-logistique/main/scripts/install-hostinger.sh
    chmod +x install-hostinger.sh
-   sudo ./install-hostinger.sh
+   # Optionnel : passez votre URL Git en argument ou via REPO_URL
+   sudo ./install-hostinger.sh [votre-repo.git]
+   # ou
+   REPO_URL=[votre-repo.git] sudo ./install-hostinger.sh
    ```
 
 3. **Configurez vos variables d'environnement**
