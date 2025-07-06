@@ -106,4 +106,3 @@ Les fichiers de police Inter se trouvent dans `public/fonts` et sont chargés vi
 ## 🧾 Licence
 
 Ce projet est sous licence MIT. Voir [LICENSE](LICENSE).
-
