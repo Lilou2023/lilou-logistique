@@ -442,7 +442,7 @@ Ce workflow GitHub + Hostinger permet :
 ### 📞 Support
 
 Pour toute question sur ce workflow :
-- 📧 Email : logistiquelilou@gmail.com
+- 📧 Email : your-email@example.com
 - 📚 Documentation : Ce guide
 - 🔧 Issues : GitHub Issues du projet
 
