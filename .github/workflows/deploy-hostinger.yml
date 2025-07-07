@@ -29,15 +29,15 @@ jobs:
       - name: ✅ Validation des variables d'environnement
         run: |
           echo "🔍 Vérification des variables d'environnement..."
-          if [ -z "${{  https://mvhogfelpbufnrklxpxq.supabase.co }}" ]; then
+          if [ -z "${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}" ]; then
             echo "❌ NEXT_PUBLIC_SUPABASE_URL manquant"
             exit 1
           fi
-          if [ -z "${{ eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im12aG9nZmVscGJ1Zm5ya2x4cHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg3MjQ0MDksImV4cCI6MjA2NDMwMDQwOX0.FrVdKelHzLgJFGFwnYfA23XsbzgrK6PCsSV01a1qM5I }}" ]; then
+          if [ -z "${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}" ]; then
             echo "❌ NEXT_PUBLIC_SUPABASE_ANON_KEY manquant"
             exit 1
           fi
-          if [ -z "${{ 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 }}" ]; then
+          if [ -z "${{ secrets.OPENAI_API_KEY }}" ]; then
             echo "❌ OPENAI_API_KEY manquant"
             exit 1
           fi
@@ -64,9 +64,9 @@ jobs:
           NEXT_PUBLIC_APP_NAME: 'Lilou Logistique DSP'
           NEXT_PUBLIC_APP_VERSION: '1.0.0'
           NEXT_PUBLIC_APP_URL: 'https://lilou-logistique.com'
-          NEXT_PUBLIC_SUPABASE_URL: ${{ https://mvhogfelpbufnrklxpxq.supabase.co }}
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im12aG9nZmVscGJ1Zm5ya2x4cHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg3MjQ0MDksImV4cCI6MjA2NDMwMDQwOX0.FrVdKelHzLgJFGFwnYfA23XsbzgrK6PCsSV01a1qM5I }}
-          OPENAI_API_KEY: ${{ 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 }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: npm run build
 
       - name: 📁 Préparation des fichiers de déploiement
