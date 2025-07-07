@@ -9,7 +9,7 @@ Le script `setup-lilou-logistique.sh` automatise complètement la configuration 
 ### 1. Prérequis
 Assurez-vous d'avoir installé :
 - Git
-- Node.js (version 18+)
+- Node.js 20+ installé
 - npm
 
 ### 2. Lancement du script
@@ -131,7 +131,7 @@ sudo apt install git
 brew install node
 
 # Ubuntu/Debian
-curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
 sudo apt-get install -y nodejs
 
 # Windows

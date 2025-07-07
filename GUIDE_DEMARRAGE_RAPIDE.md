@@ -3,7 +3,7 @@
 ## 📋 Prérequis
 
 - ✅ **Git** installé sur votre machine
-- ✅ **Node.js** version 18+ installé
+- ✅ **Node.js 20+** installé
 - ✅ **Compte GitHub** créé
 - ✅ **Accès au repository** Lilou2023/lilou-logistique
 
