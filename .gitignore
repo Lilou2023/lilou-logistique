@@ -59,3 +59,7 @@ logs
 *.tmp
 *.temp
 .cache/
+
+# Deployment artifacts
+/public_html/
+/index.html

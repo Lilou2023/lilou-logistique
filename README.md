@@ -58,6 +58,10 @@ GitHub Actions va créer la branche hostinger-deploy
 
 Hostinger va automatiquement déployer le site : https://lilou-logistique.com
 
+Les fichiers `public_html/` et `index.html` sont générés automatiquement
+par le workflow GitHub Actions dans la branche `hostinger-deploy`. Ils ne
+sont donc pas suivis dans `main`.
+
 Confirmer que tout est en ligne :
 
 Aperçu live : https://f471e78f-f041-4565-87c5-6867ce01bf46.dev31.app-preview.com/
