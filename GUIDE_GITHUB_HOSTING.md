@@ -1,5 +1,7 @@
 # 🚀 Guide Complet GitHub & Intégration Hébergement
 
+For Hostinger configuration specifics see [HOSTINGER_GIT_SETUP.md](./HOSTINGER_GIT_SETUP.md).
+
 ## 📚 Table des matières
 
 1. [Introduction à GitHub](#1-introduction-à-github)

@@ -4,6 +4,8 @@
 
 Le script `setup-lilou-logistique.sh` automatise complètement la configuration du projet Lilou Logistique, depuis l'initialisation Git jusqu'au déploiement sur Hostinger.
 
+For Hostinger deployment details see [HOSTINGER_GIT_SETUP.md](./HOSTINGER_GIT_SETUP.md).
+
 ## ⚡ Utilisation rapide
 
 ### 1. Prérequis
@@ -198,7 +200,5 @@ Après avoir suivi toutes les étapes :
 
 ---
 
-**Note** : Ce script suit exactement la documentation du projet et automatise toutes les étapes manuelles décrites dans les guides `HOSTINGER_GIT_SETUP.md`, `GITHUB_SECRETS_SETUP.md`, et `ACTIONS_HOSTINGER.md`.
+**Note** : Ce script suit exactement la documentation du projet et automatise toutes les étapes manuelles décrites dans les guides `HOSTINGER_GIT_SETUP.md` et `GITHUB_SECRETS_SETUP.md`.
 ```
-
-</rewritten_file>

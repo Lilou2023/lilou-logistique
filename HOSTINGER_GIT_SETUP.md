@@ -1,27 +1,17 @@
-# 🚀 Configuration Git sur Hostinger - lilou-logistique.com
+# 🚀 Hostinger Deployment Guide
 
-## 📋 Étapes de configuration
+This unified guide explains how to connect GitHub with Hostinger and deploy the static build of **lilou-logistique**.
 
-### 1️⃣ Ajouter la clé SSH à GitHub
+## 1. Add the Hostinger SSH key to GitHub
 
-1. **Copiez cette clé SSH** (celle fournie par Hostinger) :
-   ```
-   ssh-rsa YOUR-HOSTINGER-SSH-KEY
-   ```
+1. Copy the SSH key provided by Hostinger.
+2. On GitHub, open `Settings → Deploy keys` in your repository.
+3. Click **Add deploy key**, name it `Hostinger - lilou-logistique.com`, paste the key and check **Allow write access**.
 
-2. **Allez sur GitHub** :
-   - Accédez à votre repository : https://github.com/Lilou2023/lilou-logistique
-   - Cliquez sur `Settings` → `Deploy keys`
-   - Cliquez sur `Add deploy key`
-   - Titre : `Hostinger - lilou-logistique.com`
-   - Collez la clé SSH
-   - ✅ Cochez `Allow write access` (important!)
-   - Cliquez sur `Add key`
-
-### 2️⃣ Créer votre repository (si pas encore fait)
+## 2. Prepare your repository
 
 ```bash
-# Sur votre ordinateur local
+# From your local machine if the repo does not exist yet
 git init
 git add .
 git commit -m "Initial commit"
@@ -30,126 +20,45 @@ git remote add origin https://github.com/Lilou2023/lilou-logistique.git
 git push -u origin main
 ```
 
-### 3️⃣ Configuration dans Hostinger
+## 3. Configure Git deployment in Hostinger
 
-Dans le formulaire de déploiement Git sur Hostinger, entrez :
+Fill in the Git deployment form in Hostinger with:
 
-- **Dépôt** : 
-  ```
-  git@github.com:Lilou2023/lilou-logistique.git
-  ```
-  
-- **Branche** : 
-  ```
-  hostinger-deploy
-  ```
-  
-- **Répertoire** : 
-  ```
-  (laisser vide)
-  ```
+- **Repository**: `git@github.com:Lilou2023/lilou-logistique.git`
+- **Branch**: `hostinger-deploy`
+- **Directory**: _(leave empty)_
 
-### 4️⃣ Workflow automatique
+Hostinger will pull the branch whenever it changes.
 
-Le projet est configuré avec GitHub Actions pour :
+## 4. Automatic workflow
 
-1. **Branche `main`** : Code source complet
-2. **Branche `hostinger-deploy`** : Version statique optimisée pour Hostinger
+A GitHub Actions workflow builds the project and updates `hostinger-deploy` every time you push to `main`:
 
-À chaque push sur `main`, GitHub Actions :
-- ✅ Build l'application en mode statique
-- ✅ Crée/met à jour la branche `hostinger-deploy`
-- ✅ Ajoute les configurations Apache (.htaccess)
-- ✅ Optimise pour l'hébergement mutualisé
+1. Build the static site with `next export`.
+2. Commit the result to `hostinger-deploy`.
+3. Hostinger detects the new commit and deploys.
 
-## 🔄 Déploiement continu
+## 5. Manual commands
 
-### Option A : Déploiement automatique (Recommandé)
-
-1. Faites vos modifications sur la branche `main`
-2. Poussez vers GitHub :
-   ```bash
-   git add .
-   git commit -m "Mise à jour"
-   git push origin main
-   ```
-3. GitHub Actions créera automatiquement la branche `hostinger-deploy`
-4. Hostinger détectera les changements et déploiera automatiquement
-
-### Option B : Déploiement manuel
-
-Si vous préférez déclencher manuellement :
-
-1. Allez sur GitHub → Actions
-2. Sélectionnez "🚀 Déploiement Hostinger Automatique"
-3. Cliquez sur "Run workflow"
-
-## ⚙️ Configuration avancée
-
-### Personnaliser le build
-
-Modifiez `.github/workflows/deploy-hostinger.yml` pour :
-- Ajouter des variables d'environnement publiques
-- Modifier les options de build
-- Ajouter des étapes de post-traitement
-
-### Variables d'environnement
-
-⚠️ **Important** : Sur l'hébergement mutualisé, seules les variables `NEXT_PUBLIC_*` fonctionnent.
-
-Dans le workflow, ajoutez :
-```yaml
-env:
-  NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-  NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
-```
-
-## 🚨 Limitations de l'hébergement mutualisé
-
-- ❌ Pas de serveur Node.js
-- ❌ Pas d'API Routes
-- ❌ Pas de SSR/ISR
-- ❌ Pas de middleware
-- ✅ Export statique uniquement
-- ✅ Client-side routing
-- ✅ Assets statiques
-
-## 📝 Commandes utiles
+First deployment may require creating the branch:
 
 ```bash
-# Tester le build statique localement
-npm run build
-npx serve out
+git checkout -b hostinger-deploy
+git push origin hostinger-deploy
+git checkout main
+```
 
-# Vérifier la branche de déploiement
-git fetch origin hostinger-deploy
-git checkout hostinger-deploy
-git log --oneline -5
+To force a rebuild:
 
-# Forcer une reconstruction
+```bash
 git commit --allow-empty -m "Force rebuild"
 git push origin main
 ```
 
-## 🆘 Dépannage
+## 6. Advanced usage
 
-### Le site ne se met pas à jour
-1. Vérifiez que GitHub Actions s'est bien exécuté
-2. Dans Hostinger, cliquez sur "Pull" pour forcer la mise à jour
-3. Videz le cache du navigateur
-
-### Erreur 404 sur les routes
-- Vérifiez que le `.htaccess` est bien présent
-- Les routes dynamiques nécessitent une configuration spéciale
-
-### Images non affichées
-- Utilisez des chemins absolus : `/images/logo.png`
-- Évitez les imports dynamiques d'images
-
-## 🎉 C'est configuré !
-
-Votre site sera automatiquement déployé sur https://lilou-logistique.com à chaque push sur la branche `main` !
+The workflow file `.github/workflows/deploy-hostinger.yml` can be customised to pass environment variables or additional build steps. Only `NEXT_PUBLIC_*` variables are available on shared hosting.
 
 ---
 
-💡 **Astuce** : Pour un site plus dynamique avec toutes les fonctionnalités Next.js, considérez un VPS Hostinger.
+Your site is now deployed automatically on `https://lilou-logistique.com` whenever you push to `main`.

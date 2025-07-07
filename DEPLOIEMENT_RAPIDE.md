@@ -2,6 +2,8 @@
 
 ## 📋 Objectif
 Configurer et déployer automatiquement le projet lilou-logistique sur GitHub avec intégration Hostinger.
+For more details on Hostinger setup see [HOSTINGER_GIT_SETUP.md](./HOSTINGER_GIT_SETUP.md).
+
 
 ## ⚡ Étapes rapides
 
@@ -43,6 +45,8 @@ Dans **Settings → Secrets and variables → Actions**, ajouter :
 
 ### 5. Configurer Git sur Hostinger
 Dans le panneau d'administration → section **GIT** :
+(See [HOSTINGER_GIT_SETUP.md](./HOSTINGER_GIT_SETUP.md) for a full guide.)
+
 
 | Champ | Valeur |
 |-------|--------|
