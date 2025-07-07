@@ -1,5 +1,10 @@
 # Objectif : Configurer et déployer automatiquement le projet lilou-logistique sur GitHub avec intégration Hostinger
 
+## Environment variables
+
+Le fichier `.env.example` contient des valeurs factices (comme `YOUR_SUPABASE_URL`).
+Remplacez-les par vos clés réelles avant d'exécuter le projet.
+
 Créer un dépôt GitHub
 
 Nom : lilou-logistique
