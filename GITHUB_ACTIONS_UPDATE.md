@@ -44,4 +44,4 @@ Pour valider que les workflows fonctionnent :
 
 ---
 
-**Note** : Si vous utilisez un IDE avec un linter GitHub Actions intégré, vous pouvez désactiver temporairement les avertissements pour ces fichiers ou mettre à jour la configuration du linter. 
+**Note** : Si vous utilisez un IDE avec un linter GitHub Actions intégré, vous pouvez désactiver temporairement les avertissements pour ces fichiers ou mettre à jour la configuration du linter.

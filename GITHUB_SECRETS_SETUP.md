@@ -67,4 +67,4 @@ Si vous devez changer une clé :
 
 ---
 
-**Note** : Les secrets sont automatiquement disponibles dans tous les workflows GitHub Actions via `${{ secrets.NOM_DU_SECRET }}`. 
+**Note** : Les secrets sont automatiquement disponibles dans tous les workflows GitHub Actions via `${{ secrets.NOM_DU_SECRET }}`.

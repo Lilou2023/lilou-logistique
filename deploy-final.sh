@@ -82,16 +82,16 @@ read -p "Votre choix (1-5) : " choice
 case $choice in
     1)
         print_status "Déploiement sur Vercel..."
-        
+
         # Vérifier Vercel CLI
         if ! command -v vercel &> /dev/null; then
             print_status "Installation de Vercel CLI..."
             npm install -g vercel
         fi
-        
+
         # Déployer
         vercel --prod --yes
-        
+
         if [ $? -eq 0 ]; then
             print_success "Déploiement Vercel réussi !"
             echo ""
@@ -103,10 +103,10 @@ case $choice in
             print_error "Erreur lors du déploiement Vercel"
         fi
         ;;
-        
+
     2)
         print_status "Déploiement sur Hostinger..."
-        
+
         if [ -f "deploy-hostinger-now.sh" ]; then
             chmod +x deploy-hostinger-now.sh
             ./deploy-hostinger-now.sh
@@ -114,7 +114,7 @@ case $choice in
             print_error "Script de déploiement Hostinger non trouvé"
         fi
         ;;
-        
+
     3)
         print_status "Déploiement manuel..."
         echo ""
@@ -126,7 +126,7 @@ case $choice in
         echo "📋 Pour tester localement :"
         echo "   npm run dev"
         ;;
-        
+
     4)
         print_status "Configuration GitHub Actions..."
         echo ""
@@ -138,12 +138,12 @@ case $choice in
         echo ""
         echo "🔄 Le déploiement se fera automatiquement à chaque push"
         ;;
-        
+
     5)
         print_status "Déploiement annulé"
         exit 0
         ;;
-        
+
     *)
         print_error "Choix invalide"
         exit 1
