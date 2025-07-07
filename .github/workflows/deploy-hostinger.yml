@@ -219,6 +219,8 @@ jobs:
           
           # Ajouter tous les fichiers
           git add -A
+          # Forcer l'ajout d'index.html si ignoré
+          git add -f index.html
           
           # Commit si il y a des changements
           if ! git diff --cached --quiet; then
