@@ -63,3 +63,13 @@ Confirmer que tout est en ligne :
 Aperçu live : https://f471e78f-f041-4565-87c5-6867ce01bf46.dev31.app-preview.com/
 
 intègre ce guide dans le fichier README.md du projet
+
+## Vérifier le code avec ESLint
+
+Exécutez la commande suivante pour analyser le projet avec ESLint :
+
+```bash
+npm run lint
+```
+
+Aucune interaction n'est nécessaire, la configuration est déjà fournie.
