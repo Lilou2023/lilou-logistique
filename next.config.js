@@ -7,7 +7,7 @@ const nextConfig = {
   output: 'export',
   trailingSlash: true,
   
-  // Configuration des images (désactivée pour l'export statique)
+  // Configuration des images
   images: {
     unoptimized: true,
     domains: [
