@@ -1,65 +1,155 @@
-# Objectif : Configurer et déployer automatiquement le projet lilou-logistique sur GitHub avec intégration Hostinger
+# 🚚 Lilou Logistique – Déploiement Automatique GitHub + Hostinger
 
-Créer un dépôt GitHub
+Ce guide explique étape par étape comment configurer, déployer et maintenir le projet **lilou-logistique** sur GitHub avec intégration Hostinger.
 
-Nom : lilou-logistique
+---
 
-Type : Public
+## 1️⃣ Création du dépôt GitHub
 
-Ne pas initialiser avec README
+- Rendez-vous sur https://github.com/new
+- Nom du dépôt : `lilou-logistique`
+- Type : Public
+- Ne pas initialiser avec README
+- Créez le repository
 
-Ne pas sauvegarder les infos personnelles
+---
 
-Ajouter la clé SSH de Hostinger au dépôt
+## 2️⃣ Initialisation locale et premier push
 
-Accéder à Settings → Deploy keys dans le dépôt
-
-Titre : Hostinger - lilou-logistique.com
-
-Clé :
-
-ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDULDMx2iSXlJ5mo9cPIm1LJ5OFGB5atXuLFkR53Mqy6Lla3vAZKbP0Np2LhgXOxCxjku1p66NRND+A3CqGVOpDGMoiAEFWKrjHkJPFgokB956MDFopvHJ4zQkbX4ubMe/6j6dkht4Web9QxzPFWcUeCFihkmydAdEEFvDyfYiqS5X1JRVgRYjp5ISddws7Wl9T2ivP2hAM40Fz5e1nPGX8vJ/yzy7GHYD0g01NVdndZHnfu+UwDHhL7+4mpJdkCFNWpDlUZIyrbiE0kAfYaisOrewChq0b5ZMmhK0TiuCvVoTRmmTsp92TVwr7cApyxyWq0gGtq44tUtJqESSrAq1BL/SIo+X0d6fcKd7qffxnz2rhL28UoVLQr+1HikJwEh1Wbdbh4g3vGuj1XQLzMG4LG6ezIfluEnDRB8uvRq6NIJi/4j/TLpTPbKZ5jzN6hHOe9u76FmmeSAHzKQUnc49LVQaG2D/E0/hS5+C6EeHL/l9sQf6D/xUV/STUOQ2arek= u240832595@fr-int-web1588.main-hosting.eu
-Cochez Allow write access
-
-Pousser le projet local avec init-github.sh
-
-Depuis le dossier lilou-logistique, exécuter :
-
+Dans votre terminal :
+```bash
+git init
+git add .
+git commit -m "Initial commit"
+git branch -M main
+git remote add origin https://github.com/Lilou2023/lilou-logistique.git
+git push -u origin main
+```
+Ou utilisez le script :
+```bash
 bash init-github.sh
-Ce script initialise Git, configure les infos locales, fait le commit et push vers main
+```
 
-Configurer les secrets GitHub dans Settings → Secrets and variables → Actions :
+---
 
-Ajouter les clés suivantes :
+## 3️⃣ Ajouter la clé SSH Hostinger à GitHub
 
-NEXT_PUBLIC_SUPABASE_URL=https://mvhogfelpbufnrklxpxq.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im12aG9nZmVscGJ1Zm5ya2x4cHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg3MjQ0MDksImV4cCI6MjA2NDMwMDQwOX0.FrVdKelHzLgJFGFwnYfA23XsbzgrK6PCsSV01a1qM5I
-SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im12aG9nZmVscGJ1Zm5ya2x4cHhxIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0ODcyNDQwOSwiZXhwIjoyMDY0MzAwNDA5fQ.keTkB1muKnhNK3TkDrOcdG6vjQJKA_OYDIUSIUPDfSM
-OPENAI_API_KEY=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
-JWT_SECRET=UiuSVGy6+Tzn93GwXa/dcyPBeD+Y9q7f18fwUPL/D1cdYmQQI5K8OjMZh/RlbCErVbgCSL9NqNAPAYVVxzAzPA==
-NEXTAUTH_SECRET=ytvqKJNF+DHMZXHeipda6n+DGVOKYWz2+5MoUiN/I6ED7v65kwboamNyN1Q=
-Configurer Git sur Hostinger
+- Allez dans votre dépôt GitHub → Settings → Deploy keys
+- Cliquez sur Add deploy key
+- Titre : `Hostinger - lilou-logistique.com`
+- Collez la clé SSH fournie par Hostinger
+- Cochez **Allow write access**
+- Cliquez sur Add key
 
-Aller dans le panneau d’administration → section GIT
+---
 
-Renseigner :
+## 4️⃣ Ajouter les secrets GitHub
 
-Dépôt : git@github.com:Lilou2023/lilou-logistique.git
+Dans GitHub : Settings → Secrets and variables → Actions
+Ajoutez les secrets suivants :
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `OPENAI_API_KEY`
+- `JWT_SECRET`
+- `NEXTAUTH_SECRET`
 
-Branche : hostinger-deploy
+> Voir le fichier `GITHUB_SECRETS_SETUP.md` pour les valeurs et la génération des clés.
 
-Répertoire : (laisser vide)
+---
 
-Cliquer sur Créer
+## 5️⃣ Installer et configurer le projet localement
 
-Attendre le déploiement automatique
+```bash
+git clone https://github.com/Lilou2023/lilou-logistique.git
+cd lilou-logistique
+npm install
+cp .env.example .env.local
+```
 
-GitHub Actions va créer la branche hostinger-deploy
+Modifiez `.env.local` avec vos variables d’environnement.
 
-Hostinger va automatiquement déployer le site : https://lilou-logistique.com
+---
 
-Confirmer que tout est en ligne :
+## 6️⃣ Tester et valider l’environnement
 
-Aperçu live : https://f471e78f-f041-4565-87c5-6867ce01bf46.dev31.app-preview.com/
+```bash
+npm run test
+npm run validate-env
+```
 
-intègre ce guide dans le fichier README.md du projet
+---
+
+## 7️⃣ Configurer le déploiement Git sur Hostinger
+
+Dans le panneau Hostinger → section GIT :
+- Dépôt : `git@github.com:Lilou2023/lilou-logistique.git`
+- Branche : `hostinger-deploy`
+- Répertoire : (laisser vide)
+- Cliquez sur Créer
+
+---
+
+## 8️⃣ Premier déploiement automatique
+
+- Faites un commit sur la branche main :
+```bash
+git add .
+git commit -m "Déclenchement premier build"
+git push origin main
+```
+- GitHub Actions va :
+  - Construire le site statique
+  - Créer la branche `hostinger-deploy`
+  - Déployer automatiquement via Hostinger
+- Vérifiez :
+  - GitHub → Actions (workflow)
+  - Hostinger → Git → Logs
+  - https://lilou-logistique.com
+
+---
+
+## 9️⃣ Mises à jour continues
+
+À chaque modification du code :
+```bash
+git add .
+git commit -m "Votre message"
+git push origin main
+```
+Le déploiement est automatique ✨
+
+---
+
+## 🔄 Dépannage courant
+
+- Le site ne se met pas à jour ? Vérifiez GitHub Actions, cliquez sur "Pull" dans Hostinger, videz le cache navigateur.
+- Erreur 404 ? Vérifiez que `.htaccess` est bien généré (voir `hostinger-deploy.sh`).
+- Images manquantes ? Utilisez `/images/logo.png` (chemins absolus).
+
+---
+
+## 🔐 Sécurité et performance
+
+- CI/CD : Automatisé avec GitHub Actions
+- Tests et validation : via `validate-env.yml` et `test`
+- Export statique : Pour hébergement mutualisé
+- Sécurité : `.htaccess` généré avec protections avancées
+- Performances : Gzip + cache + routing optimisé
+
+---
+
+## 📚 Références utiles
+
+- `README.md` (ce fichier)
+- `HOSTINGER_GIT_SETUP.md`
+- `ACTIONS_HOSTINGER.md`
+- `GITHUB_SECRETS_SETUP.md`
+- `GUIDE_RAPIDE_HOSTINGER.md`
+- `DEPLOYMENT_HOSTINGER.md`
+
+---
+
+En suivant ce guide, vous aurez un projet lilou-logistique prêt à être développé, testé et déployé automatiquement sur Hostinger via GitHub Actions.
+
+N’hésitez pas à demander une version PDF ou un guide illustré si besoin !
