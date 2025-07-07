@@ -33,6 +33,8 @@ NEXT_PUBLIC_APP_URL=https://lilou-logistique.com
 
 ### Option 2 : Déploiement Hostinger 🏢
 
+See [HOSTINGER_GIT_SETUP.md](./HOSTINGER_GIT_SETUP.md) for the full Hostinger guide.
+
 #### Étape 1 : Build Statique
 ```bash
 # Utiliser le script existant
