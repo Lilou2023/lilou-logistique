@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 # Script pour générer une version statique de l'application
 # Compatible avec l'hébergement mutualisé Hostinger
@@ -24,6 +25,9 @@ const nextConfig = {
 
 module.exports = nextConfig
 EOF
+
+# S'assurer que la configuration d'origine est restaurée en cas d'interruption
+trap 'if [[ -f next.config.js.bak ]]; then mv next.config.js.bak next.config.js; fi' EXIT
 
 # Remplacer temporairement la config
 mv next.config.js next.config.js.bak
@@ -89,4 +93,4 @@ RewriteRule ^(.*)$ /index.html [L]
 EOF
 
 echo "✅ Build statique terminé ! Les fichiers sont dans le dossier 'deploy/'"
-echo "📁 Ces fichiers peuvent être déployés sur l'hébergement mutualisé Hostinger"
+echo "📁 Ces fichiers peuvent être déployés sur l'hébergement mutualisé Hostinger."

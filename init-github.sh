@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 # Script d'initialisation GitHub pour Lilou Logistique
 # Usage: bash init-github.sh

@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 # Script pour créer la branche hostinger-deploy rapidement
 # Utile pour le premier déploiement sur Hostinger

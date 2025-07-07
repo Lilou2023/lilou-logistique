@@ -1,7 +1,10 @@
 #!/bin/bash
 
 # Script d'installation automatique pour Lilou Logistique sur Hostinger VPS
-# Usage: bash install-hostinger.sh
+# Usage: bash install-hostinger.sh [REPO_URL]
+# Vous pouvez aussi définir la variable d'environnement REPO_URL pour
+# personnaliser le dépôt à cloner. Par défaut, le script utilise le dépôt
+# officiel.
 
 set -e
 
@@ -11,7 +14,10 @@ echo "================================================"
 
 # Variables
 APP_DIR="/var/www/lilou-logistique"
-REPO_URL="https://github.com/Lilou2023/lilou-logistique.git"
+# URL du repository Git à cloner
+REPO_URL_DEFAULT="https://github.com/Lilou2023/lilou-logistique.git"
+# Priorité : variable d'environnement puis argument, sinon valeur par défaut
+REPO_URL="${REPO_URL:-${1:-$REPO_URL_DEFAULT}}"
 DOMAIN=""
 EMAIL=""
 
