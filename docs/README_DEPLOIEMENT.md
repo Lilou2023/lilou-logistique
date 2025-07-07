@@ -2,10 +2,10 @@
 
 ## 🔁 Stratégie Git
 
-| Branche              | Rôle                                                        |
-|----------------------|-------------------------------------------------------------|
-| `main`               | Développement fonctionnel avec Next.js                      |
-| `hostinger-deploy`   | Branche de production statique exportée (`next export`)     |
+| Branche              | Rôle |
+|----------------------|--------------------------------------------------------|
+| `main`               | Développement fonctionnel avec Next.js |
+| `hostinger-deploy`   | Branche de production statique exportée (`next export`) |
 
 ---
 
@@ -13,7 +13,8 @@
 
 1. `main` contient le code source Next.js
 2. `hostinger-deploy` contient **le résultat de `next export`** pour Hostinger
-3. Webhook GitHub → Hostinger déclenche un `git pull` sur cette branche
+3. Le dossier `public_html/` n'est pas suivi dans `main` et est généré lors de chaque export
+4. Webhook GitHub → Hostinger déclenche un `git pull` sur cette branche
 
 ---
 
@@ -67,4 +68,4 @@ Déclenché automatiquement à chaque `push` vers `hostinger-deploy`.
 
 ---
 
-✅ **Ton déploiement est automatisé, robuste et facile à reproduire.** 
+✅ **Ton déploiement est automatisé, robuste et facile à reproduire.**

@@ -36,7 +36,7 @@ Dans votre terminal :
 ```bash
 git init
 git add .
-git commit -m "Commit initial"
+git commit -m "Initial commit"
 git branch -M main
 git remote add origin https://github.com/Lilou2023/lilou-logistique.git
 git push -u origin main
@@ -51,18 +51,18 @@ bash init-github.sh
 
 ## 3️⃣ Ajouter la clé SSH Hostinger à GitHub
 
-- Allez dans votre dépôt GitHub → Paramètres → Clés de déploiement
-- Cliquez sur Ajouter une clé de déploiement
+- Allez dans votre dépôt GitHub → Settings → Deploy keys
+- Cliquez sur Add deploy key
 - Titre : `Hostinger - lilou-logistique.com`
 - Collez la clé SSH fournie par Hostinger
-- Cochez **Autoriser l'accès en écriture**
-- Cliquez sur Ajouter une clé
+- Cochez **Allow write access**
+- Cliquez sur Add key
 
 ---
 
 ## 4️⃣ Ajouter les secrets GitHub
 
-Dans GitHub : Paramètres → Secrets et variables → Actions
+Dans GitHub : Settings → Secrets and variables → Actions
 Ajoutez les secrets suivants :
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
@@ -83,6 +83,8 @@ cd lilou-logistique
 npm install
 cp .env.example .env.local
 ```
+
+Modifiez `.env.local` avec vos variables d'environnement.
 
 ---
 
@@ -113,6 +115,56 @@ Pour permettre le déploiement automatique, ajoutez aussi ces variables dans
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - `OPENAI_API_KEY`
+
+---
+
+## 6️⃣ Tester et valider l'environnement
+
+```bash
+npm run test
+npm run validate-env
+```
+
+---
+
+## 7️⃣ Configurer le déploiement Git sur Hostinger
+
+Dans le panneau Hostinger → section GIT :
+- Dépôt : `git@github.com:Lilou2023/lilou-logistique.git`
+- Branche : `hostinger-deploy`
+- Répertoire : (laisser vide)
+- Cliquez sur Créer
+
+---
+
+## 8️⃣ Premier déploiement automatique
+
+- Faites un commit sur la branche main :
+```bash
+git add .
+git commit -m "Déclenchement premier build"
+git push origin main
+```
+- GitHub Actions va :
+  - Construire le site statique
+  - Créer la branche `hostinger-deploy`
+  - Déployer automatiquement via Hostinger
+- Vérifiez :
+  - GitHub → Actions (workflow)
+  - Hostinger → Git → Logs
+  - https://lilou-logistique.com
+
+---
+
+## 9️⃣ Mises à jour continues
+
+À chaque modification du code :
+```bash
+git add .
+git commit -m "Votre message"
+git push origin main
+```
+Le déploiement sera automatique !
 
 ---
 
@@ -172,31 +224,6 @@ Un pipeline automatique est déclenché sur chaque `push` ou `pull request` :
 
 ---
 
-## 6️⃣ Configuration Hostinger
-
-Dans le panel Hostinger → Section Git :
-- Dépôt : `git@github.com:Lilou2023/lilou-logistique.git`
-- Branche : `hostinger-deploy`
-- Répertoire : (laisser vide)
-- Cliquer sur "Créer"
-
----
-
-## 7️⃣ Déploiement automatique
-
-Une fois configuré :
-1. **Push sur main** → GitHub Actions se déclenche
-2. **Build automatique** → Application compilée
-3. **Branche hostinger-deploy** → Créée automatiquement
-4. **Hostinger détecte** → La nouvelle branche
-5. **Déploiement automatique** → Site mis en ligne
-
-**Sites finaux :**
-- Production : https://lilou-logistique.com
-- Aperçu : https://f471e78f-f041-4565-87c5-6867ce01bf46.dev31.app-preview.com/
-
----
-
 ## 🛠️ Scripts de déploiement
 
 ### Script principal (recommandé)
@@ -222,18 +249,6 @@ Les fichiers de police Inter se trouvent dans `public/fonts` et sont chargés vi
 
 ---
 
-## 🚀 Mises à jour futures
-
-Pour chaque modification :
-```bash
-git add .
-git commit -m "Votre message"
-git push origin main
-```
-Le déploiement sera automatique !
-
----
-
 ## 🔗 Liens utiles
 
 - **GitHub Actions** : https://github.com/Lilou2023/lilou-logistique/actions
@@ -246,4 +261,3 @@ Le déploiement sera automatique !
 ## 🧾 Licence
 
 Ce projet est sous licence MIT. Voir [LICENSE](LICENSE).
-
