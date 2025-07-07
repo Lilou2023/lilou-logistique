@@ -9,8 +9,10 @@ CURRENT_BRANCH=$(git branch --show-current)
 # Créer et pousser la branche
 git checkout -b hostinger-deploy 2>/dev/null || git checkout hostinger-deploy
 echo "📄 Ajout d'un fichier temporaire..."
-echo "Déploiement en cours..." > index.html
-git add index.html
+if [ ! -f index.html ]; then
+  echo "Déploiement en cours..." > index.html
+  git add index.html
+fi
 git commit -m "Initial deployment" 2>/dev/null || echo "✅ Déjà committé"
 git push -u origin hostinger-deploy
 
