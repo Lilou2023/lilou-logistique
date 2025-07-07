@@ -239,7 +239,7 @@ git push origin votre-branche
 
 ### Support
 
-- 📧 **Email** : logistiquelilou@gmail.com
+- 📧 **Email** : your-email@example.com
 - 📚 **Documentation** : `GUIDE_GITHUB_HOSTING.md`
 - 🔧 **Issues** : GitHub Issues du projet
 
