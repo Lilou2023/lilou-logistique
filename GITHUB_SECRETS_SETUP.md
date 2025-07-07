@@ -1,70 +1,83 @@
-# 🔐 Configuration des Secrets GitHub - Lilou Logistique
+# 🔐 Configuration des Secrets GitHub pour le Déploiement Automatique
 
-## 📋 Secrets Requis
+## 📋 Vue d'ensemble
 
-Pour que les workflows GitHub Actions fonctionnent correctement, vous devez configurer les secrets suivants dans votre repository GitHub.
+Ce guide vous explique comment configurer les secrets GitHub nécessaires pour que le déploiement automatique via GitHub Actions fonctionne correctement.
 
-### 🔧 Comment ajouter des secrets
+## 🚀 Étape 1 : Accéder aux Secrets GitHub
 
-1. Allez sur votre repository GitHub
-2. Cliquez sur `Settings` → `Secrets and variables` → `Actions`
-3. Cliquez sur `New repository secret`
-4. Ajoutez chaque secret ci-dessous
+1. **Allez sur votre dépôt GitHub** : `https://github.com/Lilou2023/lilou-logistique`
 
-### 📝 Liste des secrets
+2. **Cliquez sur l'onglet "Settings"** (en haut à droite)
 
-| Nom du Secret | Description | Exemple |
-|---------------|-------------|---------|
-| `NEXT_PUBLIC_SUPABASE_URL` | URL de votre projet Supabase | `https://mvhogfelpbufnrklxpxq.supabase.co` |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Clé anonyme Supabase | `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` |
-| `SUPABASE_SERVICE_ROLE_KEY` | Clé de service Supabase (privée) | `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` |
-| `OPENAI_API_KEY` | Clé API OpenAI | `sk-proj-...` |
-| `JWT_SECRET` | Secret JWT (32+ caractères) | `votre-secret-jwt-super-securise-32-chars` |
-| `NEXTAUTH_SECRET` | Secret NextAuth (32+ caractères) | `votre-secret-nextauth-super-securise-32-chars` |
+3. **Dans le menu de gauche, cliquez sur "Secrets and variables" → "Actions"**
 
-### 🔍 Où trouver ces valeurs
+4. **Cliquez sur "New repository secret"** pour chaque secret
 
-#### Supabase
-1. Allez sur https://supabase.com
-2. Sélectionnez votre projet
-3. `Settings` → `API`
-4. Copiez l'URL et les clés
+## 🔑 Étape 2 : Ajouter les Secrets Requis
 
-#### OpenAI
-1. Allez sur https://platform.openai.com/api-keys
-2. Créez une nouvelle clé API
-3. Copiez la clé (commence par `sk-`)
+### Variables d'environnement à ajouter :
 
-#### Secrets JWT/NextAuth
-Générez des secrets sécurisés :
-```bash
-# Dans votre terminal
-openssl rand -base64 32
-```
+| Nom du Secret | Valeur | Description |
+|---------------|--------|-------------|
+| `NEXT_PUBLIC_SUPABASE_URL` | `https://mvhogfelpbufnrklxpxq.supabase.co` | URL de votre projet Supabase |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` | Clé anonyme Supabase |
+| `SUPABASE_SERVICE_ROLE_KEY` | `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` | Clé de service Supabase |
+| `OPENAI_API_KEY` | `sk-proj-wcEYpbVu2ctBOzT5zmJiSaV5...` | Clé API OpenAI |
+| `JWT_SECRET` | `UiuSVGy6+Tzn93GwXa/dcyPBeD+Y9q7f...` | Secret JWT pour l'authentification |
+| `NEXTAUTH_SECRET` | `ytvqKJNF+DHMZXHeipda6n+DGVOKYWz2...` | Secret NextAuth |
 
-### ✅ Vérification
+### Variables optionnelles :
 
-Après avoir ajouté tous les secrets :
+| Nom du Secret | Valeur | Description |
+|---------------|--------|-------------|
+| `NEXT_PUBLIC_Maps_API_KEY` | `AIzaSyBoJQ8DvmPw0Y5u4ZzrRfRj-peId7JGBnI` | Clé API Google Maps |
+| `WEBHOOK_URL_ALERTS` | `https://hooks.slack.com/services/...` | URL webhook pour les alertes |
+| `WEBHOOK_SECRET` | `votre_super_cle_webhook_secrete_123` | Secret pour les webhooks |
 
-1. Poussez un commit sur la branche `main`
-2. Allez sur l'onglet `Actions` de votre repository
-3. Vérifiez que le workflow `validate-env` s'exécute sans erreur
+## 📝 Étape 3 : Procédure d'ajout
 
-### 🚨 Sécurité
+Pour chaque secret :
 
-- ⚠️ **Ne jamais** commiter ces secrets dans le code
-- ⚠️ **Ne jamais** les partager publiquement
-- ✅ Utilisez toujours les secrets GitHub pour les variables sensibles
-- ✅ Régénérez les clés si elles ont été exposées
+1. **Cliquez sur "New repository secret"**
+2. **Nom** : Entrez le nom exact (ex: `NEXT_PUBLIC_SUPABASE_URL`)
+3. **Valeur** : Copiez la valeur depuis votre fichier `.env.local`
+4. **Cliquez sur "Add secret"**
 
-### 🔄 Mise à jour des secrets
+## ✅ Étape 4 : Vérification
 
-Si vous devez changer une clé :
+Une fois tous les secrets ajoutés :
 
-1. Mettez à jour le secret dans GitHub
-2. Les prochains déploiements utiliseront automatiquement la nouvelle valeur
-3. Aucun redéploiement manuel n'est nécessaire
+1. **Retournez dans votre terminal**
+2. **Lancez le script de déploiement** :
+   ```bash
+   ./tools/deploy.sh
+   ```
+3. **Vérifiez que le déploiement se fait sans erreur**
+
+## 🔍 Dépannage
+
+### Erreur "Secret not found"
+- Vérifiez que le nom du secret est exactement le même que dans le workflow
+- Assurez-vous que le secret a été ajouté au bon dépôt
+
+### Erreur de déploiement
+- Vérifiez les logs GitHub Actions dans l'onglet "Actions"
+- Assurez-vous que toutes les variables requises sont présentes
+
+## 📚 Ressources
+
+- [Documentation GitHub Secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets)
+- [Guide de déploiement](./docs/README_DEPLOIEMENT.md)
+- [Script de déploiement](./tools/deploy.sh)
+
+## 🎯 Prochaines étapes
+
+Une fois les secrets configurés :
+1. Testez le déploiement avec `./tools/deploy.sh`
+2. Vérifiez que le site est accessible sur Hostinger
+3. Configurez les notifications si nécessaire
 
 ---
 
-**Note** : Les secrets sont automatiquement disponibles dans tous les workflows GitHub Actions via `${{ secrets.NOM_DU_SECRET }}`. 
+**Note** : Les secrets GitHub sont chiffrés et ne peuvent pas être consultés après leur ajout. Gardez une copie de vos valeurs dans un endroit sûr. 
