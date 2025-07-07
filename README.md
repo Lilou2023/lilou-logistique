@@ -154,6 +154,10 @@ git push origin main
   - Hostinger → Git → Logs
   - https://lilou-logistique.com
 
+> **Note** : le fichier `index.html` à la racine et le dossier `public_html/` sont
+> générés automatiquement dans la branche `hostinger-deploy` par le workflow de
+> déploiement. Ils n'ont pas à être commités sur `main`.
+
 ---
 
 ## 9️⃣ Mises à jour continues
