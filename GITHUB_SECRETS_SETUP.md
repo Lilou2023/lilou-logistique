@@ -15,7 +15,7 @@ Pour que les workflows GitHub Actions fonctionnent correctement, vous devez conf
 
 | Nom du Secret | Description | Exemple |
 |---------------|-------------|---------|
-| `NEXT_PUBLIC_SUPABASE_URL` | URL de votre projet Supabase | `https://mvhogfelpbufnrklxpxq.supabase.co` |
+| `NEXT_PUBLIC_SUPABASE_URL` | URL de votre projet Supabase | `https://your-supabase-url.supabase.co` |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Clé anonyme Supabase | `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` |
 | `SUPABASE_SERVICE_ROLE_KEY` | Clé de service Supabase (privée) | `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` |
 | `OPENAI_API_KEY` | Clé API OpenAI | `sk-proj-...` |
