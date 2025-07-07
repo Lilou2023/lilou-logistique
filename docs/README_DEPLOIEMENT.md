@@ -13,7 +13,8 @@
 
 1. `main` contient le code source Next.js
 2. `hostinger-deploy` contient **le résultat de `next export`** pour Hostinger
-3. Webhook GitHub → Hostinger déclenche un `git pull` sur cette branche
+3. L'export est généré automatiquement par `./tools/deploy.sh` ou le workflow GitHub
+4. Webhook GitHub → Hostinger déclenche un `git pull` sur cette branche
 
 ---
 
