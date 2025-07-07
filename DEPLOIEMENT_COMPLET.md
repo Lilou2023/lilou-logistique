@@ -25,9 +25,9 @@ vercel login
 #### Étape 3 : Configuration des Variables d'Environnement
 Sur Vercel Dashboard → Settings → Environment Variables :
 ```
-NEXT_PUBLIC_SUPABASE_URL=https://mvhogfelpbufnrklxpxq.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=votre-clé-anon-supabase
-OPENAI_API_KEY=votre-clé-openai
+NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+OPENAI_API_KEY=your-openai-api-key
 NEXT_PUBLIC_APP_URL=https://lilou-logistique.com
 ```
 
@@ -66,11 +66,11 @@ npm start
 ### Variables d'Environnement Requises
 ```env
 # Supabase
-NEXT_PUBLIC_SUPABASE_URL=https://mvhogfelpbufnrklxpxq.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=votre-clé-anon
+NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
 
 # OpenAI
-OPENAI_API_KEY=sk-votre-clé-openai
+OPENAI_API_KEY=your-openai-api-key
 
 # Application
 NEXT_PUBLIC_APP_URL=https://lilou-logistique.com
