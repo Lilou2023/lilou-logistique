@@ -74,12 +74,13 @@ jobs:
 
       - name: 📦 Install dependencies
         run: npm ci
-
+      - name: Lint code
+              run: npm run lint
       - name: 🔐 Exécution de l'audit NPM
-        run: npm audit --audit-level=high || echo "⚠️ Vulnérabilités détectées"
+        run: nnpm auditaudit --audit-level=high || echo "⚠️ Vulnérabilités détectées"
 
       - name: 🧪 Vérifier les secrets codés en dur
-        run: |
+        run:  |
           echo "🔍 Vérification des secrets en dur..."
           if grep -r "your-super-secret" . --exclude-dir=node_modules --exclude-dir=.git; then
             echo "❌ Secrets par défaut trouvés !"
