@@ -131,7 +131,7 @@ npm run validate-env
 
 ```bash
 # Build statique pour Hostinger
-npm run build:hostinger
+npm run build
 
 # Vérifier les fichiers générés
 ls out/
@@ -183,7 +183,7 @@ npm run test:coverage # Tests avec couverture
 ### Déploiement
 
 ```bash
-npm run build:hostinger  # Build pour Hostinger
+npm run build  # Build pour Hostinger
 npm run deploy          # Déploiement manuel
 ```
 
