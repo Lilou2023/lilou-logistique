@@ -133,3 +133,64 @@ En cas de problème :
 ---
 
 **🎉 Félicitations ! Votre projet est maintenant prêt pour la production !** 
+
+## 🚀 **Déploiement automatisé sur Hostinger**
+
+### **1. Pré-requis**
+
+- **Être sur la branche `main`**
+  ```bash
+  git checkout main
+  ```
+- **Avoir commit et pushé tous vos changements**
+  ```bash
+  git add .
+  git commit -m "feat: mes dernières modifications"
+  git push origin main
+  ```
+
+---
+
+### **2. Lancer le script de déploiement**
+
+Dans le terminal, exécutez simplement :
+```bash
+./tools/deploy.sh
+```
+> **Astuce** : Pour ignorer les tests :
+> ```bash
+> ./tools/deploy.sh --skip-tests
+> ```
+
+---
+
+### **3. Ce que fait le script pour vous**
+
+- Vérifie la branche courante (`main`)
+- Lance les tests (sauf si `--skip-tests`)
+- Build la version de production Next.js
+- Prépare la branche `hostinger-deploy` (copie les fichiers statiques, ajoute `.htaccess`)
+- Commit et push sur `hostinger-deploy`
+- **Déclenche automatiquement le déploiement sur Hostinger via le webhook**
+
+---
+
+### **4. Après le script**
+
+- **Aucune action manuelle supplémentaire n'est requise** : Hostinger détecte le push et met à jour le site.
+- Vous pouvez vérifier le statut du déploiement sur l'interface Hostinger ou en visitant votre site.
+
+---
+
+## 🟢 **Résumé**
+
+- Plus besoin de manipulations manuelles fastidieuses.
+- Un seul script pour tout automatiser et sécuriser vos déploiements.
+- Moins d'erreurs, plus de rapidité !
+
+---
+
+**Besoin d'aide pour personnaliser le script, ajouter des notifications, ou automatiser d'autres tâches ?**  
+Dites-le-moi, je peux vous accompagner sur mesure pour la suite !
+
+Prêt à lancer votre premier déploiement ? 
