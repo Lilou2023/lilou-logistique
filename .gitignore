@@ -59,3 +59,7 @@ logs
 *.tmp
 *.temp
 .cache/
+
+# Hostinger export
+public_html/
+index.html

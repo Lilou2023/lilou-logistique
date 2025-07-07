@@ -98,6 +98,7 @@ Un pipeline automatique est déclenché sur chaque `push` ou `pull request` :
 * Build
 * Audit de sécurité NPM
 * **Déploiement automatique sur Hostinger** 🚀
+* Les exports statiques sont générés par `./tools/deploy.sh` et poussés sur la branche `hostinger-deploy`
 
 ### Workflows disponibles :
 - `.github/workflows/validate-env.yml` - Validation et tests
