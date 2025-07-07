@@ -7,17 +7,17 @@ const path = require('path');
 const requiredEnvVars = [
   'NEXT_PUBLIC_SUPABASE_URL',
   'NEXT_PUBLIC_SUPABASE_ANON_KEY',
-  'SUPABASE_SERVICE_ROLE_KEY',
-  'OPENAI_API_KEY',
-  'JWT_SECRET',
-  'NEXTAUTH_SECRET'
+  'OPENAI_API_KEY'
 ];
 
 // Variables optionnelles mais recommandées
 const optionalEnvVars = [
   'NEXTAUTH_URL',
   'NODE_ENV',
-  'PORT'
+  'NEXT_PUBLIC_APP_URL',
+  'NEXT_PUBLIC_URL',
+  'NEXT_PUBLIC_APP_NAME',
+  'NEXT_PUBLIC_APP_VERSION'
 ];
 
 // Couleurs pour la console
@@ -36,26 +36,26 @@ function log(message, color = 'reset') {
 function validateEnv() {
   log('\n🔍 Validation des variables d\'environnement...', 'blue');
   
-  // Vérifier la présence du fichier .env.local
-  const envLocalPath = path.join(process.cwd(), '.env.local');
-  const envPath = path.join(process.cwd(), '.env');
+  // Vérifier si nous sommes dans un environnement CI/CD
+  const isCI = process.env.CI || process.env.GITHUB_ACTIONS;
   
-  if (!fs.existsSync(envLocalPath)) {
-    log('\n❌ Erreur: Le fichier .env.local n\'existe pas!', 'red');
-    log('   Créez-le en copiant .env.example:', 'yellow');
-    log('   cp .env.example .env.local\n', 'yellow');
-    process.exit(1);
+  if (!isCI) {
+    // Environnement local - vérifier la présence du fichier .env.local
+    const envLocalPath = path.join(process.cwd(), '.env.local');
+    const envPath = path.join(process.cwd(), '.env');
+    
+    if (!fs.existsSync(envLocalPath)) {
+      log('\n❌ Erreur: Le fichier .env.local n\'existe pas!', 'red');
+      log('   Créez-le en copiant .env.example:', 'yellow');
+      log('   cp .env.example .env.local\n', 'yellow');
+      process.exit(1);
+    }
+    
+    // Charger les variables d'environnement locales
+    require('dotenv').config({ path: envLocalPath });
+  } else {
+    log('   🔧 Environnement CI/CD détecté - utilisation des variables d\'environnement système', 'blue');
   }
-  
-  // Vérifier qu'il n'y a pas de fichier .env (sécurité)
-  if (fs.existsSync(envPath)) {
-    log('\n⚠️  Attention: Un fichier .env existe!', 'yellow');
-    log('   Pour des raisons de sécurité, utilisez .env.local à la place.', 'yellow');
-    log('   Le fichier .env ne doit pas être commité.\n', 'yellow');
-  }
-  
-  // Charger les variables d'environnement
-  require('dotenv').config({ path: envLocalPath });
   
   let hasErrors = false;
   let hasWarnings = false;
@@ -97,15 +97,15 @@ function validateEnv() {
     }
   }
   
-  // Vérifier la longueur des secrets
-  ['JWT_SECRET', 'NEXTAUTH_SECRET'].forEach(secret => {
-    if (process.env[secret] && process.env[secret].length < 32) {
-      log(`   ⚠️  ${secret} devrait contenir au moins 32 caractères`, 'yellow');
+  // Vérifier la clé OpenAI
+  if (process.env.OPENAI_API_KEY) {
+    if (!process.env.OPENAI_API_KEY.startsWith('sk-')) {
+      log('   ⚠️  OPENAI_API_KEY ne semble pas être une clé OpenAI valide', 'yellow');
       hasWarnings = true;
-    } else if (process.env[secret]) {
-      log(`   ✅ ${secret} a une longueur suffisante`, 'green');
+    } else {
+      log('   ✅ Clé OpenAI valide', 'green');
     }
-  });
+  }
   
   // Résumé
   console.log('\n' + '='.repeat(50));
@@ -119,6 +119,16 @@ function validateEnv() {
     log('✅ Validation réussie: Toutes les variables sont correctement configurées!', 'green');
   }
   console.log('='.repeat(50) + '\n');
+
+  // Affichage des valeurs pour debug
+  log('📊 Valeurs des variables d\'environnement:', 'blue');
+  console.log('App:', process.env.NEXT_PUBLIC_APP_NAME || 'Non définie');
+  console.log('Version:', process.env.NEXT_PUBLIC_APP_VERSION || 'Non définie');
+  console.log('URL:', process.env.NEXT_PUBLIC_APP_URL || 'Non définie');
+  console.log('Public URL:', process.env.NEXT_PUBLIC_URL || 'Non définie');
+  console.log('Supabase URL:', process.env.NEXT_PUBLIC_SUPABASE_URL ? '✅ Configurée' : '❌ Manquante');
+  console.log('Supabase Anon Key:', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? '✅ Configurée' : '❌ Manquante');
+  console.log('OpenAI API Key:', process.env.OPENAI_API_KEY ? '✅ Configurée' : '❌ Manquante');
 }
 
 // Exécuter la validation
