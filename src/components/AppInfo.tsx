@@ -6,10 +6,10 @@ interface AppInfoProps {
   className?: string;
 }
 
-const AppInfo: React.FC<AppInfoProps> = ({ 
-  showVersion = true, 
-  showUrl = false, 
-  className = '' 
+const AppInfo: React.FC<AppInfoProps> = ({
+  showVersion = true,
+  showUrl = false,
+  className = ''
 }) => {
   const appName = process.env.NEXT_PUBLIC_APP_NAME || 'Lilou Logistique DSP';
   const appVersion = process.env.NEXT_PUBLIC_APP_VERSION || '1.0.0';
@@ -28,4 +28,4 @@ const AppInfo: React.FC<AppInfoProps> = ({
   );
 };
 
-export default AppInfo; 
+export default AppInfo;

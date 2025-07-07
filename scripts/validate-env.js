@@ -34,31 +34,31 @@ function log(message, color = 'reset') {
 
 function validateEnv() {
   log('\n🔍 Validation des variables d\'environnement...', 'blue');
-  
+
   // Vérifier si nous sommes dans un environnement CI/CD
   const isCI = process.env.CI || process.env.GITHUB_ACTIONS;
-  
+
   if (!isCI) {
     // Environnement local - vérifier la présence du fichier .env.local
     const envLocalPath = path.join(process.cwd(), '.env.local');
     const envPath = path.join(process.cwd(), '.env');
-    
+
     if (!fs.existsSync(envLocalPath)) {
       log('\n❌ Erreur: Le fichier .env.local n\'existe pas!', 'red');
       log('   Créez-le en copiant .env.example:', 'yellow');
       log('   cp .env.example .env.local\n', 'yellow');
       process.exit(1);
     }
-    
+
     // Charger les variables d'environnement locales
     require('dotenv').config({ path: envLocalPath });
   } else {
     log('   🔧 Environnement CI/CD détecté - utilisation des variables d\'environnement système', 'blue');
   }
-  
+
   let hasErrors = false;
   let hasWarnings = false;
-  
+
   // Vérifier les variables requises
   log('\n📋 Variables requises:', 'blue');
   requiredEnvVars.forEach(varName => {
@@ -72,7 +72,7 @@ function validateEnv() {
       log(`   ✅ ${varName} - OK`, 'green');
     }
   });
-  
+
   // Vérifier les variables optionnelles
   log('\n📋 Variables optionnelles:', 'blue');
   optionalEnvVars.forEach(varName => {
@@ -82,10 +82,10 @@ function validateEnv() {
       log(`   ✅ ${varName} - OK`, 'green');
     }
   });
-  
+
   // Validation spécifique
   log('\n🔧 Validations spécifiques:', 'blue');
-  
+
   // Vérifier le format de l'URL Supabase
   if (process.env.NEXT_PUBLIC_SUPABASE_URL) {
     if (!process.env.NEXT_PUBLIC_SUPABASE_URL.includes('.supabase.co')) {
@@ -95,7 +95,7 @@ function validateEnv() {
       log('   ✅ URL Supabase valide', 'green');
     }
   }
-  
+
   // Vérifier la clé OpenAI
   if (process.env.OPENAI_API_KEY) {
     if (!process.env.OPENAI_API_KEY.startsWith('sk-')) {
@@ -105,7 +105,7 @@ function validateEnv() {
       log('   ✅ Clé OpenAI valide', 'green');
     }
   }
-  
+
   // Résumé
   console.log('\n' + '='.repeat(50));
   if (hasErrors) {

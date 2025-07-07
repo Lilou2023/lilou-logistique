@@ -164,7 +164,7 @@ if git diff --cached --quiet; then
 else
     # Commit
     git commit -m "🚀 Déploiement automatique - $(date '+%Y-%m-%d %H:%M:%S')"
-    
+
     # Push
     if git push origin hostinger-deploy; then
         log_success "Déploiement poussé vers hostinger-deploy"
