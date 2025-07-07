@@ -1,124 +1,155 @@
-# 🚚 Lilou Logistique
+# 🚚 Lilou Logistique – Déploiement Automatique GitHub + Hostinger
 
-Plateforme Next.js dédiée à la gestion logistique intelligente et connectée avec Supabase et OpenAI.
-
-## 🆘 Premier déploiement sur Hostinger ?
-
-Si vous avez l'erreur **"branche hostinger-deploy introuvable"**, c'est normal ! 
-
-**Solution rapide** :
-```bash
-bash scripts/create-deploy-branch.sh
-```
-Puis relancez le déploiement sur Hostinger. [Plus d'infos](FIX_FIRST_DEPLOYMENT.md)
-
-### Message "composer.json not found" ?
-
-Lors d'un déploiement via Git, Hostinger peut chercher un fichier `composer.json`
-et lancer automatiquement Composer. Ce projet est une application Next.js :
-utilisez simplement `npm install` pour installer les dépendances. Si vous voyez
-l'avertissement **"composer.json not found"**, ignorez-le ou désactivez la phase
-Composer dans les options de déploiement Hostinger.
-
-## 🚀 Fonctionnalités principales
-
-- Authentification sécurisée via NextAuth.js
-- Base de données temps réel avec Supabase
-- Intégration OpenAI (analyse, génération, automatisation)
-- CI/CD complet via GitHub Actions
-- Tests unitaires et audit de sécurité automatisés
+Ce guide explique étape par étape comment configurer, déployer et maintenir le projet **lilou-logistique** sur GitHub avec intégration Hostinger.
 
 ---
 
-## 📦 Installation locale
+## 1️⃣ Création du dépôt GitHub
+
+- Rendez-vous sur https://github.com/new
+- Nom du dépôt : `lilou-logistique`
+- Type : Public
+- Ne pas initialiser avec README
+- Créez le repository
+
+---
+
+## 2️⃣ Initialisation locale et premier push
+
+Dans votre terminal :
+```bash
+git init
+git add .
+git commit -m "Initial commit"
+git branch -M main
+git remote add origin https://github.com/Lilou2023/lilou-logistique.git
+git push -u origin main
+```
+Ou utilisez le script :
+```bash
+bash init-github.sh
+```
+
+---
+
+## 3️⃣ Ajouter la clé SSH Hostinger à GitHub
+
+- Allez dans votre dépôt GitHub → Settings → Deploy keys
+- Cliquez sur Add deploy key
+- Titre : `Hostinger - lilou-logistique.com`
+- Collez la clé SSH fournie par Hostinger
+- Cochez **Allow write access**
+- Cliquez sur Add key
+
+---
+
+## 4️⃣ Ajouter les secrets GitHub
+
+Dans GitHub : Settings → Secrets and variables → Actions
+Ajoutez les secrets suivants :
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `OPENAI_API_KEY`
+- `JWT_SECRET`
+- `NEXTAUTH_SECRET`
+
+> Voir le fichier `GITHUB_SECRETS_SETUP.md` pour les valeurs et la génération des clés.
+
+---
+
+## 5️⃣ Installer et configurer le projet localement
 
 ```bash
 git clone https://github.com/Lilou2023/lilou-logistique.git
 cd lilou-logistique
 npm install
-```
-
-Cette application nécessite **Node.js 20 ou plus**. Un fichier `.nvmrc` indique
-la version recommandée pour ceux utilisant nvm.
-
----
-
-## ⚙️ Configuration de l'environnement
-
-1. **Crée un fichier `.env.local`** à la racine du projet :
-
-```bash
 cp .env.example .env.local
 ```
 
-2. **Renseigne les variables d'environnement** dans `.env.local` :
-
-| Variable | Description |
-| -------- | ----------- |
-| `NEXT_PUBLIC_SUPABASE_URL` | URL de votre projet Supabase |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Clé anonyme Supabase |
-| `SUPABASE_SERVICE_ROLE_KEY` | Clé de rôle service Supabase |
-| `OPENAI_API_KEY` | Clé API pour OpenAI |
-| `JWT_SECRET` | Secret pour signer les JWT |
-| `NEXTAUTH_SECRET` | Secret utilisé par NextAuth.js |
+Modifiez `.env.local` avec vos variables d’environnement.
 
 ---
 
-## 🧪 Lancer les tests
+## 6️⃣ Tester et valider l’environnement
 
 ```bash
 npm run test
-```
-
----
-
-## 🧹 Lint du code
-
-```bash
-npm run lint
-```
-
-Ce projet utilise la configuration ESLint recommandée pour Next.js (voir `.eslintrc.json`).
-
----
-
-## ✅ Vérification d'environnement
-
-```bash
 npm run validate-env
 ```
 
-Ce script vérifie :
+---
 
-* La présence d'un `.env.local`
-* L'absence de `.env` (sécurité)
-* Le format et la validité des variables
+## 7️⃣ Configurer le déploiement Git sur Hostinger
+
+Dans le panneau Hostinger → section GIT :
+- Dépôt : `git@github.com:Lilou2023/lilou-logistique.git`
+- Branche : `hostinger-deploy`
+- Répertoire : (laisser vide)
+- Cliquez sur Créer
 
 ---
 
-## 🛠️ Build de production
+## 8️⃣ Premier déploiement automatique
 
+- Faites un commit sur la branche main :
 ```bash
-npm run build
+git add .
+git commit -m "Déclenchement premier build"
+git push origin main
 ```
+- GitHub Actions va :
+  - Construire le site statique
+  - Créer la branche `hostinger-deploy`
+  - Déployer automatiquement via Hostinger
+- Vérifiez :
+  - GitHub → Actions (workflow)
+  - Hostinger → Git → Logs
+  - https://lilou-logistique.com
 
 ---
 
-## 🔐 CI/CD avec GitHub Actions
+## 9️⃣ Mises à jour continues
 
-Un pipeline automatique est déclenché sur chaque `push` ou `pull request` :
-
-* Validation environnement (développement + production)
-* Lint / Type check TypeScript
-* Tests unitaires
-* Build
-* Audit de sécurité NPM
-
-Fichier de workflow : `.github/workflows/validate-env.yml`
+À chaque modification du code :
+```bash
+git add .
+git commit -m "Votre message"
+git push origin main
+```
+Le déploiement est automatique ✨
 
 ---
 
-## 🧾 Licence
+## 🔄 Dépannage courant
 
-Ce projet est sous licence MIT. Voir [LICENSE](LICENSE).
+- Le site ne se met pas à jour ? Vérifiez GitHub Actions, cliquez sur "Pull" dans Hostinger, videz le cache navigateur.
+- Erreur 404 ? Vérifiez que `.htaccess` est bien généré (voir `hostinger-deploy.sh`).
+- Images manquantes ? Utilisez `/images/logo.png` (chemins absolus).
 
+---
+
+## 🔐 Sécurité et performance
+
+- CI/CD : Automatisé avec GitHub Actions
+- Tests et validation : via `validate-env.yml` et `test`
+- Export statique : Pour hébergement mutualisé
+- Sécurité : `.htaccess` généré avec protections avancées
+- Performances : Gzip + cache + routing optimisé
+
+---
+
+## 📚 Références utiles
+
+- `README.md` (ce fichier)
+- `HOSTINGER_GIT_SETUP.md`
+- `ACTIONS_HOSTINGER.md`
+- `GITHUB_SECRETS_SETUP.md`
+- `GUIDE_RAPIDE_HOSTINGER.md`
+- `DEPLOYMENT_HOSTINGER.md`
+
+---
+
+En suivant ce guide, vous aurez un projet lilou-logistique prêt à être développé, testé et déployé automatiquement sur Hostinger via GitHub Actions.
+
+N’hésitez pas à demander une version PDF ou un guide illustré si besoin !
