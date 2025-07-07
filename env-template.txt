@@ -14,4 +14,4 @@ NEXTAUTH_URL=http://localhost:3000
 # Instructions :
 # 1. Copiez ce contenu dans un fichier .env.local
 # 2. Ne commitez JAMAIS ce fichier dans Git
-# 3. Ces mêmes variables doivent être ajoutées comme secrets GitHub 
+# 3. Ces mêmes variables doivent être ajoutées comme secrets GitHub

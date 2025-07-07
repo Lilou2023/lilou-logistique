@@ -115,4 +115,4 @@ Le déploiement sera automatique !
 
 ---
 
-**Note** : Ce guide suit exactement les instructions fournies et utilise les clés et URLs spécifiques du projet. 
+**Note** : Ce guide suit exactement les instructions fournies et utilise les clés et URLs spécifiques du projet.
