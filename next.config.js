@@ -3,8 +3,13 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   
-  // Configuration des images
+  // Configuration pour l'export statique
+  output: 'export',
+  trailingSlash: true,
+  
+  // Configuration des images (désactivée pour l'export statique)
   images: {
+    unoptimized: true,
     domains: [
       'localhost',
       // Ajoutez ici les domaines autorisés pour les images
