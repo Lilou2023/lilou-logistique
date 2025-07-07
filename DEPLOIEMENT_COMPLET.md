@@ -155,8 +155,6 @@ npm run build
 ## 📞 Support
 
 ### Documentation Disponible
-- `DEPLOYMENT_READY.md` : Guide de déploiement rapide
-- `VERCEL_VS_HOSTINGER.md` : Comparaison des plateformes
 - `GITHUB_SECRETS_SETUP.md` : Configuration des secrets
 - `WORKFLOW_STATUS.md` : Statut des workflows
 

@@ -265,8 +265,6 @@ main() {
     echo ""
     print_status "Documentation disponible :"
     echo "- DEPLOIEMENT_COMPLET.md : Guide détaillé"
-    echo "- DEPLOYMENT_READY.md : Déploiement rapide"
-    echo "- VERCEL_VS_HOSTINGER.md : Comparaison des plateformes"
     echo ""
     print_status "Variables d'environnement configurées :"
     echo "- NEXT_PUBLIC_APP_NAME: $APP_NAME"
