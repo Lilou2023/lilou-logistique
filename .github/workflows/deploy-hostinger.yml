@@ -1,31 +1,25 @@
 name: 🚀 Déploiement Hostinger Automatique
-
 on:
   push:
-    branches: [ main ]
+    branches: [main]
     paths-ignore:
       - 'README.md'
       - 'docs/**'
   workflow_dispatch:
-
 jobs:
   build-and-prepare:
     name: 🔨 Build et Préparation
     runs-on: ubuntu-latest
-    
     steps:
       - name: 📥 Checkout du code
         uses: actions/checkout@v4
-
       - name: 📦 Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
-
       - name: 📦 Installation des dépendances
         run: npm ci
-
       - name: ✅ Validation des variables d'environnement
         run: |
           echo "🔍 Vérification des variables d'environnement..."
@@ -41,8 +35,7 @@ jobs:
             echo "❌ OPENAI_API_KEY manquant"
             exit 1
           fi
-          echo "✅ Toutes les variables d'environnement sont configurées"
-
+            echo "✅ Toutes les variables d'environnement sont configurées"
       - name: 🔧 Configuration Next.js pour export statique
         run: |
           cat > next.config.js << 'EOF'
@@ -56,7 +49,6 @@ jobs:
           }
           module.exports = nextConfig
           EOF
-
       - name: 🏗️ Build statique
         env:
           NODE_ENV: production
@@ -68,41 +60,32 @@ jobs:
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: npm run build
-
       - name: 📁 Préparation des fichiers de déploiement
         run: |
           # Créer le dossier de déploiement
           mkdir -p hostinger-deploy
-          
           # Copier les fichiers statiques
           cp -r out/* hostinger-deploy/
-          
           # Créer .htaccess pour Apache
           cat > hostinger-deploy/.htaccess << 'EOF'
           # Configuration Apache optimisée pour Next.js statique
-          
           Options -MultiViews
           RewriteEngine On
-          
           # Redirection www
           RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
           RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
-          
           # Force HTTPS
           RewriteCond %{HTTPS} off
           RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
-          
           # Gestion des routes Next.js
           RewriteCond %{REQUEST_FILENAME} !-f
           RewriteCond %{REQUEST_FILENAME} !-d
           RewriteCond %{REQUEST_FILENAME} !-l
           RewriteRule ^([^/]+)/?$ $1.html [L]
-          
           # Fallback vers index.html pour les routes dynamiques
           RewriteCond %{REQUEST_FILENAME} !-f
           RewriteCond %{REQUEST_FILENAME} !-d
           RewriteRule . /index.html [L]
-          
           # Headers de sécurité
           <IfModule mod_headers.c>
               Header set X-Frame-Options "SAMEORIGIN"
@@ -111,16 +94,14 @@ jobs:
               Header set Referrer-Policy "strict-origin-when-cross-origin"
               Header set Permissions-Policy "camera=(), microphone=(), geolocation=()"
           </IfModule>
-          
           # Compression Gzip
           <IfModule mod_deflate.c>
-              AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json image/svg+xml
+            AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json image/svg+xml
           </IfModule>
-          
           # Cache optimisé
           <IfModule mod_expires.c>
-              ExpiresActive On
-              
+            ExpiresActive On
+
               # Images
               ExpiresByType image/jpg "access plus 1 year"
               ExpiresByType image/jpeg "access plus 1 year"
@@ -128,38 +109,31 @@ jobs:
               ExpiresByType image/png "access plus 1 year"
               ExpiresByType image/webp "access plus 1 year"
               ExpiresByType image/svg+xml "access plus 1 year"
-              ExpiresByType image/x-icon "access plus 1 year"
-              
-              # CSS et JS
+                ExpiresByType image/x-icon "access plus 1 year"
+                # CSS et JS
               ExpiresByType text/css "access plus 1 month"
               ExpiresByType application/javascript "access plus 1 month"
-              ExpiresByType text/javascript "access plus 1 month"
-              
-              # Fonts
-              ExpiresByType font/ttf "access plus 1 year"
-              ExpiresByType font/otf "access plus 1 year"
-              ExpiresByType font/woff "access plus 1 year"
-              ExpiresByType font/woff2 "access plus 1 year"
-              ExpiresByType application/font-woff "access plus 1 year"
-              
-              # HTML
-              ExpiresByType text/html "access plus 0 seconds"
-          </IfModule>
-          
-          # Désactiver l'indexation des dossiers
-          Options -Indexes
-          
-          # Protection des fichiers sensibles
-          <FilesMatch "^\.">
-              Order allow,deny
-              Deny from all
+                ExpiresByType text/javascript "access plus 1 month"
+                # Fonts
+                ExpiresByType font/ttf "access plus 1 year"
+                ExpiresByType font/otf "access plus 1 year"
+                ExpiresByType font/woff "access plus 1 year"
+                ExpiresByType font/woff2 "access plus 1 year"
+                ExpiresByType application/font-woff "access plus 1 year"
+                # HTML
+                ExpiresByType text/html "access plus 0 seconds"
+            </IfModule>
+            # Désactiver l'indexation des dossiers
+            Options -Indexes
+            # Protection des fichiers sensibles
+            <FilesMatch "^\.">
+                Order allow,deny
+                Deny from all
           </FilesMatch>
           EOF
-          
           # Créer un fichier de déploiement info
           echo "Build date: $(date)" > hostinger-deploy/deploy-info.txt
           echo "Commit: ${{ github.sha }}" >> hostinger-deploy/deploy-info.txt
-
       - name: 📤 Upload des artefacts
         uses: actions/upload-artifact@v4
         with:
@@ -188,7 +162,7 @@ jobs:
     needs: build-and-prepare
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
-    
+
     steps:
       - name: 📥 Checkout
         uses: actions/checkout@v4
@@ -206,22 +180,22 @@ jobs:
           # Configuration Git
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
-          
+
           # Créer ou checkout la branche
           git checkout -B hostinger-deploy
-          
+
           # Nettoyer la branche
           git rm -rf . || true
-          
+
           # Copier les fichiers de déploiement
           cp -r hostinger-deploy/* .
           cp -r hostinger-deploy/.htaccess .
-          
+
           # Ajouter tous les fichiers
           git add -A
           # Forcer l'ajout d'index.html si ignoré
           git add -f index.html
-          
+
           # Commit si il y a des changements
           if ! git diff --cached --quiet; then
             git commit -m "🚀 Déploiement automatique - ${{ github.sha }}"

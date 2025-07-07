@@ -1,40 +1,32 @@
 name: 🔍 Validation Environnement LILOU LOGISTIQUE
-
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
   pull_request:
-    branches: [ main, develop ]
-
+    branches: [main, develop]
 env:
   NODE_VERSION: '20'
   FORCE_COLOR: 1
-
 jobs:
   validate-env:
     name: 🛡️ Validation Configuration
     runs-on: ubuntu-latest
-
     steps:
       - name: 📥 Checkout du code
         uses: actions/checkout@v4
-          with:
-              fetch-depth: 0
-
+        with:
+          fetch-depth: 0
       - name: 📦 Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-
-
       - name: 📦 Install dependencies
         run: npm ci
       - name: Lint code
-              run: npm run lint
+        run: npm run lint
       - name: 🔧 Type check
         run: npm run type-check || echo "⚠️ Erreurs TypeScript détectées"
-
       - name: ✅ Validate ENV - Dev
         env:
           NODE_ENV: development
@@ -45,12 +37,10 @@ jobs:
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
         run: npm run validate-env
-
       - name: 🧪 Unit Tests
         env:
           NODE_ENV: test
         run: npm run test || echo "⚠️ Tests échoués"
-
       - name: 🏗️ Build Test
         env:
           NODE_ENV: production
@@ -61,28 +51,24 @@ jobs:
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
         run: npm run build
-
   audit:
     name: 🔒 Audit Sécurité
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - name: 🔧 Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-
       - name: 📦 Install dependencies
         run: npm ci
       - name: Lint code
-              run: npm run lint
+        run: npm run lint
       - name: 🔐 Exécution de l'audit NPM
-        run: nnpm auditaudit --audit-level=high || echo "⚠️ Vulnérabilités détectées"
-
+        run: npm audit --audit-level=high || echo "⚠️ Vulnérabilités détectées"
       - name: 🧪 Vérifier les secrets codés en dur
-        run:  |
+        run: |
           echo "🔍 Vérification des secrets en dur..."
           if grep -r "your-super-secret" . --exclude-dir=node_modules --exclude-dir=.git; then
             echo "❌ Secrets par défaut trouvés !"
