@@ -206,6 +206,16 @@ npm run build
 
 ---
 
+## 🎨 Formatage du code
+
+Pour appliquer le formatage Prettier sur l'ensemble du projet :
+
+```bash
+npx prettier --write .
+```
+
+---
+
 ## 🔐 CI/CD avec GitHub Actions
 
 Un pipeline automatique est déclenché sur chaque `push` ou `pull request` :
