@@ -59,3 +59,7 @@ logs
 *.tmp
 *.temp
 .cache/
+scripts/build-static(1).sh
+scripts/create-deploy-branch(1).sh
+scripts/install-hostinger(1).sh
+scripts/validate-env(1).js
