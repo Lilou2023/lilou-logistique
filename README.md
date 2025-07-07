@@ -1,127 +1,65 @@
-# 🚚 Lilou Logistique
+# Objectif : Configurer et déployer automatiquement le projet lilou-logistique sur GitHub avec intégration Hostinger
 
-[![Deploy Hostinger](https://github.com/Lilou2023/lilou-logistique/workflows/%F0%9F%9A%80%20D%C3%A9ploiement%20Hostinger%20Automatique/badge.svg)](https://github.com/Lilou2023/lilou-logistique/actions)
-[![Tests](https://img.shields.io/badge/tests-passing-brightgreen)](https://github.com/Lilou2023/lilou-logistique/actions)
-[![Next.js](https://img.shields.io/badge/Next.js-14.0.4-black)](https://nextjs.org/)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+Créer un dépôt GitHub
 
-Plateforme Next.js dédiée à la gestion logistique intelligente et connectée avec Supabase et OpenAI.
+Nom : lilou-logistique
 
-## 🚀 Fonctionnalités principales
+Type : Public
 
-- Authentification sécurisée via NextAuth.js
-- Base de données temps réel avec Supabase
-- Intégration OpenAI (analyse, génération, automatisation)
-- CI/CD complet via GitHub Actions
-- Tests unitaires et audit de sécurité automatisés
-- Chargement local de la police **Inter**
+Ne pas initialiser avec README
 
----
+Ne pas sauvegarder les infos personnelles
 
-## 📦 Installation locale
+Ajouter la clé SSH de Hostinger au dépôt
 
-```bash
-git clone https://github.com/Lilou2023/lilou-logistique.git
-cd lilou-logistique
-npm install
-```
+Accéder à Settings → Deploy keys dans le dépôt
 
----
+Titre : Hostinger - lilou-logistique.com
 
-## ⚙️ Configuration de l'environnement
+Clé :
 
-1. **Crée un fichier `.env.local`** à la racine du projet :
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDULDMx2iSXlJ5mo9cPIm1LJ5OFGB5atXuLFkR53Mqy6Lla3vAZKbP0Np2LhgXOxCxjku1p66NRND+A3CqGVOpDGMoiAEFWKrjHkJPFgokB956MDFopvHJ4zQkbX4ubMe/6j6dkht4Web9QxzPFWcUeCFihkmydAdEEFvDyfYiqS5X1JRVgRYjp5ISddws7Wl9T2ivP2hAM40Fz5e1nPGX8vJ/yzy7GHYD0g01NVdndZHnfu+UwDHhL7+4mpJdkCFNWpDlUZIyrbiE0kAfYaisOrewChq0b5ZMmhK0TiuCvVoTRmmTsp92TVwr7cApyxyWq0gGtq44tUtJqESSrAq1BL/SIo+X0d6fcKd7qffxnz2rhL28UoVLQr+1HikJwEh1Wbdbh4g3vGuj1XQLzMG4LG6ezIfluEnDRB8uvRq6NIJi/4j/TLpTPbKZ5jzN6hHOe9u76FmmeSAHzKQUnc49LVQaG2D/E0/hS5+C6EeHL/l9sQf6D/xUV/STUOQ2arek= u240832595@fr-int-web1588.main-hosting.eu
+Cochez Allow write access
 
-```bash
-cp .env.example .env.local
-```
+Pousser le projet local avec init-github.sh
 
-2. **Renseigne les variables d'environnement** dans `.env.local` :
+Depuis le dossier lilou-logistique, exécuter :
 
-| Variable                        | Description                                 |
-| ------------------------------- | ------------------------------------------- |
-| `NEXT_PUBLIC_SUPABASE_URL`      | |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` |              |
-| `SUPABASE_SERVICE_ROLE_KEY`     | |
-| `OPENAI_API_KEY`                ||
-| `JWT_SECRET`                    |                      |
-| `NEXTAUTH_SECRET`               |                |
-### Ajouter les secrets GitHub
+bash init-github.sh
+Ce script initialise Git, configure les infos locales, fait le commit et push vers main
 
-Pour permettre le déploiement automatique, ajoutez aussi ces variables dans
-**Settings → Secrets and variables → Actions** de votre dépôt GitHub :
+Configurer les secrets GitHub dans Settings → Secrets and variables → Actions :
 
-- `NEXT_PUBLIC_SUPABASE_URL`
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-- `OPENAI_API_KEY`
+Ajouter les clés suivantes :
 
+NEXT_PUBLIC_SUPABASE_URL=https://mvhogfelpbufnrklxpxq.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im12aG9nZmVscGJ1Zm5ya2x4cHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg3MjQ0MDksImV4cCI6MjA2NDMwMDQwOX0.FrVdKelHzLgJFGFwnYfA23XsbzgrK6PCsSV01a1qM5I
+SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im12aG9nZmVscGJ1Zm5ya2x4cHhxIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0ODcyNDQwOSwiZXhwIjoyMDY0MzAwNDA5fQ.keTkB1muKnhNK3TkDrOcdG6vjQJKA_OYDIUSIUPDfSM
+OPENAI_API_KEY=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
+JWT_SECRET=UiuSVGy6+Tzn93GwXa/dcyPBeD+Y9q7f18fwUPL/D1cdYmQQI5K8OjMZh/RlbCErVbgCSL9NqNAPAYVVxzAzPA==
+NEXTAUTH_SECRET=ytvqKJNF+DHMZXHeipda6n+DGVOKYWz2+5MoUiN/I6ED7v65kwboamNyN1Q=
+Configurer Git sur Hostinger
 
----
+Aller dans le panneau d’administration → section GIT
 
-## 🧪 Lancer les tests
+Renseigner :
 
-```bash
-npm run test
-```
+Dépôt : git@github.com:Lilou2023/lilou-logistique.git
 
----
+Branche : hostinger-deploy
 
-## ✅ Vérification d'environnement
+Répertoire : (laisser vide)
 
-```bash
-npm run validate-env
-```
+Cliquer sur Créer
 
-Ce script vérifie :
+Attendre le déploiement automatique
 
-* La présence d'un `.env.local`
-* L'absence de `.env` (sécurité)
-* Le format et la validité des variables
+GitHub Actions va créer la branche hostinger-deploy
 
----
+Hostinger va automatiquement déployer le site : https://lilou-logistique.com
 
-## 🛠️ Build de production
+Confirmer que tout est en ligne :
 
-```bash
-npm run build
-```
+Aperçu live : https://f471e78f-f041-4565-87c5-6867ce01bf46.dev31.app-preview.com/
 
----
-
-## 🔐 CI/CD avec GitHub Actions
-
-Un pipeline automatique est déclenché sur chaque `push` ou `pull request` :
-
-* Validation environnement (développement + production)
-* Lint / Type check TypeScript
-* Tests unitaires
-* Build
-* Audit de sécurité NPM
-* **Déploiement automatique sur Hostinger** 🚀
-
-### Workflows disponibles :
-- `.github/workflows/validate-env.yml` - Validation et tests
-- `.github/workflows/deploy-hostinger.yml` - Déploiement automatique
-
-### Déploiement manuel :
-```bash
-# Script automatisé
-./tools/deploy.sh
-
-# Avec options
-./tools/deploy.sh --force --skip-tests
-```
-
----
-
-## ✍️ Police Inter locale
-
-Les fichiers de police Inter se trouvent dans `public/fonts` et sont chargés via `next/font/local` dans `app/layout.tsx`.
-
----
-
-
-## 🧾 Licence
-
-Ce projet est sous licence MIT. Voir [LICENSE](LICENSE).
-
+intègre ce guide dans le fichier README.md du projet
