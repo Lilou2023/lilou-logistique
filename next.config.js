@@ -2,9 +2,19 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
+
+  // Exporter le site en HTML statique pour la compatibilité
+  // avec l'hébergement mutualisé Hostinger
+  output: 'export',
+
+  // Lors de l'export statique, inclure un slash final pour que
+  // la page `not-found` soit correctement générée en `404/index.html`
+  trailingSlash: true,
   
   // Configuration des images
   images: {
+    // Désactiver l'optimisation côté serveur pour l'export statique
+    unoptimized: true,
     domains: [
       'localhost',
       // Ajoutez ici les domaines autorisés pour les images
