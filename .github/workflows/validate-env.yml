@@ -75,7 +75,7 @@ jobs:
         run: npm ci
 
       - name: 🔐 Exécution de l'audit NPM
-        run: npm audit --audit-level=high || echo "⚠️ Vulnérabilités détectées"
+        run: npm audit --audit-level=high
 
       - name: 🧪 Vérifier les secrets codés en dur
         run: |
