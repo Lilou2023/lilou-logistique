@@ -82,7 +82,7 @@ Initialisation Git et push initial.
 
 - `deploy-lilou-complete.sh` - Script de déploiement complet
 - `configure-hostinger-ssh.sh` - Configuration SSH et secrets
-- `env-template.txt` - Template des variables d'environnement
+- `.env.example` - Exemple de configuration des variables d'environnement
 - `setup-lilou-logistique.sh` - Script de configuration générale
 
 ## ✅ Vérifications finales
