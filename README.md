@@ -18,6 +18,10 @@ Plateforme Next.js dédiée à la gestion logistique intelligente et connectée 
 - Tests unitaires et audit de sécurité automatisés
 - Chargement local de la police **Inter**
 
+## 💻 Prérequis
+
+- Node.js 20+ installé
+
 ---
 
 ## 1️⃣ Création du dépôt GitHub
