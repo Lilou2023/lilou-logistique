@@ -108,7 +108,7 @@ fi
 # Créer .env.local si nécessaire
 if [ ! -f ".env.local" ]; then
     print_info "Création du fichier .env.local..."
-    
+
     # Demander les variables d'environnement
     echo ""
     print_info "Configuration des variables d'environnement :"
@@ -116,11 +116,11 @@ if [ ! -f ".env.local" ]; then
     read -p "NEXT_PUBLIC_SUPABASE_ANON_KEY: " supabase_anon_key
     read -p "SUPABASE_SERVICE_ROLE_KEY: " supabase_service_key
     read -p "OPENAI_API_KEY: " openai_key
-    
+
     # Générer des secrets sécurisés
     jwt_secret=$(openssl rand -base64 32)
     nextauth_secret=$(openssl rand -base64 32)
-    
+
     # Créer le fichier .env.local
     cat > .env.local << EOF
 # Configuration Supabase
@@ -136,7 +136,7 @@ JWT_SECRET=$jwt_secret
 NEXTAUTH_SECRET=$nextauth_secret
 NEXTAUTH_URL=http://localhost:3000
 EOF
-    
+
     print_success "Fichier .env.local créé"
 else
     print_info "Fichier .env.local déjà présent"
@@ -330,7 +330,6 @@ echo "Documentation :"
 echo "  - README.md                    # Guide principal"
 echo "  - HOSTINGER_GIT_SETUP.md       # Configuration Hostinger"
 echo "  - GITHUB_SECRETS_SETUP.md      # Configuration secrets"
-echo "  - ACTIONS_HOSTINGER.md         # Actions GitHub"
 echo ""
 echo "Outils :"
 echo "  - GitHub Actions : $repo_url/actions"

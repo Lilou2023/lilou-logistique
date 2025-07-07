@@ -108,7 +108,7 @@ if [ -f "init-github.sh" ]; then
     echo "- Faire le commit initial"
     echo "- Pousser vers la branche main"
     echo ""
-    
+
     read -p "Voulez-vous lancer init-github.sh maintenant ? (y/N): " run_init
     if [[ $run_init =~ ^[Yy]$ ]]; then
         ./init-github.sh
@@ -224,4 +224,4 @@ print_info "Sites à vérifier :"
 echo "- Production : https://lilou-logistique.com"
 echo "- Aperçu : https://f471e78f-f041-4565-87c5-6867ce01bf46.dev31.app-preview.com/"
 echo ""
-print_header "🚀 Bon développement !" 
+print_header "🚀 Bon développement !"

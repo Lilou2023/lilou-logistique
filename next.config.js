@@ -6,7 +6,7 @@ const nextConfig = {
   // Lors de l'export statique, inclure un slash final pour que
   // la page `not-found` soit correctement générée en `404/index.html`
   trailingSlash: true,
-  
+
   // Configuration des images
   images: {
     domains: [

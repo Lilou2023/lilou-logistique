@@ -53,126 +53,9 @@ bash init-github.sh
 
 ---
 
-## 3️⃣ Ajouter la clé SSH Hostinger à GitHub
+## Deploying to Hostinger
+See [HOSTINGER_GIT_SETUP.md](./HOSTINGER_GIT_SETUP.md) for SSH key setup, secrets and deployment workflow.
 
-- Allez dans votre dépôt GitHub → Settings → Deploy keys
-- Cliquez sur Add deploy key
-- Titre : `Hostinger - lilou-logistique.com`
-- Collez la clé SSH fournie par Hostinger
-- Cochez **Allow write access**
-- Cliquez sur Add key
-
----
-
-## 4️⃣ Ajouter les secrets GitHub
-
-Dans GitHub : Settings → Secrets and variables → Actions
-Ajoutez les secrets suivants :
-- `NEXT_PUBLIC_SUPABASE_URL`
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-- `SUPABASE_SERVICE_ROLE_KEY`
-- `OPENAI_API_KEY`
-- `JWT_SECRET`
-- `NEXTAUTH_SECRET`
-
-> Voir le fichier `GITHUB_SECRETS_SETUP.md` pour les valeurs et la génération des clés.
-
----
-
-## 5️⃣ Installer et configurer le projet localement
-
-```bash
-git clone https://github.com/Lilou2023/lilou-logistique.git
-cd lilou-logistique
-npm install
-cp .env.example .env.local
-```
-
-Modifiez `.env.local` avec vos variables d'environnement.
-
----
-
-## ⚙️ Configuration de l'environnement
-
-1. **Crée un fichier `.env.local`** à la racine du projet :
-
-```bash
-cp .env.example .env.local
-```
-
-2. **Renseigne les variables d'environnement** dans `.env.local` :
-
-| Variable                        | Description                                 |
-| ------------------------------- | ------------------------------------------- |
-| `NEXT_PUBLIC_SUPABASE_URL`      | URL de votre projet Supabase                |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Clé anonyme Supabase                        |
-| `SUPABASE_SERVICE_ROLE_KEY`     | Clé de service Supabase (privée)            |
-| `OPENAI_API_KEY`                | Clé API OpenAI                              |
-| `JWT_SECRET`                    | Secret JWT (32+ caractères)                 |
-| `NEXTAUTH_SECRET`               | Secret NextAuth (32+ caractères)            |
-
-### Ajouter les secrets GitHub
-
-Pour permettre le déploiement automatique, ajoutez aussi ces variables dans
-**Settings → Secrets and variables → Actions** de votre dépôt GitHub :
-
-- `NEXT_PUBLIC_SUPABASE_URL`
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-- `OPENAI_API_KEY`
-
----
-
-## 6️⃣ Tester et valider l'environnement
-
-```bash
-npm run test
-npm run validate-env
-```
-
----
-
-## 7️⃣ Configurer le déploiement Git sur Hostinger
-
-Dans le panneau Hostinger → section GIT :
-- Dépôt : `git@github.com:Lilou2023/lilou-logistique.git`
-- Branche : `hostinger-deploy`
-- Répertoire : (laisser vide)
-- Cliquez sur Créer
-
----
-
-## 8️⃣ Premier déploiement automatique
-
-- Faites un commit sur la branche main :
-```bash
-git add .
-git commit -m "Déclenchement premier build"
-git push origin main
-```
-- GitHub Actions va :
-  - Construire le site statique
-  - Créer la branche `hostinger-deploy`
-  - Déployer automatiquement via Hostinger
-- Vérifiez :
-  - GitHub → Actions (workflow)
-  - Hostinger → Git → Logs
-  - https://lilou-logistique.com
-
-> **Note** : le fichier `index.html` à la racine et le dossier `public_html/` sont
-> générés automatiquement dans la branche `hostinger-deploy` par le workflow de
-> déploiement. Ils n'ont pas à être commités sur `main`.
-
----
-
-## 9️⃣ Mises à jour continues
-
-À chaque modification du code :
-```bash
-git add .
-git commit -m "Votre message"
-git push origin main
-```
-Le déploiement sera automatique !
 
 ---
 
@@ -203,6 +86,18 @@ Ce script vérifie :
 ```bash
 npm run build
 ```
+
+---
+
+## 🔍 Analyse du code (ESLint)
+
+Pour vérifier la qualité et le style du code, lancez :
+
+```bash
+npm run lint
+```
+
+Le fichier `.eslintrc.json` fourni configure les règles de Next.js afin que la commande s'exécute sans invite interactive.
 
 ---
 

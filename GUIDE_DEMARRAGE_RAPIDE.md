@@ -257,4 +257,4 @@ git push origin votre-branche
 
 ---
 
-*Guide de démarrage rapide - Lilou Logistique v1.0* 
+*Guide de démarrage rapide - Lilou Logistique v1.0*

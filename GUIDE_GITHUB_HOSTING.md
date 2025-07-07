@@ -1,5 +1,7 @@
 # 🚀 Guide Complet GitHub & Intégration Hébergement
 
+For Hostinger configuration specifics see [HOSTINGER_GIT_SETUP.md](./HOSTINGER_GIT_SETUP.md).
+
 ## 📚 Table des matières
 
 1. [Introduction à GitHub](#1-introduction-à-github)
@@ -199,7 +201,7 @@ Ajout du système de gestion des utilisateurs
 
 ## 🔧 Changements apportés
 - [ ] Page de connexion
-- [ ] Page d'inscription  
+- [ ] Page d'inscription
 - [ ] Protection des routes
 - [ ] Intégration Supabase
 
@@ -311,7 +313,7 @@ sequenceDiagram
     participant GH as GitHub
     participant WA as GitHub Actions
     participant H as Hostinger
-    
+
     Dev->>GH: Push sur main
     GH->>WA: Déclenche workflow
     WA->>WA: Build statique
@@ -390,7 +392,7 @@ jobs:
   build-and-prepare:
     # Build statique Next.js
     # Création des fichiers pour Hostinger
-    
+
   create-deploy-branch:
     # Création de la branche hostinger-deploy
     # Déclenchement du webhook Hostinger
@@ -448,4 +450,4 @@ Pour toute question sur ce workflow :
 
 ---
 
-*Guide créé pour le projet Lilou Logistique - Version 1.0* 
+*Guide créé pour le projet Lilou Logistique - Version 1.0*

@@ -160,7 +160,7 @@ RewriteRule . /index.html [L]
 # Cache optimisé
 <IfModule mod_expires.c>
     ExpiresActive On
-    
+
     # Images
     ExpiresByType image/jpg "access plus 1 year"
     ExpiresByType image/jpeg "access plus 1 year"
@@ -169,19 +169,19 @@ RewriteRule . /index.html [L]
     ExpiresByType image/webp "access plus 1 year"
     ExpiresByType image/svg+xml "access plus 1 year"
     ExpiresByType image/x-icon "access plus 1 year"
-    
+
     # CSS et JS
     ExpiresByType text/css "access plus 1 month"
     ExpiresByType application/javascript "access plus 1 month"
     ExpiresByType text/javascript "access plus 1 month"
-    
+
     # Fonts
     ExpiresByType font/ttf "access plus 1 year"
     ExpiresByType font/otf "access plus 1 year"
     ExpiresByType font/woff "access plus 1 year"
     ExpiresByType font/woff2 "access plus 1 year"
     ExpiresByType application/font-woff "access plus 1 year"
-    
+
     # HTML
     ExpiresByType text/html "access plus 0 seconds"
 </IfModule>
@@ -225,4 +225,4 @@ echo "   https://lilou-logistique.com"
 echo ""
 echo "================================================"
 
-print_success "Déploiement prêt !" 
+print_success "Déploiement prêt !"

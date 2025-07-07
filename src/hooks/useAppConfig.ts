@@ -54,4 +54,4 @@ export const getAppMetadata = () => {
     url: config.url,
     version: config.version,
   };
-}; 
+};

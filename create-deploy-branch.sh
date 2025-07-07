@@ -18,4 +18,4 @@ git push -u origin hostinger-deploy
 git checkout $CURRENT_BRANCH
 
 echo "✅ Branche hostinger-deploy créée !"
-echo "👉 Retournez sur Hostinger et cliquez sur 'Pull'" 
+echo "👉 Retournez sur Hostinger et cliquez sur 'Pull'"
