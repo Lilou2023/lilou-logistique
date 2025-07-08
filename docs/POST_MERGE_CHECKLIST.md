@@ -17,7 +17,7 @@ Ce document aide à ne rien oublier juste après la fusion d'une branche importa
 
 - [ ] Exécuter la commande :
   ```bash
-  npm run build:hostinger
+  npm run build
   ```
 - [ ] Vérifier que le dossier `/out` a été généré
 - [ ] Copier le contenu vers la racine de `hostinger-deploy`

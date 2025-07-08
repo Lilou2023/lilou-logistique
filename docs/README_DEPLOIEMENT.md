@@ -30,7 +30,7 @@ git merge main
 
 # Rebuild + export statique
 npm install
-npm run build:hostinger
+npm run build
 cp -r out/* .
 
 # Commit et push
