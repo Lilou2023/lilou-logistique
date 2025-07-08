@@ -26,7 +26,7 @@ Unable to resolve action `actions/checkout@v4`, repository or version not found
 
 - **Sécurité** : Dernières mises à jour de sécurité
 - **Performance** : Améliorations de performance
-- **Node.js 20** : Support natif de Node.js 20
+- **Node.js 20+** : Support natif de Node.js 20 et versions ultérieures
 - **Maintenance** : Les versions v3 ne sont plus maintenues activement
 
 ## 📋 Fichiers mis à jour

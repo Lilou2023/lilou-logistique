@@ -23,7 +23,7 @@ ssh root@votre-ip-serveur
 # Mise à jour du système
 sudo apt update && sudo apt upgrade -y
 
-# Installation de Node.js 20
+# Installation de Node.js 20+
 curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
 sudo apt-get install -y nodejs
 

@@ -38,7 +38,7 @@ get_user_input
 echo "🔄 Mise à jour du système..."
 apt update && apt upgrade -y || error_exit "Échec de la mise à jour du système"
 
-echo "📦 Installation de Node.js 20..."
+echo "📦 Installation de Node.js 20+..."
 if ! command -v node &> /dev/null; then
     curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
     apt-get install -y nodejs || error_exit "Échec de l'installation de Node.js"
