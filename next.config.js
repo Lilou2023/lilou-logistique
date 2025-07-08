@@ -3,8 +3,7 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   
-  // Configuration pour l'export statique
-  output: 'export',
+  // Configuration standard pour le deploiement sur Vercel
   trailingSlash: true,
   
   // Configuration des images
@@ -53,5 +52,4 @@ const nextConfig = {
     ]
   },
 }
-
 module.exports = nextConfig
