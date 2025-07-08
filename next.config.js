@@ -4,7 +4,7 @@ const nextConfig = {
   swcMinify: true,
   
   // Configuration pour l'export statique
-  output: 'export',
+  // output: 'export', // ← Décommentez cette ligne uniquement pour le déploiement statique (Hostinger). Laissez-la commentée en développement local.
   trailingSlash: true,
   
   // Configuration des images

@@ -15,6 +15,11 @@ REPO_URL="https://github.com/Lilou2023/lilou-logistique.git"
 DOMAIN=""
 EMAIL=""
 
+# Variables d'application optionnelles
+NEXT_PUBLIC_APP_NAME="Lilou Logistique DSP"
+NEXT_PUBLIC_APP_VERSION="1.0.0"
+NEXT_PUBLIC_APP_URL="https://lilou-logistique.com"
+
 # Fonction pour demander les informations
 get_user_input() {
     read -p "📧 Entrez votre adresse email (pour SSL): " EMAIL
