@@ -17,3 +17,4 @@ else
     echo "❌ Échec du 'git push'. Le déploiement est annulé."
     exit 1
 fi
+(Le contenu de votre commit, "feat: Ajout de la nouvelle page de contact")
