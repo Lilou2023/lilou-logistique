@@ -69,3 +69,4 @@ logs
 
 # Hostinger deployment
 public_html/
+node_modules
