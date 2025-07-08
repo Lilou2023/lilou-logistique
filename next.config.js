@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
-  
+
   // Configuration des images
   images: {
     domains: [
@@ -48,5 +48,4 @@ const nextConfig = {
     ]
   },
 }
-
-module.exports = nextConfig
+module.exports = nextConfig;
