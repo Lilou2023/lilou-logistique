@@ -1,0 +1,13 @@
+{
+    "build": {
+          "production": {
+                  "releaseChannel": "default",
+                  "android": {
+                            "buildType": "app-bundle"
+                  },
+                  "ios": {
+                            "simulator": false
+                  }
+          }
+
+}
