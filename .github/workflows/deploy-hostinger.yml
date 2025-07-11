@@ -215,7 +215,6 @@ jobs:
           
           # Copier les fichiers de déploiement
           cp -r hostinger-deploy/* .
-          cp -r hostinger-deploy/.htaccess .
           
           # Ajouter tous les fichiers
           git add -A

@@ -1,13 +1,13 @@
 {
-  "framework": "nextjs",
   "buildCommand": "npm run build",
   "outputDirectory": ".next",
+  "framework": "nextjs",
   "installCommand": "npm install",
   "devCommand": "npm run dev",
   "regions": ["cdg1"],
   "functions": {
-    "app/api/**/*.ts": {
-      "runtime": "nodejs20.x"
+    "app/**/*.tsx": {
+      "maxDuration": 30
     }
   },
   "headers": [
@@ -15,12 +15,12 @@
       "source": "/(.*)",
       "headers": [
         {
-          "key": "X-Frame-Options",
-          "value": "SAMEORIGIN"
-        },
-        {
           "key": "X-Content-Type-Options",
           "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
         },
         {
           "key": "X-XSS-Protection",
@@ -28,4 +28,5 @@
         }
       ]
     }
-  ]} 
+  ]
+} 

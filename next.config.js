@@ -3,13 +3,13 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   
-  // Configuration pour l'export statique
-  // output: 'export', // ← Décommentez cette ligne uniquement pour le déploiement statique (Hostinger). Laissez-la commentée en développement local.
-  trailingSlash: true,
+  // Configuration pour Vercel (pas d'export statique)
+  // output: 'export', // ← Décommentez cette ligne uniquement pour le déploiement statique (Hostinger). Laissez-la commentée pour Vercel.
+  trailingSlash: false, // Changé à false pour Vercel
   
   // Configuration des images
   images: {
-    unoptimized: true,
+    unoptimized: false, // Changé à false pour Vercel
     domains: [
       'localhost',
       // Ajoutez ici les domaines autorisés pour les images
