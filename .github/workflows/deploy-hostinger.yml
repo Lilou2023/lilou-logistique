@@ -213,7 +213,7 @@ jobs:
           # Nettoyer la branche
           git rm -rf . || true
           
-          # Copier les fichiers de déploiement
+          # Copier les fichiers de déploiement (incluant .htaccess)
           cp -r hostinger-deploy/* .
           
           # Ajouter tous les fichiers
