@@ -41,17 +41,22 @@ function validateEnv() {
   if (!isCI) {
     // Environnement local - vérifier la présence du fichier .env.local
     const envLocalPath = path.join(process.cwd(), '.env.local');
-    const envPath = path.join(process.cwd(), '.env');
-    
-    if (!fs.existsSync(envLocalPath)) {
-      log('\n❌ Erreur: Le fichier .env.local n\'existe pas!', 'red');
-      log('   Créez-le en copiant .env.example:', 'yellow');
-      log('   cp .env.example .env.local\n', 'yellow');
-      process.exit(1);
+
+    if (fs.existsSync(envLocalPath)) {
+      // Charger les variables d'environnement locales
+      require('dotenv').config({ path: envLocalPath });
+    } else {
+      const missingVars = requiredEnvVars.some(varName => !process.env[varName]);
+
+      if (missingVars) {
+        log('\n❌ Erreur: Le fichier .env.local est manquant et certaines variables requises sont absentes!', 'red');
+        log('   Créez-le en copiant .env.example:', 'yellow');
+        log('   cp .env.example .env.local\n', 'yellow');
+        process.exit(1);
+      } else {
+        log('   ⚠️  .env.local absent - utilisation des variables d\'environnement', 'yellow');
+      }
     }
-    
-    // Charger les variables d'environnement locales
-    require('dotenv').config({ path: envLocalPath });
   } else {
     log('   🔧 Environnement CI/CD détecté - utilisation des variables d\'environnement système', 'blue');
   }
