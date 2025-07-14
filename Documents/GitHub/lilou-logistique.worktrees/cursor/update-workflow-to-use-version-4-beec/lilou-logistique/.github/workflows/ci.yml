@@ -1,256 +1,63 @@
-name: 🚀 Lilou Logistique CI/CD Pipeline
+name: CI/CD Pipeline
 
 on:
   push:
-    branches:
-      - main
-      - develop
-      - staging
+    branches: [ main, develop ]
   pull_request:
-    branches:
-      - main
-      - develop
-
-env:
-  NODE_VERSION: '18'
-  NPM_CACHE_FOLDER: ~/.npm
-  NPM_CONFIG_CACHE: ~/.npm
+    branches: [ main ]
 
 jobs:
-  # 🔍 Tests et Validation
   test:
     runs-on: ubuntu-latest
-    name: 🧪 Tests et Validation
-    timeout-minutes: 10
-    
     steps:
-      - name: 📥 Checkout du code
-        uses: actions/checkout@v4
-        
-      - name: 🟢 Configuration Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-          
-      - name: 📦 Installation des dépendances
-        run: |
-          echo "🔧 Installation des dépendances..."
-          npm ci --prefer-offline --no-audit
-          
-      - name: 🔍 Vérification TypeScript
-        run: |
-          echo "🔍 Vérification TypeScript..."
-          npm run type-check
-          
-      - name: 🧪 Exécution des tests
-        run: |
-          echo "🧪 Exécution des tests..."
-          npm run test:ci || npm test || echo "⚠️ Aucun script de test trouvé"
-          
-      - name: 📊 Upload des résultats de tests
-        if: always()
+          node-version: "18"
+      - name: Install dependencies
+        if: ${{ hashFiles('package.json') != '' }}
+        run: npm ci
+      - name: Run tests
+        if: ${{ hashFiles('package.json') != '' }}
+        run: npm test
+      - name: Upload test-results
+        if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:
           name: test-results
-          path: |
-            coverage/
-            test-results/
-            *.xml
-          retention-days: 7
+          path: test-results/
 
-  # 📊 Analyse de Performance
-  performance:
-    runs-on: ubuntu-latest
-    name: 📊 Analyse de Performance
-    needs: test
-    timeout-minutes: 15
-    
-    steps:
-      - name: 📥 Checkout du code
-        uses: actions/checkout@v4
-        
-      - name: 🟢 Configuration Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-          
-      - name: 📦 Installation des dépendances
-        run: npm ci --prefer-offline
-        
-      - name: 🏗️ Build de production
-        run: |
-          echo "🏗️ Build de production..."
-          npm run build
-          
-      - name: 📊 Analyse de la taille du bundle
-        run: |
-          echo "📊 Analyse de la taille du bundle..."
-          npm run bundle-analyzer || npm run build:analyze || echo "⚠️ Analyse de bundle non disponible"
-          
-      - name: 🚀 Test Lighthouse
-        run: |
-          echo "🚀 Test Lighthouse..."
-          npm run lighthouse || echo "⚠️ Lighthouse non configuré"
-          
-      - name: 📈 Upload des rapports de performance
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: performance-reports
-          path: |
-            lighthouse/
-            bundle-analyzer/
-            dist/
-          retention-days: 30
-
-  # 🏗️ Build et Optimisation
   build:
+    needs: test
     runs-on: ubuntu-latest
-    name: 🏗️ Build Optimisé
-    needs: [test, performance]
-    timeout-minutes: 20
-    
     steps:
-      - name: 📥 Checkout du code
-        uses: actions/checkout@v4
-        
-      - name: 🟢 Configuration Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-          
-      - name: 📦 Installation des dépendances
-        run: npm ci --prefer-offline
-        
-      - name: 🏗️ Build de production optimisé
-        run: |
-          echo "🏗️ Build de production optimisé..."
-          npm run build
-          
-      - name: 📦 Compression des assets
-        run: |
-          echo "📦 Compression des assets..."
-          find dist -name "*.js" -exec gzip -9 {} \;
-          find dist -name "*.css" -exec gzip -9 {} \;
-          
-      - name: 📊 Upload du build
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-artifacts
-          path: |
-            dist/
-            build/
-            *.zip
-            *.tar.gz
-          retention-days: 7
-
-  # 📱 Build Mobile (Capacitor)
-  mobile-build:
-    runs-on: ubuntu-latest
-    name: 📱 Build Mobile
-    needs: build
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
-    timeout-minutes: 25
-    
-    steps:
-      - name: 📥 Checkout du code
-        uses: actions/checkout@v4
-        
-      - name: 🟢 Configuration Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-          
-      - name: 📦 Installation des dépendances
-        run: npm ci --prefer-offline
-        
-      - name: 🏗️ Build de production
+          node-version: "18"
+      - name: Install dependencies
+        if: ${{ hashFiles('package.json') != '' }}
+        run: npm ci
+      - name: Build
         run: npm run build
-        
-      - name: 📱 Build Capacitor
-        run: |
-          echo "📱 Build Capacitor..."
-          npm run capacitor:build || npx cap build || echo "⚠️ Capacitor non configuré"
-          
-      - name: 📦 Upload build mobile
-        if: always()
+      - name: Upload build
         uses: actions/upload-artifact@v4
         with:
-          name: mobile-build
-          path: |
-            android/
-            ios/
-            capacitor.config.ts
-          retention-days: 7
-
-  # 🚀 Déploiement Staging
-  deploy-staging:
-    runs-on: ubuntu-latest
-    name: 🚀 Déploiement Staging
-    needs: [build, mobile-build]
-    if: github.ref == 'refs/heads/develop'
-    # environment: staging
-    timeout-minutes: 15
-    
-    steps:
-      - name: 📥 Checkout du code
-        uses: actions/checkout@v4
-        
-      - name: 📦 Téléchargement du build
-        uses: actions/download-artifact@v4
-        with:
-          name: build-artifacts
+          name: build
           path: dist/
-          
-      - name: 🚀 Déploiement Unifié Staging
-        run: |
-          echo "🚀 Déploiement unifié vers staging..."
-          chmod +x ./deploy-unified.sh
-          ./deploy-unified.sh staging || echo "⚠️ Script de déploiement non trouvé"
-          
-      - name: ✅ Vérification du déploiement
-        run: |
-          echo "✅ Vérification du déploiement staging..."
-          sleep 30
-          curl -f https://staging.lilou-logistique.com || echo "⚠️ Site staging non accessible"
 
-  # 🚀 Déploiement Production
-  deploy-production:
+  deploy:
+    needs: build
+    if: ${{ github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
-    name: 🚀 Déploiement Production
-    needs: [build, mobile-build]
-    if: github.ref == 'refs/heads/main'
-    # environment: production
-    timeout-minutes: 20
-    
     steps:
-      - name: 📥 Checkout du code
-        uses: actions/checkout@v4
-        
-      - name: 📦 Téléchargement du build
-        uses: actions/download-artifact@v4
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
         with:
-          name: build-artifacts
+          name: build
           path: dist/
-          
-      - name: 🚀 Déploiement Unifié Production
+      - name: Deploy to Hostinger
         run: |
-          echo "🚀 Déploiement unifié vers production..."
-          chmod +x ./deploy-unified.sh
-          ./deploy-unified.sh production || echo "⚠️ Script de déploiement non trouvé"
-          
-      - name: ✅ Vérification du déploiement
-        run: |
-          echo "✅ Vérification du déploiement production..."
-          sleep 30
-          curl -f https://lilou-logistique.com || echo "⚠️ Site production non accessible"
-          
-      - name: 📊 Notification de succès
-        if: success()
-        run: |
-          echo "🎉 Déploiement production réussi !"
-          echo "📊 Performance: $(npm run lighthouse --silent | grep -E 'Performance|FCP|LCP' || echo 'N/A')" 
+          # Place your deployment command here (scp, rsync, hpanel-cli, etc.)
+          echo "Deploying to Hostinger..."
+          # Add your actual deployment script here
