@@ -15,13 +15,13 @@ on:
                                           with:
                                                     node-version: "18"
                                                           - name: Install dependencies
-                                                                  if: ${{ files['package.json'] }}
+                                                                  if: ${{ hashFiles('package.json') != '' }}
                                                                           run: npm ci
                                                                                 - name: Run tests
-                                                                                        if: ${{ files['package.json'] }}
+                                                                                        if: ${{ hashFiles('package.json') != '' }}
                                                                                                 run: npm test
                                                                                                       - name: Upload test-results
-                                                                                                              if: always()
+                                                                                                              if: ${{ always() }}
                                                                                                                       uses: actions/upload-artifact@v4
                                                                                                                               with:
                                                                                                                                         name: test-results
@@ -36,7 +36,7 @@ on:
                                                                                                                                                                                     with:
                                                                                                                                                                                               node-version: "18"
                                                                                                                                                                                                     - name: Install dependencies
-                                                                                                                                                                                                            if: ${{ files['package.json'] }}
+                                                                                                                                                                                                            if: ${{ hashFiles('package.json') != '' }}
                                                                                                                                                                                                                     run: npm ci
                                                                                                                                                                                                                           - name: Build
                                                                                                                                                                                                                                   run: npm run build
@@ -48,7 +48,7 @@ on:
                                                                                                                                                                                                                                                                             
                                                                                                                                                                                                                                                                               deploy:
                                                                                                                                                                                                                                                                                   needs: build
-                                                                                                                                                                                                                                                                                      if: github.ref == 'refs/heads/main'
+                                                                                                                                                                                                                                                                                      if: ${{ github.ref == 'refs/heads/main' }}
                                                                                                                                                                                                                                                                                           runs-on: ubuntu-latest
                                                                                                                                                                                                                                                                                               steps:
                                                                                                                                                                                                                                                                                                     - uses: actions/checkout@v4
@@ -58,5 +58,5 @@ on:
                                                                                                                                                                                                                                                                                                                                       path: dist/
                                                                                                                                                                                                                                                                                                                                             - name: Deploy to Hostinger
                                                                                                                                                                                                                                                                                                                                                     run: |
-                                                                                                                                                                                                                                                                                                                                                              # Place your deployment command here (scp, rsync, hpanel-cli, etc.)
+                                                                                                                                                                                                                                                                                                                                                              # Place your deployment command here
                                                                                                                                                                                                                                                                                                                                                               
