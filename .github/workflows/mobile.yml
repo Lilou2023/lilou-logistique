@@ -1,0 +1,39 @@
+name: "📱 Build & Publish Mobile App"
+
+on:
+  push:
+      paths:
+            - 'mobile-app/**'
+                  - '.github/workflows/mobile.yml'
+
+                  jobs:
+                    build:
+                        runs-on: ubuntu-latest
+                            defaults:
+                                  run:
+                                          working-directory: mobile-app
+
+                                              steps:
+                                                    - name: '📥 Checkout code'
+                                                            uses: actions/checkout@v3
+
+                                                                  - name: '📦 Setup Node.js'
+                                                                          uses: actions/setup-node@v3
+                                                                                  with:
+                                                                                            node-version: 18
+
+                                                                                                  - name: '💙 Install dependencies'
+                                                                                                          run: npm install
+                                                                                                          
+                                                                                                                - name: '✅ EAS Login'
+                                                                                                                        run: npx expo login --username ${{ secrets.EXPO_USERNAME }} --password ${{ secrets.EXPO_PASSWORD }}
+                                                                                                                        
+                                                                                                                              - name: '🚀 Build Android'
+                                                                                                                                      run: npx eas build --platform android --non-interactive --profile production
+                                                                                                                                              env:
+                                                                                                                                                        EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+                                                                                                                                                        
+                                                                                                                                                              - name: '🚀 Build iOS'
+                                                                                                                                                                      run: npx eas build --platform ios --non-interactive --profile production
+                                                                                                                                                                              env:
+                                                                                                                                                                                        EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
