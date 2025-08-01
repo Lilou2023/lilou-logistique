@@ -1,0 +1,111 @@
+name: "🚀 Deploy to Hostinger - Lilou Logistique"
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "🚚 Checkout code"
+        uses: actions/checkout@v4
+
+      - name: "⚙️ Setup Node.js"
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: "📦 Install dependencies"
+        run: npm ci
+
+      - name: "🏠 Build Next.js app"
+        run: npm run build
+
+      - name: Deploy to Hostinger
+        env:
+          HOSTINGER_USER: ${{ secrets.HOSTINGER_USER }}
+          HOSTINGER_HOST: ${{ secrets.HOSTINGER_HOST }}
+          HOSTINGER_PATH: ${{ secrets.HOSTINGER_PATH }}
+          SSH_KEY: ${{ secrets.HOSTINGER_SSH_KEY }}
+        run: |
+          echo "$SSH_KEY" > key.pem
+          chmod 600 key.pem
+          scp -i key.pem -r dist/* $HOSTINGER_USER@$HOSTINGER_HOST:$HOSTINGER_PATH
+
+      - name: "🧹 Clean up SSH key"
+        run: rm -f key.pem
+
+      - name: "🌐 Vérification du site"
+        run: |
+          sleep 15
+          curl -f https://lilou-logistique.com
+
+      - name: "👷️ Installer les dépendances sur Hostinger"
+        env:
+          HOSTINGER_USER: ${{ secrets.HOSTINGER_USER }}
+          HOSTINGER_HOST: ${{ secrets.HOSTINGER_HOST }}
+          HOSTINGER_PATH: ${{ secrets.HOSTINGER_PATH }}
+          SSH_KEY: ${{ secrets.HOSTINGER_SSH_KEY }}
+        run: |
+          ssh -i key.pem -o StrictHostKeyChecking=no $HOSTINGER_USER@$HOSTINGER_HOST "cd $HOSTINGER_PATH && npm install --production"
+
+      - name: "🔄 Redémarrer l’application (PM2)"
+        env:
+          HOSTINGER_USER: ${{ secrets.HOSTINGER_USER }}
+          HOSTINGER_HOST: ${{ secrets.HOSTINGER_HOST }}
+          HOSTINGER_PATH: ${{ secrets.HOSTINGER_PATH }}
+          SSH_KEY: ${{ secrets.HOSTINGER_SSH_KEY }}
+        run: |
+          ssh -i key.pem -o StrictHostKeyChecking=no $HOSTINGER_USER@$HOSTINGER_HOST "cd $HOSTINGER_PATH && pm2 restart all"
+
+# 🚀 Déploiement Automatique sur Hostinger
+
+## Procédure
+
+1. **Ajout du workflow**
+   Place le fichier `.github/workflows/deploy-hostinger.yml` dans le dépôt, puis :
+   ```bash
+   git add .github/workflows/deploy-hostinger.yml
+   git commit -m "feat: add Hostinger deploy workflow"
+   git push origin main
+   ```
+
+2. **Configuration des secrets GitHub**
+   Dans GitHub → Settings → Secrets and variables → Actions, crée :
+   - `HOSTINGER_USER` : utilisateur SSH
+   - `HOSTINGER_HOST` : adresse/IP du serveur
+   - `HOSTINGER_PATH` : chemin de déploiement (ex. `/home/username/public_html/`)
+   - `HOSTINGER_SSH_KEY` : clé privée SSH
+
+3. **Préparation du serveur**
+   - Node.js et PM2 doivent être installés.
+   - Le répertoire cible doit exister.
+   - La clé publique SSH doit être autorisée.
+
+4. **Déclenchement et suivi**
+   - Tout push sur `main` déclenche le déploiement.
+   - Pour forcer un déploiement :
+     ```bash
+     git commit --allow-empty -m "🚀 trigger deploy"
+     git push origin main
+     ```
+   - Surveille l’onglet **Actions** du dépôt.
+
+5. **Validation**
+   - Vérifie la mise à jour sur : https://lilou-logistique.com
+
+## En cas de problème
+
+- Consulte les logs GitHub Actions.
+- Vérifie la configuration SSH, Node.js, PM2, et le chemin de build.
+- Adapte le script si besoin (autre process manager, autre dossier de build…).
+
+---
+
+Pour toute question ou adaptation, contacte [Ton prénom] ou l’équipe technique.
