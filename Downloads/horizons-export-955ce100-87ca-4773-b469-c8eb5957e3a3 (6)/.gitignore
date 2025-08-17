@@ -1,0 +1,70 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Production build
+dist/
+dist-ssr/
+build/
+
+# Environment variables
+.env
+.env.local
+.env.production
+.env.development
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+*.log
+
+# Testing
+coverage/
+.nyc_output
+
+# Cache
+.eslintcache
+.npm
+.yarn-integrity
+
+# Temporary files
+*.tmp
+*.temp
+.tmp/
+.temp/
+
+# Deployment files
+deploy.tar.gz
+*.tar.gz
+backup_*.tar.gz
+
+# SSH keys (NEVER commit these!)
+*.pem
+*.key
+id_rsa*
+.ssh/
+
+# Local scripts
+test-auth-automated.py
+quick-user-creation.js
+test-auth.js
+
+# Database
+*.sql
+*.sqlite
+
+# OS files
+Thumbs.db
+Desktop.ini

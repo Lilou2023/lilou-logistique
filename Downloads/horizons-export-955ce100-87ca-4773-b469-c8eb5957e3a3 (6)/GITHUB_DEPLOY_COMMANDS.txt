@@ -1,0 +1,177 @@
+════════════════════════════════════════════════════════════════════════════════
+    DÉPLOIEMENT DEPUIS GITHUB VERS HOSTINGER
+    Repository : https://github.com/Lilou2023/lilou-logistique.git
+════════════════════════════════════════════════════════════════════════════════
+
+📦 VOTRE DÉPÔT GIT EST PRÊT !
+------------------------------
+URL : https://github.com/Lilou2023/lilou-logistique.git
+Branche : Lilou-Go
+
+════════════════════════════════════════════════════════════════════════════════
+    MÉTHODE 1 : DÉPLOIEMENT COMPLET (Première fois)
+════════════════════════════════════════════════════════════════════════════════
+
+Copiez-collez cette commande complète :
+
+ssh -p 65002 u240832595@217.65.150.107 << 'ENDSSH'
+# Configuration
+REPO_URL="https://github.com/Lilou2023/lilou-logistique.git"
+BRANCH="Lilou-Go"
+BUILD_DIR="~/lilou-build"
+DEPLOY_DIR="~/public_html"
+
+echo "🚀 Déploiement initial depuis GitHub..."
+
+# Backup
+mkdir -p ~/backups
+tar -czf ~/backups/backup_$(date +%Y%m%d_%H%M%S).tar.gz -C ~/public_html . 2>/dev/null
+
+# Clone le repository
+if [ -d "$BUILD_DIR" ]; then
+    rm -rf $BUILD_DIR
+fi
+git clone -b $BRANCH $REPO_URL $BUILD_DIR
+cd $BUILD_DIR
+
+# Installation Node si nécessaire
+if ! command -v node &> /dev/null; then
+    echo "Installation de Node.js..."
+    curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+fi
+
+# Build
+npm install
+npm run build
+
+# Déployer
+rm -rf $DEPLOY_DIR/*
+cp -r dist/* $DEPLOY_DIR/
+
+# Créer .htaccess
+cat > $DEPLOY_DIR/.htaccess << 'EOF'
+RewriteEngine On
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+RewriteBase /
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^.*$ /index.html [L]
+Options -Indexes
+EOF
+
+# Permissions
+chmod -R 755 $DEPLOY_DIR
+find $DEPLOY_DIR -type f -exec chmod 644 {} \;
+
+echo "✅ Déploiement terminé !"
+echo "🌐 Site en ligne : https://lilou-logistique.com"
+ENDSSH
+
+════════════════════════════════════════════════════════════════════════════════
+    MÉTHODE 2 : MISE À JOUR RAPIDE (Après modifications)
+════════════════════════════════════════════════════════════════════════════════
+
+# 1. D'abord, pusher vos changements locaux :
+git add .
+git commit -m "Mise à jour"
+git push origin Lilou-Go
+
+# 2. Ensuite, déployer (une ligne) :
+ssh -p 65002 u240832595@217.65.150.107 'cd ~/lilou-build && git pull origin Lilou-Go && npm install && npm run build && rm -rf ~/public_html/* && cp -r dist/* ~/public_html/ && echo "✅ Mis à jour"'
+
+════════════════════════════════════════════════════════════════════════════════
+    MÉTHODE 3 : DÉPLOIEMENT MANUEL ÉTAPE PAR ÉTAPE
+════════════════════════════════════════════════════════════════════════════════
+
+# ÉTAPE 1 : Push local vers GitHub
+git add .
+git commit -m "Update $(date +%Y-%m-%d)"
+git push origin Lilou-Go
+
+# ÉTAPE 2 : Connexion SSH
+ssh -p 65002 u240832595@217.65.150.107
+
+# ÉTAPE 3 : Sur le serveur, cloner/update
+cd ~
+if [ ! -d "lilou-build" ]; then
+    git clone -b Lilou-Go https://github.com/Lilou2023/lilou-logistique.git lilou-build
+fi
+cd lilou-build
+git pull origin Lilou-Go
+
+# ÉTAPE 4 : Build
+npm install
+npm run build
+
+# ÉTAPE 5 : Déployer
+rm -rf ~/public_html/*
+cp -r dist/* ~/public_html/
+
+# ÉTAPE 6 : Créer .htaccess
+cat > ~/public_html/.htaccess << 'EOF'
+RewriteEngine On
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+RewriteBase /
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^.*$ /index.html [L]
+Options -Indexes
+EOF
+
+# ÉTAPE 7 : Sortir
+exit
+
+════════════════════════════════════════════════════════════════════════════════
+    COMMANDES UTILES
+════════════════════════════════════════════════════════════════════════════════
+
+# Vérifier l'état du repo sur le serveur
+ssh -p 65002 u240832595@217.65.150.107 'cd ~/lilou-build && git status'
+
+# Voir les derniers commits
+ssh -p 65002 u240832595@217.65.150.107 'cd ~/lilou-build && git log --oneline -5'
+
+# Nettoyer et refaire un clone propre
+ssh -p 65002 u240832595@217.65.150.107 'rm -rf ~/lilou-build && git clone -b Lilou-Go https://github.com/Lilou2023/lilou-logistique.git ~/lilou-build'
+
+# Vérifier les logs d'erreur
+ssh -p 65002 u240832595@217.65.150.107 'tail -20 ~/logs/lilou-logistique.com/https/error.log'
+
+# Restaurer une sauvegarde
+ssh -p 65002 u240832595@217.65.150.107 'cd ~/public_html && rm -rf * && tar -xzf ~/backups/backup_YYYYMMDD_HHMMSS.tar.gz'
+
+════════════════════════════════════════════════════════════════════════════════
+    WORKFLOW RECOMMANDÉ
+════════════════════════════════════════════════════════════════════════════════
+
+1. DÉVELOPPEMENT LOCAL
+   - Faire vos modifications
+   - Tester avec : npm run dev
+   - Build test : npm run build
+
+2. PUSH VERS GITHUB
+   git add .
+   git commit -m "Description des changements"
+   git push origin Lilou-Go
+
+3. DÉPLOIEMENT (30 secondes)
+   ssh -p 65002 u240832595@217.65.150.107 'cd ~/lilou-build && git pull && npm run build && cp -r dist/* ~/public_html/'
+
+4. VÉRIFICATION
+   - Ouvrir https://lilou-logistique.com
+   - Tester les fonctionnalités
+   - Vérifier la console (F12)
+
+════════════════════════════════════════════════════════════════════════════════
+    AUTOMATISATION AVEC ALIAS
+════════════════════════════════════════════════════════════════════════════════
+
+Ajoutez dans votre ~/.bashrc ou ~/.zshrc :
+
+alias deploy-lilou='git push origin Lilou-Go && ssh -p 65002 u240832595@217.65.150.107 "cd ~/lilou-build && git pull && npm run build && rm -rf ~/public_html/* && cp -r dist/* ~/public_html/ && echo Déployé!"'
+
+Ensuite, déployez simplement avec : deploy-lilou
+
+════════════════════════════════════════════════════════════════════════════════

@@ -1,0 +1,133 @@
+════════════════════════════════════════════════════════════════════════════════
+    COMMANDES DE DÉPLOIEMENT POUR LILOU-LOGISTIQUE.COM
+    COPIEZ-COLLEZ DIRECTEMENT DANS VOTRE TERMINAL
+════════════════════════════════════════════════════════════════════════════════
+
+VOS INFORMATIONS :
+------------------
+🌐 Domaine : lilou-logistique.com
+🖥️ IP : 217.65.150.107
+🔌 Port : 65002
+👤 Username : u240832595
+
+════════════════════════════════════════════════════════════════════════════════
+    MÉTHODE RAPIDE : TOUT EN UNE COMMANDE
+════════════════════════════════════════════════════════════════════════════════
+
+# COPIEZ TOUT CE BLOC ET COLLEZ DANS VOTRE TERMINAL :
+
+npm run build && \
+tar -czf deploy.tar.gz -C dist . && \
+scp -P 65002 deploy.tar.gz u240832595@217.65.150.107:~/ && \
+ssh -p 65002 u240832595@217.65.150.107 'cd ~/public_html && rm -rf * && tar -xzf ~/deploy.tar.gz && rm ~/deploy.tar.gz && echo "✅ Déploiement terminé !"' && \
+rm deploy.tar.gz && \
+echo "🌐 Votre site est maintenant en ligne : https://lilou-logistique.com"
+
+════════════════════════════════════════════════════════════════════════════════
+    MÉTHODE DÉTAILLÉE : ÉTAPE PAR ÉTAPE
+════════════════════════════════════════════════════════════════════════════════
+
+# ÉTAPE 1 : BUILD DE PRODUCTION
+npm run build
+
+# ÉTAPE 2 : CRÉER L'ARCHIVE
+tar -czf deploy.tar.gz -C dist .
+
+# ÉTAPE 3 : UPLOAD VERS HOSTINGER (entrez votre mot de passe quand demandé)
+scp -P 65002 deploy.tar.gz u240832595@217.65.150.107:~/
+
+# ÉTAPE 4 : CONNEXION SSH (entrez votre mot de passe)
+ssh -p 65002 u240832595@217.65.150.107
+
+# ÉTAPE 5 : UNE FOIS CONNECTÉ, COPIEZ CES COMMANDES :
+cd ~/public_html
+rm -rf *
+tar -xzf ~/deploy.tar.gz
+rm ~/deploy.tar.gz
+
+# ÉTAPE 6 : CRÉER LE .HTACCESS (COPIEZ TOUT LE BLOC) :
+cat > .htaccess << 'EOF'
+RewriteEngine On
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+RewriteBase /
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^.*$ /index.html [L]
+Header set X-Content-Type-Options "nosniff"
+Header set X-Frame-Options "SAMEORIGIN"
+<FilesMatch "\.(jpg|jpeg|png|gif|svg|ico|js|css|woff2)$">
+Header set Cache-Control "max-age=31536000, public"
+</FilesMatch>
+Options -Indexes
+EOF
+
+# ÉTAPE 7 : PERMISSIONS
+chmod 755 .
+find . -type d -exec chmod 755 {} \;
+find . -type f -exec chmod 644 {} \;
+
+# ÉTAPE 8 : SORTIR SSH
+exit
+
+# ÉTAPE 9 : NETTOYER FICHIER LOCAL
+rm deploy.tar.gz
+
+════════════════════════════════════════════════════════════════════════════════
+    COMMANDE DE SAUVEGARDE (AVANT DE DÉPLOYER)
+════════════════════════════════════════════════════════════════════════════════
+
+ssh -p 65002 u240832595@217.65.150.107 'mkdir -p ~/backups && tar -czf ~/backups/backup_$(date +%Y%m%d_%H%M%S).tar.gz -C ~/public_html . && echo "Sauvegarde créée"'
+
+════════════════════════════════════════════════════════════════════════════════
+    VÉRIFICATION APRÈS DÉPLOIEMENT
+════════════════════════════════════════════════════════════════════════════════
+
+# TESTER SI LE SITE RÉPOND
+curl -I https://lilou-logistique.com
+
+# VÉRIFIER LES FICHIERS SUR LE SERVEUR
+ssh -p 65002 u240832595@217.65.150.107 'ls -la ~/public_html | head -10'
+
+# VÉRIFIER LES LOGS D'ERREUR
+ssh -p 65002 u240832595@217.65.150.107 'tail -20 ~/logs/lilou-logistique.com/https/error.log 2>/dev/null || echo "Pas d erreurs"'
+
+════════════════════════════════════════════════════════════════════════════════
+    EN CAS DE PROBLÈME : RESTAURER LA SAUVEGARDE
+════════════════════════════════════════════════════════════════════════════════
+
+ssh -p 65002 u240832595@217.65.150.107
+
+# Une fois connecté :
+cd ~/public_html
+rm -rf *
+# Remplacez YYYYMMDD_HHMMSS par la date de votre backup
+tar -xzf ~/backups/backup_YYYYMMDD_HHMMSS.tar.gz
+exit
+
+════════════════════════════════════════════════════════════════════════════════
+    MÉTHODE ALTERNATIVE : VIA FILEZILLA
+════════════════════════════════════════════════════════════════════════════════
+
+1. Téléchargez FileZilla
+2. Nouvelle connexion :
+   - Hôte : sftp://217.65.150.107
+   - Nom d'utilisateur : u240832595
+   - Mot de passe : [votre mot de passe]
+   - Port : 65002
+3. Naviguez vers public_html
+4. Supprimez le contenu
+5. Uploadez le contenu du dossier 'dist'
+6. Uploadez le fichier .htaccess
+
+════════════════════════════════════════════════════════════════════════════════
+    TEST FINAL
+════════════════════════════════════════════════════════════════════════════════
+
+Ouvrez votre navigateur et testez :
+
+✅ https://lilou-logistique.com
+✅ https://lilou-logistique.com/login
+✅ https://lilou-logistique.com/select-role
+
+════════════════════════════════════════════════════════════════════════════════

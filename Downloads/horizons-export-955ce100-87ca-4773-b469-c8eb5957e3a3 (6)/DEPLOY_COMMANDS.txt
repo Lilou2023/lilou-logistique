@@ -1,0 +1,162 @@
+════════════════════════════════════════════════════════════════════════════════
+  COMMANDES DE DÉPLOIEMENT RAPIDE - LILOU-GO IA
+════════════════════════════════════════════════════════════════════════════════
+
+⚠️ REMPLACEZ D'ABORD CES VALEURS :
+-----------------------------------
+[HOST]     = Votre host SSH (ex: ssh123.main.hostinger.com)
+[PORT]     = Votre port SSH (ex: 65002)
+[USERNAME] = Votre username SSH (ex: u123456789)
+[PASSWORD] = Votre mot de passe SSH
+
+════════════════════════════════════════════════════════════════════════════════
+  OPTION 1 : DÉPLOIEMENT RAPIDE (Copier-Coller)
+════════════════════════════════════════════════════════════════════════════════
+
+# 1. BUILD LOCAL (dans votre terminal local)
+npm run build
+
+# 2. CRÉER L'ARCHIVE
+tar -czf deploy.tar.gz -C dist . .htaccess
+
+# 3. UPLOAD VIA SCP
+scp -P [PORT] deploy.tar.gz [USERNAME]@[HOST]:~/
+
+# 4. CONNEXION SSH ET DÉPLOIEMENT
+ssh -p [PORT] [USERNAME]@[HOST]
+
+# 5. COMMANDES SUR LE SERVEUR (copier tout le bloc)
+cd ~ && \
+mkdir -p backups && \
+tar -czf backups/backup_$(date +%Y%m%d_%H%M%S).tar.gz -C public_html . 2>/dev/null; \
+cd public_html && \
+rm -rf * && \
+tar -xzf ~/deploy.tar.gz && \
+rm ~/deploy.tar.gz && \
+find . -type d -exec chmod 755 {} \; && \
+find . -type f -exec chmod 644 {} \; && \
+echo "✅ Déploiement terminé !"
+
+# 6. SORTIR SSH
+exit
+
+# 7. NETTOYER LOCAL
+rm deploy.tar.gz
+
+════════════════════════════════════════════════════════════════════════════════
+  OPTION 2 : COMMANDES DÉTAILLÉES (Étape par étape)
+════════════════════════════════════════════════════════════════════════════════
+
+# ÉTAPE 1 : PRÉPARATION LOCALE
+# -----------------------------
+cd /chemin/vers/votre/projet
+npm run build
+ls -la dist/  # Vérifier que le build est créé
+
+# ÉTAPE 2 : CONNEXION SSH
+# ------------------------
+ssh -p [PORT] [USERNAME]@[HOST]
+# Entrez votre mot de passe
+
+# ÉTAPE 3 : PRÉPARATION SERVEUR
+# ------------------------------
+# Créer une sauvegarde
+cd ~
+mkdir -p backups
+BACKUP_NAME="backup_$(date +%Y%m%d_%H%M%S).tar.gz"
+tar -czf backups/$BACKUP_NAME -C public_html . 
+echo "Sauvegarde créée : $BACKUP_NAME"
+
+# ÉTAPE 4 : NETTOYER PUBLIC_HTML
+# -------------------------------
+cd ~/public_html
+rm -rf *
+ls -la  # Vérifier que c'est vide
+
+# ÉTAPE 5 : SORTIR SSH ET UPLOADER
+# ---------------------------------
+exit
+# De retour sur votre machine locale
+cd /chemin/vers/votre/projet
+scp -P [PORT] -r dist/* [USERNAME]@[HOST]:~/public_html/
+scp -P [PORT] .htaccess [USERNAME]@[HOST]:~/public_html/
+
+# ÉTAPE 6 : FINALISER SUR LE SERVEUR
+# ------------------------------------
+ssh -p [PORT] [USERNAME]@[HOST]
+cd ~/public_html
+ls -la  # Vérifier les fichiers
+chmod 755 .
+find . -type d -exec chmod 755 {} \;
+find . -type f -exec chmod 644 {} \;
+
+# ÉTAPE 7 : VÉRIFIER
+# ------------------
+curl -I https://votre-domaine.com
+# Devrait retourner HTTP/2 200
+
+════════════════════════════════════════════════════════════════════════════════
+  CRÉATION DU .htaccess DIRECTEMENT SUR LE SERVEUR
+════════════════════════════════════════════════════════════════════════════════
+
+ssh -p [PORT] [USERNAME]@[HOST]
+
+cat > ~/public_html/.htaccess << 'EOF'
+RewriteEngine On
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+RewriteBase /
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^.*$ /index.html [L]
+Header set X-Content-Type-Options "nosniff"
+Header set X-Frame-Options "SAMEORIGIN"
+<FilesMatch "\.(jpg|jpeg|png|gif|svg|ico|js|css|woff2)$">
+    Header set Cache-Control "max-age=31536000, public"
+</FilesMatch>
+Options -Indexes
+EOF
+
+chmod 644 ~/public_html/.htaccess
+
+════════════════════════════════════════════════════════════════════════════════
+  COMMANDES DE DÉPANNAGE
+════════════════════════════════════════════════════════════════════════════════
+
+# VÉRIFIER LES LOGS D'ERREUR
+tail -50 ~/logs/error.log
+
+# VÉRIFIER LES PERMISSIONS
+ls -la ~/public_html/
+
+# RÉPARER LES PERMISSIONS
+find ~/public_html -type d -exec chmod 755 {} \;
+find ~/public_html -type f -exec chmod 644 {} \;
+
+# VÉRIFIER L'ESPACE DISQUE
+df -h
+
+# VÉRIFIER LES PROCESSUS
+ps aux | grep node
+
+# RESTAURER UNE SAUVEGARDE
+cd ~/public_html
+rm -rf *
+tar -xzf ~/backups/backup_YYYYMMDD_HHMMSS.tar.gz
+
+════════════════════════════════════════════════════════════════════════════════
+  TEST FINAL
+════════════════════════════════════════════════════════════════════════════════
+
+# Sur votre machine locale
+curl -I https://votre-domaine.com
+curl https://votre-domaine.com/login
+curl https://votre-domaine.com/select-role
+
+# Dans le navigateur
+1. Ouvrir : https://votre-domaine.com
+2. Tester : /login
+3. Console (F12) : Vérifier les erreurs
+4. Network : Vérifier que tous les fichiers se chargent
+
+════════════════════════════════════════════════════════════════════════════════
