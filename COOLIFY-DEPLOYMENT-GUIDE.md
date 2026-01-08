@@ -37,6 +37,17 @@ Ce guide s'appuie sur la documentation officielle de Coolify :
 - Documentation : https://coolify.io/docs
 - GitHub : https://github.com/coollabsio/coolify
 
+### Flux de Configuration
+
+Coolify utilise un assistant d'onboarding interactif qui vous guide à travers :
+1. Création du compte administrateur
+2. Sélection du type de serveur (Local/Remote)
+3. Configuration des clés SSH (si serveur distant)
+4. Validation de la connexion au serveur
+5. Création du premier projet (optionnel)
+
+**Note importante :** Ce guide couvre le processus d'onboarding actuel de Coolify. L'interface peut légèrement varier selon la version installée.
+
 ---
 
 ## Configuration du VPS
@@ -130,20 +141,78 @@ docker logs -f coolify
 2. Accédez à : `http://votre-ip-vps:8000`
 3. Vous devriez voir l'écran de configuration initiale de Coolify
 
-### Étape 4 : Configuration Initiale
+### Étape 4 : Configuration Initiale - Assistant d'Onboarding
 
-1. **Créer le compte administrateur :**
-   - Email : votre-email@domaine.com
-   - Mot de passe : (utilisez un mot de passe fort)
-   - Confirmez le mot de passe
+Coolify propose maintenant un assistant d'onboarding guidé pour simplifier la configuration.
 
-2. **Configurer l'instance :**
-   - Nom de l'instance : `Lilou Logistique Production`
-   - Région : `Europe` (ou votre région)
+#### 4.1 Créer le Compte Administrateur
 
-3. **Configuration du serveur :**
-   - Coolify détectera automatiquement votre serveur local
-   - Validez la configuration
+1. **Email** : votre-email@domaine.com
+2. **Mot de passe** : Utilisez un mot de passe fort (minimum 8 caractères)
+3. **Confirmez le mot de passe**
+4. Cliquez sur **Register** ou **Create Account**
+
+#### 4.2 Choisir le Type de Serveur
+
+L'assistant vous demandera de choisir où déployer vos applications :
+
+- **Localhost** : Déployer sur le serveur où Coolify est installé (recommandé pour commencer)
+- **Remote Server** : Déployer sur un serveur distant via SSH
+
+**Pour ce guide, sélectionnez "Localhost"** car Coolify est installé sur le serveur de production.
+
+#### 4.3 Configuration de la Clé Privée SSH (pour Remote Server uniquement)
+
+Si vous aviez choisi "Remote Server", vous devriez :
+
+1. **Créer ou sélectionner une clé SSH privée :**
+   - Utilisez une clé existante
+   - Ou créez une nouvelle clé SSH sur votre VPS :
+     ```bash
+     ssh-keygen -t ed25519 -C "coolify-deployment"
+     cat ~/.ssh/id_ed25519  # Copiez la clé privée
+     cat ~/.ssh/id_ed25519.pub  # Copiez la clé publique
+     ```
+
+2. **Ajouter la clé publique au serveur distant :**
+   ```bash
+   # Sur le serveur distant
+   echo "votre-cle-publique" >> ~/.ssh/authorized_keys
+   chmod 600 ~/.ssh/authorized_keys
+   ```
+
+3. **Coller la clé privée dans Coolify** dans le champ approprié
+
+**Note :** Pour une installation locale (Localhost), cette étape est automatiquement gérée par Coolify.
+
+#### 4.4 Valider la Connexion au Serveur
+
+Coolify va tester la connexion au serveur et vérifier :
+- ✅ Accès SSH (pour remote)
+- ✅ Docker installé et fonctionnel
+- ✅ Permissions appropriées
+
+Si la validation réussit, cliquez sur **Continue** ou **Next**.
+
+#### 4.5 Créer le Premier Projet
+
+L'assistant peut vous proposer de créer un projet immédiatement :
+- **Nom du projet** : `Lilou Logistique`
+- **Description** : `Plateforme de gestion logistique DSP`
+
+Vous pouvez aussi sauter cette étape et créer le projet manuellement plus tard.
+
+#### 4.6 Accéder au Dashboard
+
+Une fois l'onboarding terminé, vous arriverez sur le dashboard principal de Coolify où vous pourrez :
+- Gérer vos serveurs
+- Créer et déployer des applications
+- Configurer des sources Git
+- Surveiller les ressources
+
+**URL de référence de l'onboarding :** 
+Si vous devez revenir à l'assistant d'onboarding ou reconfigurer un serveur, vous pouvez accéder à :
+`http://votre-ip-vps:8000/onboarding`
 
 ---
 
@@ -750,6 +819,41 @@ export default async function handler(
 ---
 
 ## Dépannage
+
+### Problème 0 : Erreur lors de l'Onboarding
+
+**Symptôme :** L'assistant d'onboarding ne valide pas la configuration du serveur ou affiche une erreur lors de la configuration de la clé SSH.
+
+**Solutions :**
+
+```bash
+# 1. Vérifier que Docker fonctionne correctement
+docker ps
+docker --version
+
+# 2. Vérifier les permissions Docker
+sudo usermod -aG docker $USER
+# Déconnectez-vous et reconnectez-vous pour appliquer les changements
+
+# 3. Si vous configurez un serveur distant, testez la connexion SSH manuellement
+ssh -i ~/.ssh/votre_cle utilisateur@ip-serveur-distant
+
+# 4. Vérifier les logs de Coolify pendant l'onboarding
+docker logs -f coolify
+
+# 5. Redémarrer le processus d'onboarding
+# Accédez à http://votre-ip-vps:8000/onboarding pour recommencer
+```
+
+**Erreur "Private Key Invalid" :**
+- Assurez-vous que vous copiez la clé **privée** (pas la clé publique .pub)
+- Vérifiez que la clé n'a pas de caractères supplémentaires (espaces, retours à la ligne)
+- La clé doit commencer par `-----BEGIN OPENSSH PRIVATE KEY-----` ou `-----BEGIN RSA PRIVATE KEY-----`
+
+**Erreur "Cannot Connect to Server" :**
+- Vérifiez que le serveur distant est accessible : `ping ip-serveur`
+- Vérifiez que le port SSH est ouvert (22 ou personnalisé)
+- Vérifiez que la clé publique correspondante est dans `~/.ssh/authorized_keys` sur le serveur distant
 
 ### Problème 1 : Coolify ne Démarre pas
 
