@@ -188,7 +188,7 @@ docker logs -f coolify
 3. Choisissez **Public Repository** ou **Private Repository**
 4. Configurez :
    - **Git Source** : Sélectionnez votre source GitHub
-   - **Repository** : `Lilou2023/lilou-logistique`
+   - **Repository** : `Votre-Organisation/votre-depot` (exemple: `Lilou2023/lilou-logistique`)
    - **Branch** : `main`
    - **Build Pack** : `nixpacks` (détection automatique)
    - **Port** : `3000` (Next.js)
@@ -232,13 +232,13 @@ docker logs -f coolify
 
 ```env
 # URL publique Supabase
-NEXT_PUBLIC_SUPABASE_URL=https://ocsxrxcphdknfzihejjd.supabase.co
+NEXT_PUBLIC_SUPABASE_URL=https://votre-projet-id.supabase.co
 
 # Clé anonyme publique Supabase (safe pour le client)
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9jc3hyeGNwaGRrbmZ6aWhlamtkIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTU1NjQ4MDAsImV4cCI6MjAxMTE0MDgwMH0.xxxxx
+NEXT_PUBLIC_SUPABASE_ANON_KEY=votre-cle-anon-publique-ici
 
 # Clé de service Supabase (SECRET - pour les opérations backend)
-SUPABASE_SERVICE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9jc3hyeGNwaGRrbmZ6aWhlamtkIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTY5NTU2NDgwMCwiZXhwIjoyMDExMTQwODAwfQ.xxxxx
+SUPABASE_SERVICE_KEY=votre-cle-service-secrete-ici
 ```
 
 #### Variables NextAuth
